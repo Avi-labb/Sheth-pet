@@ -25,11 +25,14 @@ app.use(
 );
 app.use(cookieParser());
 
-// Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 connectDB();
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 app.get("/", (req, res) => {
   res.send("API Running");
 });
