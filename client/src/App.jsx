@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
 import Home from './pages/Home/Home'
@@ -11,49 +12,104 @@ import About from './pages/About/About'
 import Insights from './pages/Insights'
 import Careers from './pages/Careers'
 import Contact from './pages/Contact/Contact'
-import AdminLogin from './pages/AdminLogin'
-import Dashboard from './pages/Dashboard'
+import AdminLogin from './pages/Admin/AdminLogin'
+import Dashboard from './pages/Admin/Dashboard'
+import BulkUpload from './pages/Admin/bulkupload'
+import CategoryPage from './pages/Category/CategoryPage'
 import './App.css'
 
 // Test comment for HMR
+
+// Scroll to top component
+function ScrollToTop() {
+  const location = useLocation()
+  
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+  
+  return null
+}
+
+// Layout component
+function PublicLayout({ children }) {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        {children}
+      </main>
+      <Footer />
+    </div>
+  )
+}
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen">
+        <ScrollToTop />
         <Routes>
           {/* Admin Routes (no header/footer) */}
-          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLogin />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/bulk-upload" element={<BulkUpload />} />
           
           {/* Public Routes */}
           <Route path="/" element={
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1">
-                <Home />
-              </main>
-              <Footer />
-            </div>
+            <PublicLayout>
+              <Home />
+            </PublicLayout>
           } />
-          <Route path="*" element={
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1">
-                <Routes>
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/manufacturing" element={<Manufacturing />} />
-                  <Route path="/industries" element={<Industries />} />
-                  <Route path="/sustainability" element={<Sustainability />} />
-                  <Route path="/clients" element={<Clients />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/insights" element={<Insights />} />
-                  <Route path="/careers" element={<Careers />} />
-                  <Route path="/contact" element={<Contact />} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
+          <Route path="/products" element={
+            <PublicLayout>
+              <Products />
+            </PublicLayout>
+          } />
+          <Route path="/products/:categoryName" element={
+            <PublicLayout>
+              <CategoryPage />
+            </PublicLayout>
+          } />
+          <Route path="/manufacturing" element={
+            <PublicLayout>
+              <Manufacturing />
+            </PublicLayout>
+          } />
+          <Route path="/industries" element={
+            <PublicLayout>
+              <Industries />
+            </PublicLayout>
+          } />
+          <Route path="/sustainability" element={
+            <PublicLayout>
+              <Sustainability />
+            </PublicLayout>
+          } />
+          <Route path="/clients" element={
+            <PublicLayout>
+              <Clients />
+            </PublicLayout>
+          } />
+          <Route path="/about" element={
+            <PublicLayout>
+              <About />
+            </PublicLayout>
+          } />
+          <Route path="/insights" element={
+            <PublicLayout>
+              <Insights />
+            </PublicLayout>
+          } />
+          <Route path="/careers" element={
+            <PublicLayout>
+              <Careers />
+            </PublicLayout>
+          } />
+          <Route path="/contact" element={
+            <PublicLayout>
+              <Contact />
+            </PublicLayout>
           } />
         </Routes>
       </div>

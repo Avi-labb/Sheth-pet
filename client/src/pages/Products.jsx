@@ -1,162 +1,326 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Box, Layers, Package, Settings, ChevronRight, ChevronDown } from 'lucide-react'
+import { Package, ChevronRight, X, Box, Layers, Settings, Filter } from 'lucide-react'
+import { productAPI } from '../services/api'
 
 const Products = () => {
-  const [expandedProduct, setExpandedProduct] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState(['All', 'Bottles', 'Jars', 'Caps', 'Containers'])
+  const [loading, setLoading] = useState(false)
+  const [selectedProductDetail, setSelectedProductDetail] = useState(null)
 
-  const products = [
-    {
-      id: 0,
-      icon: Box,
-      title: 'PET Bottles',
-      description: 'Wide range of PET bottles in various sizes and shapes for all your packaging needs.',
-      features: ['50ml - 5L capacity', 'Custom shapes available', 'Food grade material', 'Leak proof'],
-      details: 'Our PET bottles are manufactured using state-of-the-art technology, ensuring consistency and quality. Perfect for beverages, pharmaceuticals, cosmetics, and more.'
-    },
-    {
-      id: 1,
-      icon: Layers,
-      title: 'Jars & Containers',
-      description: 'Premium quality jars perfect for food, cosmetics, and personal care products.',
-      features: ['Wide mouth design', 'Stackable options', 'UV protection', 'Airtight seals'],
-      details: 'Our jars are designed for both functionality and aesthetics. Available in various sizes and colors to match your brand identity.'
-    },
-    {
-      id: 2,
-      icon: Package,
-      title: 'Preforms',
-      description: 'High-quality preforms engineered for consistent blow molding performance.',
-      features: ['Precision engineering', 'Multiple neck finishes', 'Color customization', 'Fast turnaround'],
-      details: 'Our preforms are made from high-grade PET resin, ensuring excellent clarity and strength. Perfect for all blow molding applications.'
-    },
-    {
-      id: 3,
-      icon: Settings,
-      title: 'Caps & Closures',
-      description: 'Complete range of caps and closures designed for perfect sealing and ease of use.',
-      features: ['Various neck sizes', 'Child resistant options', 'Tamper evident', 'Custom branding'],
-      details: 'We offer a wide variety of caps and closures, including screw caps, flip-top caps, and more, all designed for optimal performance and safety.'
+  const fetchProducts = async (category) => {
+    setLoading(true)
+    try {
+      const result = await productAPI.getProducts(category === 'All' ? null : category)
+      if (result.ok) {
+        setProducts(result.data.products)
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error)
     }
-  ]
+    setLoading(false)
+  }
+
+  const fetchCategories = async () => {
+    try {
+      const result = await productAPI.getCategories()
+      if (result.ok && result.data.categories) {
+        setCategories(['All', ...result.data.categories])
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error)
+    }
+  }
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
+
+  useEffect(() => {
+    fetchProducts(selectedCategory)
+  }, [selectedCategory])
 
   return (
-    <div>
-      <section className="bg-gradient-to-br from-slate-900 to-slate-800 py-25 px-6 text-center">
-        <motion.div
-          className="max-w-[800px] mx-auto"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            Our Products
-          </h1>
-          <p className="text-lg md:text-xl text-white/80 font-normal" style={{ fontFamily: "'Inter', sans-serif" }}>
-            Complete range of PET packaging solutions
-          </p>
-        </motion.div>
-      </section>
+    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-red-500 selection:text-white">
+      {/* Hero Header Section */}
+     
+      {/* Main Split Layout Workspace */}
+      <div className="max-w-7xl   mx-auto px-4 sm:px-6 py-8 md:py-12">
+        <div className="grid grid-cols-1 mt-20 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* LEFT SIDEBAR: Categories (Sticky on Desktop, Horizontal Scroll on Mobile) */}
+          <aside className="lg:col-span-3 lg:sticky lg:top-24 z-30 bg-slate-950 lg:bg-transparent -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="bg-slate-900/20 lg:bg-slate-900/40 border border-slate-900 rounded-none lg:rounded-2xl p-2 lg:p-5 backdrop-blur-md lg:backdrop-blur-none">
+              
+              {/* Desktop Sidebar Title */}
+              <div className="hidden lg:flex items-center gap-2 mb-4 pb-3 border-b border-slate-800/60">
+                <Filter size={14} className="text-red-500" />
+                <span className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">Categories</span>
+              </div>
 
-      <section className="py-25">
-        <div className="max-w-full mx-auto px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {products.map((product, index) => (
-              <motion.div
-                key={product.id}
-                className="bg-white border border-slate-200 rounded-2xl transition-all duration-300 overflow-hidden"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                whileHover={{ y: -15, transition: { duration: 0.3 } }}
-              >
-                <div className="p-12">
-                  <div className="w-24 h-24 mb-6 flex items-center justify-center bg-gradient-to-br from-red-600/10 to-red-600/5 text-red-600 rounded-2xl">
-                    <product.icon size={56} />
+              {/* Flex wrapper supporting horizontal scroll on mobile and stack on desktop */}
+              <div className="flex flex-nowrap  lg:flex-col gap-1.5 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 no-scrollbar">
+                {categories.map((category) => {
+                  const isActive = selectedCategory === category
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-4 lg:px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all duration-200 text-left w-auto lg:w-full border flex items-center justify-between group ${
+                        isActive
+                          ? 'bg-red-600 text-white border-red-600 shadow-md shadow-red-600/10'
+                          : 'bg-slate-900/60 lg:bg-transparent text-slate-400 border-slate-900 lg:border-transparent hover:text-slate-200 hover:bg-slate-900/40'
+                      }`}
+                    >
+                      <span>{category}</span>
+                      <ChevronRight 
+                        size={12} 
+                        className={`hidden lg:block transition-transform duration-200 ${
+                          isActive ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'
+                        }`} 
+                      />
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </aside>
+
+          {/* RIGHT GRID: Products Content Workspace */}
+          <main className="lg:col-span-9">
+            {loading ? (
+              /* Loading Skeleton */
+              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="bg-slate-900/40 border border-slate-900 rounded-2xl overflow-hidden animate-pulse">
+                    <div className="aspect-[4/3] bg-slate-800/20 w-full" />
+                    <div className="p-5 space-y-3">
+                      <div className="h-4 bg-slate-800/20 rounded w-1/4" />
+                      <div className="h-5 bg-slate-800/20 rounded w-3/4" />
+                      <div className="h-9 bg-slate-800/20 rounded w-full mt-3" />
+                    </div>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-slate-800 mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                    {product.title}
-                  </h3>
-                  <p className="text-base text-slate-600 mb-6 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                    {product.description}
-                  </p>
-                  <ul className="list-none mb-6">
-                    {product.features.map((feature, idx) => (
-                      <motion.li
-                        key={idx}
-                        className="flex items-center gap-2 py-2 text-sm text-slate-600"
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.3, delay: index * 0.15 + idx * 0.05 }}
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        <ChevronRight size={16} />
-                        {feature}
-                      </motion.li>
-                    ))}
-                  </ul>
-                  <button
-                    onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)}
-                    className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg border-2 border-slate-200 bg-transparent text-slate-800 font-semibold text-sm uppercase tracking-wider cursor-pointer transition-all duration-300 hover:border-red-600 hover:text-red-600 hover:bg-red-50"
-                    style={{ fontFamily: "'Poppins', sans-serif" }}
+                ))}
+              </div>
+            ) : products.length > 0 ? (
+              /* High-Fidelity Product Display Matrix */
+              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {products.map((product, index) => (
+                  <motion.div
+                    key={product._id}
+                    className="bg-slate-900/40 border border-slate-900 rounded-2xl overflow-hidden cursor-pointer group flex flex-col justify-between h-full relative"
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.35, delay: index * 0.02 }}
+                    whileHover={{ y: -4, borderColor: 'rgba(239, 68, 68, 0.2)' }}
+                    onClick={() => setSelectedProductDetail(product)}
                   >
-                    {expandedProduct === product.id ? 'Show Less' : 'Learn More'}
-                    <motion.div
-                      animate={{ rotate: expandedProduct === product.id ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <ChevronDown size={16} />
-                    </motion.div>
-                  </button>
-                </div>
-                <AnimatePresence>
-                  {expandedProduct === product.id && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.4 }}
-                      className="bg-slate-50 border-t border-slate-200"
-                    >
-                      <div className="p-12">
-                        <h4 className="text-xl font-semibold text-slate-800 mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                          More Details
-                        </h4>
-                        <p className="text-base text-slate-600 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                          {product.details}
+                    <div>
+                      {/* Interactive Visual Frame */}
+                      <div className="relative aspect-[4/3] bg-slate-950 border-b border-slate-900/60 flex items-center justify-center overflow-hidden transition-colors duration-300">
+                        {product.image ? (
+                          <img
+                            src={`http://localhost:5000/uploads/${product.image}`}
+                            alt={product.name}
+                            className="w-full h-full object-contain p-6 transform group-hover:scale-105 transition-transform duration-500 ease-out"
+                          />
+                        ) : (
+                          <div className="text-slate-800 flex flex-col items-center gap-1.5">
+                            <Package size={32} strokeWidth={1} />
+                            <span className="text-[8px] uppercase tracking-widest text-slate-600 font-bold">Staging Frame</span>
+                          </div>
+                        )}
+
+                        {product.category && (
+                          <span className="absolute top-3 left-3 inline-block px-2 py-0.5 bg-slate-950/80 text-slate-400 text-[8px] font-bold uppercase tracking-wider rounded border border-slate-800/80 backdrop-blur-sm">
+                            {product.category}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Info Area */}
+                      <div className="p-5">
+                        <h3 
+                          className="text-base font-bold text-slate-100 group-hover:text-red-500 transition-colors duration-200 line-clamp-1 mb-0.5" 
+                          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                        >
+                          {product.name}
+                        </h3>
+
+                        {product.sku && (
+                          <p className="text-[9px] font-mono text-slate-500 tracking-wider mb-2">
+                            REF: {product.sku}
+                          </p>
+                        )}
+                        
+                        <p 
+                          className="text-xs text-slate-400 line-clamp-2 leading-relaxed font-normal" 
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          {product.keySpecs || product.description || 'Premium design optimized for logistical distribution integrity.'}
                         </p>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-          </div>
+                    </div>
+
+                    {/* Button Zone */}
+                    <div className="px-5 pb-5 pt-1">
+                      <div className="w-full py-2 px-3 bg-slate-900/60 group-hover:bg-red-600 border border-slate-800 group-hover:border-red-600 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-white text-[10px] font-bold uppercase tracking-wider transition-all duration-300 group/btn">
+                        <span>Specifications</span>
+                        <ChevronRight size={10} className="ml-1 transform group-hover/btn:translate-x-1 transition-transform" />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              /* Empty Suite State */
+              <div className="text-center py-20 border border-dashed border-slate-900 rounded-2xl bg-slate-900/10 max-w-sm mx-auto">
+                <Package size={36} className="mx-auto text-slate-800 mb-2" strokeWidth={1} />
+                <h3 className="text-sm font-bold text-slate-400 mb-0.5">Category Empty</h3>
+                <p className="text-slate-500 text-[11px] px-4">Our variant collection is currently being revised. Please toggle other tiers.</p>
+              </div>
+            )}
+          </main>
+
+        </div>
+      </div>
+
+      {/* Enterprise Custom Request Frame */}
+      <section className="py-12 bg-slate-900/10 border-t border-slate-900/60 mt-12">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-xl md:text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+            Need Custom Technical Dimensions?
+          </h2>
+          <p className="text-xs md:text-sm text-slate-400 mb-5 max-w-lg mx-auto leading-relaxed">
+            We partner directly with industrial procurement leads to configure custom containers.
+          </p>
+          <button className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-colors">
+            Request Design Blueprint
+          </button>
         </div>
       </section>
 
-      <section className="py-20 bg-slate-50">
-        <div className="max-w-full mx-auto px-12">
+      {/* Dynamic Pop-up Modal Stage */}
+      <AnimatePresence>
+        {selectedProductDetail && (
           <motion.div
-            className="text-center max-w-[700px] mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+            onClick={() => setSelectedProductDetail(null)}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Need Custom Packaging?
-            </h2>
-            <p className="text-lg text-slate-600 mb-8 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-              We work closely with you to create bespoke packaging solutions that perfectly match your brand and product requirements.
-            </p>
-            <button className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg border-2 border-red-600 bg-red-600 text-white font-semibold text-sm uppercase tracking-wider cursor-pointer transition-all duration-300 hover:bg-red-700 hover:border-red-700" style={{ fontFamily: "'Poppins', sans-serif" }}>
-              Request Custom Quote
-            </button>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/90 backdrop-blur-sm" />
+            
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.99 }}
+              transition={{ type: "spring", damping: 28, stiffness: 400 }}
+              className="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl my-auto max-h-[calc(100vh-2rem)] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setSelectedProductDetail(null)}
+                className="absolute top-3 right-3 z-20 p-1.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+              >
+                <X size={14} />
+              </button>
+
+              <div className="overflow-y-auto flex-1 dynamic-scrollbar">
+                <div className="grid grid-cols-1 lg:grid-cols-12">
+                  
+                  {/* Left Plate Display */}
+                  <div className="lg:col-span-5 relative bg-slate-950 border-b lg:border-b-0 lg:border-r border-slate-800 p-3 flex flex-col justify-center items-center min-h-[200px] lg:min-h-[380px]">
+                    {selectedProductDetail.category && (
+                      <span className="absolute top-4 left-4 inline-block px-3 py-0.5 bg-red-950/40 border border-red-900/40 text-red-400 text-[10px] font-bold uppercase tracking-widest rounded">
+                        {selectedProductDetail.category}
+                      </span>
+                    )}
+                    <div className="w-full aspect-square max-w-[150px] lg:max-w-[450px] flex items-center justify-center transition-transform hover:scale-105 duration-500">
+                      {selectedProductDetail.image ? (
+                        <img
+                          src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
+                          alt={selectedProductDetail.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Package size={48} className="text-slate-800" strokeWidth={1} />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Plate Specifications */}
+                  <div className="lg:col-span-7 p-5 lg:p-6 bg-slate-900/20 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      <div>
+                        <h2 className="text-base lg:text-lg font-bold text-white tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                          {selectedProductDetail.name}
+                        </h2>
+                        {selectedProductDetail.sku && (
+                          <p className="text-[9px] font-mono text-slate-500 mt-0.5">SKU: {selectedProductDetail.sku}</p>
+                        )}
+                      </div>
+                      <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2.5">Structural Metrics</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {[
+                          { label: 'Color Variant', value: selectedProductDetail.color, icon: <div className="w-1.5 h-1.5 rounded-full bg-slate-400" /> },
+                          { label: 'Volumetric Size', value: selectedProductDetail.size, icon: <Box size={10} className="text-slate-400" /> },
+                          { label: 'Closure System', value: selectedProductDetail.capType, icon: <Settings size={10} className="text-slate-400" /> },
+                          { label: 'Minimum MOQ', value: selectedProductDetail.moqPackaging, icon: <Layers size={10} className="text-slate-400" /> }
+                        ].map((spec, i) => spec.value ? (
+                          <div key={i} className="p-2 bg-slate-950/40 border border-slate-800/60 rounded-xl flex items-center gap-2.5">
+                            <div className="w-6 h-6 rounded bg-slate-900 border border-slate-800 flex items-center justify-center flex-shrink-0">
+                              {spec.icon}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-[7px] font-bold text-slate-500 uppercase tracking-wider">{spec.label}</p>
+                              <p className="text-xs font-semibold text-slate-200 truncate">{spec.value}</p>
+                            </div>
+                          </div>
+                        ) : null)}
+                      </div>
+                     
+                      <hr className="border-slate-800/80" />
+
+                      {/* Metric Specifications Grid */}
+                      
+                       <div>
+                          <h4 className="text-[9px] mt-2 font-bold text-slate-500 uppercase tracking-widest mb-1.5">Description</h4>
+                        <p className="text-xs lg:text-sm text-slate-300 leading-relaxed font-normal">
+                          {selectedProductDetail.keySpecs || selectedProductDetail.description || 'Premium components manufactured under structural quality guidelines.'}
+                        </p>
+                      </div>
+                        <div className="p-3 bg-slate-950/30 border border-slate-800/60 rounded-lg">
+                          <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Applications</h4>
+                          <p className="text-xs text-slate-400 leading-relaxed">{selectedProductDetail.usage}</p>
+                        </div>
+                    </div>
+
+                    {/* Lower Controls */}
+                    <div className="flex flex-col sm:flex-row gap-2 pt-4 mt-6 border-t border-slate-800/60">
+                      <button className="w-full sm:flex-1 py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest transition-colors">
+                        Request Quote Now
+                      </button>
+                      <button
+                        onClick={() => setSelectedProductDetail(null)}
+                        className="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-colors border border-slate-700"
+                      >
+                        Close
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </motion.div>
           </motion.div>
-        </div>
-      </section>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

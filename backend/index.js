@@ -1,79 +1,47 @@
-const express = require('express');
-const cors = require('cors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+import express from "express";
+import dotenv from "dotenv";
+import cors from 'cors';
+import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+import connectDB from "./db/mongoose.js";
+
+import adminRoutes from './routes/adminRoute.js'
+import productRouter from './routes/productRoute.js'
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: true, // Allow all origins for development
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 
-// Mock admin user (in production, use a database)
-const adminUser = {
-  email: process.env.ADMIN_EMAIL,
-  passwordHash: bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10)
-};
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Login endpoint
-app.post('/api/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
+connectDB();
 
-    if (email !== adminUser.email) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, adminUser.passwordHash);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token, message: 'Login successful!' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
+app.get("/", (req, res) => {
+  res.send("API Running");
 });
 
-// Forgot password endpoint (mock)
-app.post('/api/forgot-password', (req, res) => {
-  const { email } = req.body;
-  
-  if (email === adminUser.email) {
-    // In production, send an actual email here
-    res.json({ message: 'Password reset link sent to your email!' });
-  } else {
-    res.json({ message: 'If this email exists, a reset link has been sent.' });
-  }
+app.get("/test", (req, res) => {
+  res.json({ message: "Test route working!" });
 });
 
-// Verify token middleware
-const verifyToken = (req, res, next) => {
-  const token = req.headers['authorization'];
-  
-  if (!token) {
-    return res.status(403).json({ message: 'No token provided' });
-  }
+app.use('/api/admin',adminRoutes)
+app.use('/api/products',productRouter)
 
-  try {
-    const decoded = jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    res.status(401).json({ message: 'Invalid token' });
-  }
-};
-
-// Protected route example
-app.get('/api/dashboard', verifyToken, (req, res) => {
-  res.json({ 
-    message: 'Welcome to the dashboard!',
-    user: req.user
-  });
-});
-
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Backend server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

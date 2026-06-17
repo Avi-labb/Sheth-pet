@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, ChevronRight } from 'lucide-react'
+import { Menu, X, ChevronRight, ChevronDown } from 'lucide-react'
+import { productAPI } from '../../services/api'
 import logo from '../../assets/images/radhe-logo.png'
 
 const navItems = [
-  { name: 'Products', path: '/products' },
   { name: 'Manufacturing', path: '/manufacturing' },
   { name: 'Industries', path: '/industries' },
   { name: 'Sustainability', path: '/sustainability' },
@@ -15,10 +15,26 @@ const navItems = [
   { name: 'Careers', path: '/careers' },
 ]
 
-const Header = () => {
+const Header = ({ onCategorySelect }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Containers'])
   const location = useLocation()
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const result = await productAPI.getCategories()
+        console.log("Categories API result:", result)
+        if (result.ok && result.data.categories) {
+          setCategories(result.data.categories)
+        }
+      } catch (error) {
+        console.error("Error fetching categories", error)
+      }
+    }
+    fetchCategories()
+  }, [])
 
   return (
     <nav
@@ -28,7 +44,11 @@ const Header = () => {
       <div className="max-w-8xl mx-auto px-5 sm:px-10 h-full flex items-center justify-between">
         
         {/* Brand Logo Wrapper (Left Aligned) */}
-        <Link to="/" className="flex items-center gap-3 group focus:outline-none z-50">
+        <Link 
+          to="/" 
+          onClick={() => onCategorySelect && onCategorySelect(null)}
+          className="flex items-center gap-3 group focus:outline-none z-50"
+        >
           <div className="w-25 h-25 shrink-0 transition-transform duration-300 group-hover:scale-105">
             <img
               src={logo}
@@ -44,6 +64,51 @@ const Header = () => {
 
         {/* Desktop Navigation Link Array (Centered) */}
         <div className="hidden lg:flex items-center gap-1 h-full">
+          {/* Products Dropdown */}
+          <div
+            className="relative h-full flex items-center"
+            onMouseEnter={() => setShowDropdown(true)}
+            onMouseLeave={() => setShowDropdown(false)}
+          >
+            <button
+              className={`relative px-3 py-2 text-[13px] font-medium tracking-wide text-slate-200 transition-colors duration-300 rounded-lg hover:text-white group flex items-center gap-1`}
+            >
+              <span className="relative uppercase z-10">Products</span>
+              <ChevronDown size={14} className="transition-transform duration-300 group-hover:rotate-180" />
+            </button>
+
+            <AnimatePresence>
+              {showDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full left-0 mt-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl py-3 min-w-[200px]"
+                >
+                  <Link
+                    to="/products"
+                    onClick={() => setShowDropdown(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-900/50 transition-colors"
+                  >
+                    All Products
+                  </Link>
+                  {categories.map((category) => (
+                    <Link
+                      key={category}
+                      to={`/products/${encodeURIComponent(category.toLowerCase())}`}
+                      onClick={() => {
+                        setShowDropdown(false)
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-900/50 transition-colors"
+                    >
+                      {category}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           {navItems.map((item) => {
             const isActive = location.pathname === item.path
             return (
@@ -110,6 +175,29 @@ const Header = () => {
               transition={{ type: 'spring', damping: 26, stiffness: 220 }}
               onClick={(e) => e.stopPropagation()} 
             >
+              {/* Products Section */}
+              <div className="border-b border-slate-900 pb-3 mb-2">
+                <Link
+                  to="/products"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide text-white"
+                >
+                  All Products
+                  <ChevronRight size={14} className="text-slate-600" />
+                </Link>
+                {categories.map((category) => (
+                  <Link
+                    key={category}
+                    to={`/products/${encodeURIComponent(category.toLowerCase())}`}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-between w-full px-4 py-2 pl-8 rounded-xl text-sm font-medium tracking-wide text-slate-400 hover:text-white"
+                  >
+                    {category}
+                    <ChevronRight size={14} className="text-slate-600" />
+                  </Link>
+                ))}
+              </div>
+
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path
                 return (
