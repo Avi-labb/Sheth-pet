@@ -11,6 +11,9 @@ import productRouter from "./routes/productRoute.js";
 
 dotenv.config();
 
+console.log("MONGO_URI:", process.env.MONGO_URI);
+console.log("JWT_SECRET:", process.env.JWT_SECRET ? "Loaded" : "Missing");
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
