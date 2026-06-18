@@ -9,9 +9,8 @@ const navItems = [
   { name: 'Manufacturing', path: '/manufacturing' },
   { name: 'Industries', path: '/industries' },
   { name: 'Sustainability', path: '/sustainability' },
-  { name: 'Clients', path: '/clients' },
   { name: 'About', path: '/about' },
-  { name: 'Insights', path: '/insights' },
+  { name: 'Blog', path: '/blog' },
   { name: 'Careers', path: '/careers' },
 ]
 

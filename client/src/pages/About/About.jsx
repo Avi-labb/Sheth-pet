@@ -1,213 +1,325 @@
 import { motion } from 'framer-motion'
-import { Building, Users, Trophy, Target, Globe, Heart, Eye } from 'lucide-react'
+import { Target, Eye, Leaf, CheckCircle, Zap, TrendingUp, Users, MapPin, Award, Scale, Mail, ArrowUpRight } from 'lucide-react'
 
 const About = () => {
-  return (
-    <div>
-      <section className="bg-gradient-to-br from-slate-900 to-slate-800 py-25 px-6 text-center">
-        <motion.div
-          className="max-w-[800px] mx-auto"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            About Us
-          </h1>
-          <p className="text-lg md:text-xl text-white/80 font-normal" style={{ fontFamily: "'Inter', sans-serif" }}>
-            Our story, mission, and values
-          </p>
-        </motion.div>
-      </section>
+  const timeline = [
+    { year: '1996', title: 'Radhe Containers', desc: 'Founded as Sheth PET & Polymers in Wada, MH.', loc: 'Wada, Maharashtra' },
+    { year: '2008', title: 'Calyx Containers', desc: 'Commissioned in Anjar, Kutch facility.', loc: 'Anjar, Kutch' },
+    { year: '2015', title: '200+ Active Clients', desc: 'Across FMCG, Pharma and Food & Beverage.', loc: 'India Wide' },
+    { year: '2020', title: 'In-House Design Lab', desc: '3D printing operational for client sampling.', loc: 'Thane Headquarters' },
+    { year: '2026', title: 'Third Facility', desc: 'Pardi, Vapi, Gujarat plant operations kickstart.', loc: 'Pardi, Vapi' }
+  ]
 
-      <section className="py-25">
-        <div className="max-w-7xl mx-auto px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                Who We Are
-              </h2>
-              <p className="text-lg text-slate-600 mb-6 font-semibold" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Established in the year <strong>1996</strong>, Sheth PET and Polymers Pvt. Ltd. are engaged in manufacturing and wholesaling of Pharma PET Bottle, Tablet Containers, PET Bottles, PET Preforms, Food Flavour Bottles, Agrochemical PET Bottles, PET Jars, Plastic Caps and Juice Bottle.
-              </p>
-              <p className="text-base text-slate-600 mb-4 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                We have established a <strong>state-of-the-art infrastructural facility</strong>, which helps to bring forward a technically sound range of products for our clients. All these units are manned by highly knowledgeable and hardworking professionals. Our well-equipped and spacious working area ensures proper facilities while maintaining employee health and safety.
-              </p>
-              <p className="text-base text-slate-600 mb-4 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                We follow a <strong>quality-centric approach</strong>, ensuring that all production processes are carried out under strict supervision of quality controllers. This commitment has helped us carve a niche in the market and achieve significant milestones.
-              </p>
-              <p className="text-base text-slate-600 mb-6 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                All our products are manufactured using <strong>finest quality raw materials</strong> sourced from reliable vendors. They undergo strict testing under various conditions to ensure durability, efficiency, and non-breakable performance.
-              </p>
-              <p className="text-base text-slate-600 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Under the leadership of <strong>Mr. Viren Sheth (Director)</strong>, we have achieved remarkable growth. His guidance, along with our dedicated team, continues to inspire us to deliver the best products and services.
-              </p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <div className="w-full h-[450px] bg-gradient-to-br from-red-50 to-slate-50 rounded-2xl flex items-center justify-center border border-slate-200">
-                <div className="text-center p-8">
-                  <div className="text-7xl font-extrabold text-red-600 mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>10+</div>
-                  <div className="text-2xl font-semibold text-slate-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Years of Excellence</div>
+  const leadership = [
+    { initials: 'GS', name: 'Ghanshyam Sheth', role: 'Director · Operations', email: 'ghanshyam.s@shethpet.com' },
+    { initials: 'VS', name: 'Virendra Sheth', role: 'Director · Manufacturing', email: 'virendra.s@shethpet.com' },
+    { initials: 'JS', name: 'Jignesh Sheth', role: 'Director · Sales & Strategy', email: 'jignesh.s@shethpet.com' }
+  ]
+
+  const coreValues = [
+    { icon: Leaf, title: 'Sustainability', desc: 'Materials & processes engineered to minimize impact.' },
+    { icon: CheckCircle, title: 'Quality Assurance', desc: 'Zero compromise on raw materials and final inspection.' },
+    { icon: Zap, title: 'Innovation', desc: 'In-house design and 3D sampling to iterate fast.' },
+    { icon: TrendingUp, title: 'Operational Excellence', desc: 'Continuous investment in best-in-class international tech.' },
+    { icon: Users, title: 'Customer-Centricity', desc: 'Built on long-term client partnerships and satisfaction.' }
+  ]
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+  }
+
+  return (
+    <div className="bg-[#f8fafc] text-slate-900 font-sans antialiased selection:bg-red-500 selection:text-white overflow-x-hidden">
+      
+      {/* Hero Section - Premium Editorial Split */}
+      <section className="relative min-h-[85vh] flex items-center border-b border-slate-200/80 bg-white overflow-hidden">
+        {/* Abstract Background Design Accents */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-red-500/5 to-orange-500/0 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -left-12 bottom-0 w-96 h-96 bg-slate-100 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-16 px-6 lg:px-12 py-23 items-center relative z-10">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-red-50/80 border border-red-100/70 rounded-full text-[11px] font-bold text-red-600 tracking-wider uppercase">
+              <Scale size={13} className="text-red-500" /> Est. 1996 · Industrial Leadership
+            </div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-950 leading-[1.08]">
+              High-performance packaging <br className="hidden sm:inline"/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-red-500 to-orange-500">
+                engineered for global brands.
+              </span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-600 font-medium max-w-2xl leading-relaxed">
+              Discover how three decades of structured manufacturing converted a first-generation dream into India’s benchmark PET & PP solutions ecosystem.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <a href="#heritage" className="px-7 py-4 bg-slate-950 text-white rounded-2xl font-semibold text-sm hover:bg-slate-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2 group">
+                Explore Our Story 
+                <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+              </a>
+            </div>
+          </div>
+
+          {/* Right Hero Visual Block */}
+          <div className="lg:col-span-5 relative w-full">
+            <div className="relative h-[480px] w-full bg-slate-100 rounded-[2.5rem] overflow-hidden border border-slate-200/60 shadow-xl shadow-slate-100/50">
+              <img 
+                src="/api/placeholder/600/600" 
+                alt="Precision Engineering Architecture" 
+                className="w-full h-full object-cover grayscale contrast-[1.15] mix-blend-multiply opacity-90 transition-transform duration-700 hover:scale-105" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
+              
+              {/* Dynamic Overlay Metric Floating Card */}
+              <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white/40 shadow-xl">
+                <div className="grid grid-cols-3 gap-2 text-center divide-x divide-slate-200/80">
+                  <div>
+                    <div className="text-3xl font-extrabold text-slate-950 tracking-tight">300+</div>
+                    <div className="text-[10px] uppercase font-bold text-slate-500 tracking-widest mt-1">Global Clients</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-extrabold text-slate-950 tracking-tight">3</div>
+                    <div className="text-[10px] uppercase font-bold text-slate-500 tracking-widest mt-1">Plants Run</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-extrabold text-slate-950 tracking-tight">50+</div>
+                    <div className="text-[10px] uppercase font-bold text-slate-500 tracking-widest mt-1">Heavy Tech</div>
+                  </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-25 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="bg-white p-10 rounded-2xl border border-slate-200"
-            >
-              <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                <Target className="text-red-600" size={28} />
-                Our Mission
-              </h3>
-              <p className="text-base text-slate-600 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                To provide innovative and sustainable polymer solutions that empower our clients to excel in their respective markets.
+
+<section id="heritage" className="py-20  bg-slate-50 border-t border-b border-slate-300 relative overflow-hidden">
+  {/* Soft background design accent */}
+  <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-slate-50 rounded-full blur-3xl pointer-events-none -z-10" />
+
+  <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+      
+      {/* Left Column: Bold Summary & Visual Anchor */}
+      <div className="lg:col-span-5 space-y-6 lg:sticky">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-400 text-slate-800 rounded-full text-[14px] font-bold tracking-wider uppercase">
+          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /> 1996 · The Origin
+        </div>
+        
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative pl-6 border-l-4 border-red-500"
+        >
+          <h3 className="text-2xl md:text-3xl font-black text-slate-950 leading-[1.25] tracking-tight">
+            A first-generation family business built on uncompromising manufacturing integrity.
+          </h3>
+        </motion.div>
+
+        <p className="text-slate-600 font-medium text-sm md:text-base leading-relaxed max-w-sm">
+          Today operating three facilities, serving over 300 global brands across 27 Indian states and 4 countries.
+        </p>
+      </div>
+
+      {/* Right Column: Detailed Narrative with Inline Micro-Highlights */}
+      <div className="lg:col-span-7">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={containerVariants}
+          className="space-y-8 text-base md:text-lg text-slate-600 font-medium leading-relaxed"
+        >
+          <motion.p variants={itemVariants}>
+            Sheth PET & Polymers was founded in 1996 by three first-generation entrepreneurs —{' '}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Ghanshyam Sheth</span>,{' '}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Virendra Sheth</span>, and{' '}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Jignesh Sheth</span> — with a single defining belief: Indian industrial packaging could match global standards without structural or raw material compromises.
+          </motion.p>
+          
+          <motion.p variants={itemVariants}>
+            Today, under our specialized brand names{' '}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Radhe Containers</span> and{' '}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Calyx Containers</span>, we operate three multi-ton plants covering over{' '}
+            <span className="font-semibold text-slate-950">100,000 sqft</span> of production space. Our floor houses more than 50 heavy high-output systems built by global engineering standard-bearers like ASB Japan, Boge Germany, HMT, and Husky, carefully processing over{' '}
+            <span className="font-semibold text-slate-950">3,000 corporate consignments</span> every year.
+          </motion.p>
+          
+          <motion.p variants={itemVariants} className="pt-2">
+            Our{' '}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-xs font-bold rounded-full border border-red-100">
+              150+ Specialist Team
+            </span>{' '}
+            — consisting of automation engineers, multi-station plant supervisors, logistics coordinators, and strict QA inspectors — operates directly out of a single shared playbook:{' '}
+            <span className="font-bold text-slate-950 underline decoration-red-500 decoration-2 underline-offset-4">
+              absolute zero compromise on base resin raw materials
+            </span>, vigilant sensory checks at every manufacturing matrix, and deep, multi-decade partnerships with our clients.
+          </motion.p>
+        </motion.div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+      {/* The Bento Ecosystem Block */}
+      <section id="ecosystem" className="py-24 lg:py-32 max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="mb-16 space-y-3">
+          <span className="text-xs font-extrabold uppercase tracking-widest text-red-600 block">Operations Ecosystem</span>
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-950">Purpose-Built Infrastructure</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Mission Box */}
+          <div className="p-8 md:p-10 bg-white border border-slate-200/70 rounded-[2rem] shadow-sm flex flex-col justify-between group hover:border-slate-300 hover:shadow-md transition-all duration-300">
+            <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 mb-10 shadow-sm group-hover:bg-red-50 group-hover:text-red-600 transition-colors">
+              <Target size={26} />
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-bold text-xs uppercase tracking-widest text-slate-400">Our Mission</h3>
+              <p className="text-xl font-bold text-slate-900 leading-snug tracking-tight">
+                To engineer hyper-custom packaging blueprints balancing extreme structural integrity with client specifications.
               </p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="bg-white p-10 rounded-2xl border border-slate-200"
-            >
-              <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                <Eye className="text-red-600" size={28} />
-                Our Vision
-              </h3>
-              <p className="text-base text-slate-600 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                To be the global leader in high-performance polymer manufacturing, recognized for quality, integrity, and sustainability.
+            </div>
+          </div>
+
+          {/* Vision Box */}
+          <div className="p-8 md:p-10 bg-white border border-slate-200/70 rounded-[2rem] shadow-sm flex flex-col justify-between group hover:border-slate-300 hover:shadow-md transition-all duration-300">
+            <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-900 mb-10 shadow-sm group-hover:bg-red-50 group-hover:text-red-600 transition-colors">
+              <Eye size={26} />
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-bold text-xs uppercase tracking-widest text-slate-400">Our Vision</h3>
+              <p className="text-xl font-bold text-slate-900 leading-snug tracking-tight">
+                To anchor a dominant command structure across the subcontinental PET & PP high-output processing landscapes.
               </p>
-            </motion.div>
+            </div>
+          </div>
+
+          {/* Infrastructure Metrics Box */}
+          <div className="p-8 md:p-10 bg-slate-950 text-white rounded-[2rem] shadow-xl flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute right-0 bottom-0 translate-x-12 translate-y-12 w-64 h-64 bg-red-600/15 rounded-full blur-3xl pointer-events-none group-hover:bg-red-600/25 transition-colors duration-500" />
+            <div className="z-10 h-full flex flex-col justify-between">
+              <div className="w-14 h-14 bg-white/10 border border-white/10 rounded-2xl flex items-center justify-center text-white mb-10 shadow-inner">
+                <Award size={26} />
+              </div>
+              <div>
+                <h3 className="font-bold text-xs uppercase tracking-widest text-slate-400 mb-2">Footprint Scale</h3>
+                <p className="text-2xl font-black tracking-tight text-white mb-4">
+                  100,000+ sqft Capacity
+                </p>
+                <p className="text-sm text-slate-400 leading-relaxed font-normal opacity-90">
+                  Utilizing state-of-the-art international hardware chains from ASB Japan, Boge Germany, HMT, and Husky.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-25">
-        <div className="max-w-7xl mx-auto px-12">
-          <motion.h2
-            className="text-3xl md:text-4xl font-bold text-slate-800 mb-12 text-center"
-            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Company Factsheet
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Basic Information',
-                items: [
-                  { label: 'Nature', value: 'Manufacturer' },
-                  { label: 'Additional', value: 'Factory / Office' },
-                  { label: 'CEO', value: 'Virendra Sheth' },
-                  { label: 'Employees', value: '11–25 People' },
-                  { label: 'Turnover', value: '₹5–25 Cr' }
-                ]
-              },
-              {
-                title: 'Legal & GST',
-                items: [
-                  { label: 'GST No', value: '27AABCS4075P1ZT' },
-                  { label: 'CIN', value: 'U28992MH1996PTC099561' },
-                  { label: 'GST Date', value: '01-07-2017' },
-                  { label: 'Firm', value: 'Limited Company' }
-                ]
-              },
-              {
-                title: 'Infrastructure',
-                items: [
-                  { label: 'Location', value: 'Urban' },
-                  { label: 'Building', value: 'Permanent' },
-                  { label: 'Premises', value: '500 sq.ft' },
-                  { label: 'Space', value: 'Front Porch' }
-                ]
-              },
-              {
-                title: 'Company USP',
-                content: 'Quality Testing Facilities Available'
-              },
-              {
-                title: 'Payment & Shipment',
-                items: [
-                  { label: 'Payment', value: 'Cash, Card, Cheque, DD' },
-                  { label: 'Shipment', value: 'By Road' },
-                  { label: 'Packaging', value: 'Customized' }
-                ]
-              }
-            ].map((card, index) => (
-              <motion.div
-                key={index}
-                className="bg-white p-8 rounded-2xl border border-slate-200"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <h4 className="text-lg font-semibold text-slate-800 mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  {card.title}
-                </h4>
-                {card.items ? (
-                  <ul className="space-y-3 text-sm">
-                    {card.items.map((item, i) => (
-                      <li key={i} className="flex justify-between">
-                        <span className="text-slate-500 font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>{item.label}:</span>
-                        <span className="text-slate-700" style={{ fontFamily: "'Inter', sans-serif" }}>{item.value}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-slate-600" style={{ fontFamily: "'Inter', sans-serif" }}>{card.content}</p>
-                )}
-              </motion.div>
+
+      {/* Clean Cleaned-Up Core Values */}
+      <section className="bg-slate-950 text-white py-24 lg:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.05),transparent_45%)]" />
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+            <div className="lg:col-span-4 space-y-4 lg:sticky lg:top-28">
+              <span className="text-xs font-extrabold uppercase tracking-widest text-red-400 block">Operational DNA</span>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-white">The Frameworks That Sustain Us</h2>
+              <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-md font-light">
+                We manage production lines under uncompromising standards, validating every design iterate from material optimization to client integration.
+              </p>
+            </div>
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {coreValues.map((val, idx) => {
+                const IconComponent = val.icon
+                return (
+                  <div key={idx} className="p-8 bg-slate-900/50 border border-slate-800/80 rounded-[2rem] hover:border-slate-700 hover:bg-slate-900 transition-all duration-300 group">
+                    <div className="w-12 h-12 bg-slate-800 border border-slate-700/60 rounded-xl flex items-center justify-center text-red-400 mb-6 group-hover:bg-red-500 group-hover:text-white transition-all duration-300">
+                      <IconComponent size={22} />
+                    </div>
+                    <h4 className="font-bold text-xl text-white mb-2 tracking-tight">{val.title}</h4>
+                    <p className="text-sm text-slate-400 leading-relaxed font-light opacity-90">{val.desc}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sleek Left-Anchored Timeline */}
+      <section id="timeline" className="py-24 lg:py-32 max-w-5xl mx-auto px-6 lg:px-12">
+        <div className="mb-20 space-y-3">
+          <span className="text-xs font-extrabold uppercase tracking-widest text-red-600 block">Our Timeline</span>
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-950">Milestones & Expansions</h2>
+        </div>
+
+        <div className="relative border-l-2 border-slate-200/80 pl-8 ml-4 space-y-14">
+          {timeline.map((item, idx) => (
+            <motion.div 
+              key={idx}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={itemVariants}
+              className="relative group"
+            >
+              {/* Dot indicator */}
+              <div className="absolute -left-[2.65rem] top-2 w-5 h-5 rounded-full bg-white border-4 border-red-500 shadow-sm group-hover:scale-110 transition-transform duration-300" />
+              
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                <span className="text-3xl font-black text-slate-950 tracking-tight">{item.year}</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 rounded-full text-xs text-slate-600 font-medium border border-slate-200/40">
+                  <MapPin size={12} className="text-slate-400" /> {item.loc}
+                </span>
+              </div>
+              <div className="bg-white p-6 md:p-8 border border-slate-200/70 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                <h3 className="font-bold text-lg text-slate-900 mb-1.5 tracking-tight">{item.title}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Corporate Leadership Profiles */}
+      <section id="leadership" className="py-24 lg:py-32 bg-white border-t border-slate-200/80">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="mb-20 text-center space-y-3">
+            <span className="text-xs font-extrabold uppercase tracking-widest text-red-600 block">Executive Council</span>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-950">Board of Directors</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {leadership.map((member, idx) => (
+              <div key={idx} className="group bg-slate-50/60 border border-slate-200/80 rounded-3xl p-8 hover:bg-white hover:shadow-xl hover:border-slate-300/50 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="w-16 h-16 bg-slate-950 text-white rounded-2xl flex items-center justify-center font-extrabold text-xl mb-6 shadow-md shadow-slate-950/10 group-hover:bg-red-600 transition-colors duration-300">
+                    {member.initials}
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-950 mb-1 tracking-tight">{member.name}</h3>
+                  <p className="text-sm text-slate-500 font-semibold mb-8">{member.role}</p>
+                </div>
+                <a 
+                  href={`mailto:${member.email}`} 
+                  className="inline-flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-widest bg-white border border-slate-200 px-4 py-3.5 rounded-xl hover:bg-slate-950 hover:text-white hover:border-slate-950 transition-all duration-300 w-full justify-center shadow-sm"
+                >
+                  <Mail size={14} /> Connect via Email
+                </a>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-25">
-        <div className="max-w-[900px] mx-auto px-12">
-          <div className="bg-gradient-to-br from-red-600 to-red-700 p-12 rounded-2xl text-center text-white">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                Join Our Team
-              </h2>
-              <p className="text-lg mb-8" style={{ fontFamily: "'Inter', sans-serif" }}>
-                We're always looking for talented individuals to join our growing family.
-              </p>
-              <button className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg border-2 border-white bg-white text-red-600 font-semibold text-sm uppercase tracking-wider cursor-pointer transition-all duration-300 hover:bg-transparent hover:text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
-                View Openings
-              </button>
-            </motion.div>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

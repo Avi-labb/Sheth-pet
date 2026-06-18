@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, Users, Award } from 'lucide-react'
 
 const Contact = () => {
   const [formSubmitted, setFormSubmitted] = useState(false)
@@ -25,88 +25,163 @@ const Contact = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
+  // Encode address for Google Maps
+  const address = "Sheth PET And Polymers Private Limited, Unit No 510, B Wing, Lodha Supremus II, Road No 22, Wagle Industrial Estate, Thane - 400604, Maharashtra, India"
+  const encodedAddress = encodeURIComponent(address)
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`
+
   return (
-    <div>
-      <section className="bg-gradient-to-br from-slate-900 to-slate-800 py-25 px-6 text-center">
-        <motion.div
-          className="max-w-[800px] mx-auto"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            Contact Us
-          </h1>
-          <p className="text-lg md:text-xl text-white/80 font-normal" style={{ fontFamily: "'Inter', sans-serif" }}>
-            Get in touch with our team
-          </p>
-        </motion.div>
+    <div className="bg-white text-slate-900">
+      {/* Hero Section */}
+      <section className="relative min-h-[50vh] flex flex-col justify-center bg-gradient-to-br from-slate-50 to-white overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-10 right-10 w-40 h-40 bg-red-100 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 left-10 w-60 h-60 bg-orange-100 rounded-full blur-3xl" />
+        </div>
+        
+        <div className="relative z-10 max-w-6xl mx-auto px-5 md:px-12 py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="max-w-4xl"
+          >
+            <span className="text-xs font-bold tracking-[0.2em] text-red-500 uppercase block mb-4">Get In Touch</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight leading-[1.1]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              Let's Talk About Your <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">Packaging Needs</span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-600 font-light leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+              Ready to elevate your packaging? Reach out and let's discuss how we can create the perfect solution for your brand.
+            </p>
+          </motion.div>
+        </div>
       </section>
 
-      <section className="py-25">
-        <div className="max-w-full mx-auto px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12">
+      {/* Info Cards */}
+      <section className="py-10 bg-white">
+        <div className="max-w-6xl mx-auto px-5 md:px-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { icon: Clock, title: "Response Time", desc: "Within 24 business hours", color: "from-blue-500 to-cyan-500" },
+              { icon: Users, title: "Dedicated Team", desc: "Expert sales & production team", color: "from-purple-500 to-pink-500" },
+              { icon: Award, title: "28+ Years", desc: "Trusted by 300+ brands", color: "from-green-500 to-emerald-500" },
+            ].map((item, index) => {
+              const Icon = item.icon
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
+                  className="p-6 bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
+                >
+                  <div className={`w-12 h-12 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center mb-4`}>
+                    <Icon size={24} className="text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{item.title}</h3>
+                  <p className="text-slate-600 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>{item.desc}</p>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Main Contact Section */}
+      <section className="py-16 md:py-24 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-5 md:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-12">
+            {/* Left Column - Contact Info */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="space-y-6"
             >
-              <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-10 md:p-8 rounded-2xl text-white">
-                <h2 className="text-2xl md:text-3xl font-bold mb-8" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  Get In Touch
+              <div className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm">
+                <h2 className="text-2xl font-bold mb-8" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Contact Details
                 </h2>
-                <div className="space-y-8">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 flex items-center justify-center bg-white/10 rounded-lg flex-shrink-0">
-                      <MapPin size={24} className="text-red-500" />
+                <div className="space-y-6">
+                  <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 group hover:bg-slate-50 p-3 -mx-3 rounded-xl transition-colors">
+                    <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-200 transition-colors">
+                      <MapPin size={24} className="text-red-600" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      <h3 className="text-base font-semibold mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                         Address
                       </h3>
-                      <p className="text-white/70 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        Industrial Estate, Mumbai, Maharashtra, India
+                      <p className="text-slate-600 text-sm leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        Sheth PET And Polymers Private Limited<br/>
+                        Unit No 510, B Wing, Lodha Supremus II,<br/>
+                        Road No 22, Wagle Industrial Estate,<br/>
+                        Thane - 400604, Maharashtra, India
                       </p>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 flex items-center justify-center bg-white/10 rounded-lg flex-shrink-0">
-                      <Phone size={24} className="text-red-500" />
+                  </a>
+
+                  <a href="tel:+918047833997" className="flex items-start gap-4 group hover:bg-slate-50 p-3 -mx-3 rounded-xl transition-colors">
+                    <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-200 transition-colors">
+                      <Phone size={24} className="text-red-600" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      <h3 className="text-base font-semibold mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                         Phone
                       </h3>
-                      <p className="text-white/70 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        +91 22 1234 5678
+                      <p className="text-slate-600 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        +91 80478 33997
                       </p>
                     </div>
-                  </div>
+                  </a>
+
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 flex items-center justify-center bg-white/10 rounded-lg flex-shrink-0">
-                      <Mail size={24} className="text-red-500" />
+                    <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Mail size={24} className="text-red-600" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                      <h3 className="text-base font-semibold mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                         Email
                       </h3>
-                      <p className="text-white/70 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        info@shethpet.com
-                      </p>
+                      <div className="text-slate-600 text-sm space-y-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <a href="mailto:info@sethpet.com" className="hover:text-red-600 transition-colors">info@sethpet.com</a><br/>
+                        <a href="mailto:sales@sethpet.com" className="hover:text-red-600 transition-colors">sales@sethpet.com</a>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* Map Section */}
+              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden h-80">
+                <iframe
+                  title="Google Maps"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyA-aWrwA5Lg9h0d4u2lVh9E8WlXQZ8Y9Z0&q=${encodedAddress}`}
+                  allowFullScreen
+                />
+              </div>
             </motion.div>
 
+            {/* Right Column - Form */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             >
-              <div className="bg-white p-12 border border-slate-200 rounded-2xl">
+              <div className="bg-white p-8 md:p-10 border border-slate-200 rounded-2xl shadow-sm">
+                <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Send Us a Message
+                </h2>
+                <p className="text-slate-600 mb-8 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Fill out the form and our team will get back to you within 24 business hours.
+                </p>
                 {formSubmitted ? (
                   <motion.div
                     className="text-center py-12"
@@ -115,18 +190,18 @@ const Contact = () => {
                     transition={{ duration: 0.5 }}
                   >
                     <CheckCircle2 size={80} className="mx-auto mb-6 text-green-600" />
-                    <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <h3 className="text-2xl font-bold mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                       Thank You!
-                    </h2>
+                    </h3>
                     <p className="text-base text-slate-600" style={{ fontFamily: "'Inter', sans-serif" }}>
-                      We'll get back to you shortly.
+                      We've received your message and will get back to you shortly.
                     </p>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       <div>
-                        <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                        <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Inter', sans-serif" }}>
                           Your Name *
                         </label>
                         <input
@@ -135,13 +210,13 @@ const Contact = () => {
                           value={formData.name}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-slate-50 text-slate-800 font-medium text-base transition-all duration-300 focus:outline-none focus:border-red-600 focus:bg-white"
+                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                           placeholder="John Doe"
                         />
                       </div>
                       <div>
-                        <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                        <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Inter', sans-serif" }}>
                           Email Address *
                         </label>
                         <input
@@ -150,7 +225,7 @@ const Contact = () => {
                           value={formData.email}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-slate-50 text-slate-800 font-medium text-base transition-all duration-300 focus:outline-none focus:border-red-600 focus:bg-white"
+                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                           placeholder="john@example.com"
                         />
@@ -158,7 +233,7 @@ const Contact = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       <div>
-                        <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                        <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Inter', sans-serif" }}>
                           Phone Number
                         </label>
                         <input
@@ -166,29 +241,34 @@ const Contact = () => {
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-slate-50 text-slate-800 font-medium text-base transition-all duration-300 focus:outline-none focus:border-red-600 focus:bg-white"
+                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                           placeholder="+91 98765 43210"
                         />
                       </div>
                       <div>
-                        <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                        <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Inter', sans-serif" }}>
                           Subject *
                         </label>
-                        <input
-                          type="text"
+                        <select
                           name="subject"
                           value={formData.subject}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-slate-50 text-slate-800 font-medium text-base transition-all duration-300 focus:outline-none focus:border-red-600 focus:bg-white"
+                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100"
                           style={{ fontFamily: "'Inter', sans-serif" }}
-                          placeholder="How can we help?"
-                        />
+                        >
+                          <option value="">Select a topic...</option>
+                          <option value="product-inquiry">Product Inquiry</option>
+                          <option value="custom-solution">Custom Packaging Solution</option>
+                          <option value="bulk-order">Bulk Order</option>
+                          <option value="sample-request">Sample Request</option>
+                          <option value="other">Other</option>
+                        </select>
                       </div>
                     </div>
                     <div className="mb-8">
-                      <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                      <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Inter', sans-serif" }}>
                         Message *
                       </label>
                       <textarea
@@ -196,19 +276,19 @@ const Contact = () => {
                         value={formData.message}
                         onChange={handleChange}
                         required
-                        rows={5}
-                        className="w-full px-4 py-3 rounded-lg border-2 border-slate-200 bg-slate-50 text-slate-800 font-medium text-base transition-all duration-300 focus:outline-none focus:border-red-600 focus:bg-white resize-none"
+                        rows={6}
+                        className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 resize-none"
                         style={{ fontFamily: "'Inter', sans-serif" }}
-                        placeholder="Tell us about your requirements..."
+                        placeholder="Tell us about your packaging requirements..."
                       ></textarea>
                     </div>
                     <button
                       type="submit"
-                      className="w-full flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg border-2 border-red-600 bg-red-600 text-white font-semibold text-sm uppercase tracking-wider cursor-pointer transition-all duration-300 hover:bg-red-700 hover:border-red-700 hover:-translate-y-0.5 hover:shadow-xl"
-                      style={{ fontFamily: "'Poppins', sans-serif" }}
+                      className="w-full flex items-center justify-center gap-2 px-7 py-4 rounded-xl border border-red-600 bg-red-600 text-white font-bold text-xs uppercase tracking-wider cursor-pointer transition-all duration-300 hover:bg-red-700 hover:border-red-700 hover:-translate-y-0.5 hover:shadow-lg shadow-red-200"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      Send Message
-                      <Send size={20} />
+                      Send Enquiry
+                      <Send size={18} />
                     </button>
                   </form>
                 )}

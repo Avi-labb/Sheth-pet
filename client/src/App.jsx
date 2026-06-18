@@ -9,7 +9,7 @@ import Industries from './pages/Industries'
 import Sustainability from './pages/Sustainability'
 import Clients from './pages/Clients'
 import About from './pages/About/About'
-import Insights from './pages/Insights'
+import Blog from './pages/Blog'
 import Careers from './pages/Careers'
 import Contact from './pages/Contact/Contact'
 import AdminLogin from './pages/Admin/AdminLogin'
@@ -96,9 +96,9 @@ function App() {
               <About />
             </PublicLayout>
           } />
-          <Route path="/insights" element={
+          <Route path="/blog" element={
             <PublicLayout>
-              <Insights />
+              <Blog />
             </PublicLayout>
           } />
           <Route path="/careers" element={
