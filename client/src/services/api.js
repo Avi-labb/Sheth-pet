@@ -1,7 +1,9 @@
 
-const ADMIN_API_BASE_URL = "http://localhost:5000/api/admin";
-const PRODUCT_API_BASE_URL = "http://localhost:5000/api/products";
+//const ADMIN_API_BASE_URL = "http://localhost:5000/api/admin";
+//const PRODUCT_API_BASE_URL = "http://localhost:5000/api/products";
 
+const ADMIN_API_BASE_URL = "/api/admin";
+const PRODUCT_API_BASE_URL = "/api/products";
 // Helper function for API calls
 const apiRequest = async (baseUrl, endpoint, options = {}) => {
   try {

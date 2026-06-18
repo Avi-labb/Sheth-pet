@@ -83,7 +83,8 @@ const Bottle = () => {
                     <div className="relative aspect-[4/3] bg-slate-950 border-b border-slate-900/50 flex items-center justify-center overflow-hidden group-hover:bg-slate-900/20 transition-colors duration-300">
                       {product.image ? (
                         <img
-                          src={`http://localhost:5000/uploads/${product.image}`}
+                          //src={`http://localhost:5000/uploads/${product.image}`}
+                          src={`/uploads/${product.image}`}
                           alt={product.name}
                           className="w-full h-full object-contain p-6 md:p-8 transform group-hover:scale-103 transition-transform duration-300 ease-out"
                         />
@@ -199,7 +200,8 @@ const Bottle = () => {
                     <div className="w-full aspect-square max-w-[180px] md:max-w-[200px] flex items-center justify-center py-2">
                       {selectedProductDetail.image ? (
                         <img
-                          src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
+                          //src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
+                          src={`/uploads/${selectedProductDetail.image}`}
                           alt={selectedProductDetail.name}
                           className="w-full h-full object-contain object-center max-h-[200px]"
                         />

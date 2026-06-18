@@ -79,7 +79,8 @@ const Container = () => {
                     <div className="w-16 h-16 mb-6 flex items-center justify-center bg-red-600/10 text-red-500 border border-red-500/20 rounded-xl group-hover:bg-red-600 group-hover:text-white transition-all duration-200 overflow-hidden">
                       {product.image ? (
                         <img 
-                          src={`http://localhost:5000/uploads/${product.image}`} 
+                          //src={`http://localhost:5000/uploads/${product.image}`} 
+                          src={`/uploads/${product.image}`} 
                           alt={product.name} 
                           className="w-full h-full object-cover"
                         />
@@ -163,7 +164,8 @@ const Container = () => {
                     <div className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-8 flex items-center justify-center bg-gradient-to-br from-red-600/20 to-red-600/5 border border-red-500/20 rounded-3xl overflow-hidden">
                       {selectedProductDetail.image ? (
                         <img
-                          src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
+                        //  src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
+                          src={`/uploads/${selectedProductDetail.image}`}
                           alt={selectedProductDetail.name}
                           className="w-full h-full object-cover"
                         />

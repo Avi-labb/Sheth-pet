@@ -123,7 +123,8 @@ const Products = () => {
                       <div className="relative aspect-[4/3] bg-slate-950 border-b border-slate-900/60 flex items-center justify-center overflow-hidden transition-colors duration-300">
                         {product.image ? (
                           <img
-                            src={`http://localhost:5000/uploads/${product.image}`}
+                            //src={`http://localhost:5000/uploads/${product.image}`}
+                            src={`/uploads/${product.image}`}
                             alt={product.name}
                             className="w-full h-full object-contain p-6 transform group-hover:scale-105 transition-transform duration-500 ease-out"
                           />
@@ -243,7 +244,8 @@ const Products = () => {
                     <div className="w-full aspect-square max-w-[150px] lg:max-w-[450px] flex items-center justify-center transition-transform hover:scale-105 duration-500">
                       {selectedProductDetail.image ? (
                         <img
-                          src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
+                          //src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
+                          src={`/uploads/${selectedProductDetail.image}`}
                           alt={selectedProductDetail.name}
                           className="w-full h-full object-cover"
                         />
