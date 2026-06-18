@@ -7,8 +7,9 @@ export const loginAdmin = async (req, res) => {
   try {
     console.log("Login request received! Body:", req.body);
     const { email, password } = req.body;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    console.log("Admin Model Collection:", Admin.collection.name);
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
