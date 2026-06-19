@@ -14,10 +14,25 @@ const navItems = [
   { name: 'Careers', path: '/careers' },
 ]
 
+const functionCategories = [
+  "Pharmaceutical",
+  "Personal Care",
+  "Food & Beverages",
+  "Home Care",
+  "Industrial",
+]
+
+const typeCategories = [
+  "Bottles",
+  "Jars",
+  "Preforms",
+  "Caps",
+]
+
 const Header = ({ onCategorySelect }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
-  const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Containers'])
+  const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms'])
   const location = useLocation()
 
   useEffect(() => {
@@ -37,14 +52,13 @@ const Header = ({ onCategorySelect }) => {
 
   return (
     <nav
-      className={'fixed py-10 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 bg-slate-950/80 backdrop-blur-md border-slate-800/60 h-16 shadow-lg shadow-black/20' 
-        }
+      className={'fixed py-10 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 bg-slate-950/80 backdrop-blur-md border-slate-800/60 h-16 shadow-lg shadow-black/20'}
     >
       <div className="max-w-8xl mx-auto px-5 sm:px-10 h-full flex items-center justify-between">
-        
+
         {/* Brand Logo Wrapper (Left Aligned) */}
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           onClick={() => onCategorySelect && onCategorySelect(null)}
           className="flex items-center gap-3 group focus:outline-none z-50"
         >
@@ -52,57 +66,102 @@ const Header = ({ onCategorySelect }) => {
             <img
               src={logo}
               alt="Logo"
-              className="w-full h-full object-contain" 
+              className="w-full h-full object-contain"
             />
           </div>
-          <div className="flex flex-col leading-tight">
-            <span className="font-bold text-lg tracking-wider text-white">SHETH</span>
-            <span className="text-[9px] font-medium tracking-[0.2em] text-slate-300 uppercase">Pet & Polymers</span>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 leading-tight text-center">
+            <span className="text-lg sm:text-lg font-bold tracking-wider text-white">
+              SHETH
+            </span>
+            <span className="text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider">
+              Pet & Polymers
+            </span>
           </div>
         </Link>
 
         {/* Desktop Navigation Link Array (Centered) */}
         <div className="hidden lg:flex items-center gap-1 h-full">
-          {/* Products Dropdown */}
+          {/* Products Mega Menu */}
           <div
             className="relative h-full flex items-center"
             onMouseEnter={() => setShowDropdown(true)}
             onMouseLeave={() => setShowDropdown(false)}
           >
             <button
-              className={`relative px-3 py-2 text-[13px] font-medium tracking-wide text-slate-200 transition-colors duration-300 rounded-lg hover:text-white group flex items-center gap-1`}
+              className="relative px-3 py-2 text-[13px] font-medium tracking-wide text-slate-200 transition-colors duration-300 rounded-lg hover:text-white group flex items-center gap-1"
             >
               <span className="relative uppercase z-10">Products</span>
-              <ChevronDown size={14} className="transition-transform duration-300 group-hover:rotate-180" />
+              <ChevronDown
+                size={14}
+                className="transition-transform duration-300 group-hover:rotate-180"
+              />
             </button>
 
             <AnimatePresence>
               {showDropdown && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full left-0 mt-2 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl py-3 min-w-[200px]"
+                  exit={{ opacity: 0, y: 15 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-4
+                             bg-slate-950 border border-slate-800
+                             rounded-2xl shadow-2xl
+                             min-w-[650px] overflow-hidden"
                 >
-                  <Link
-                    to="/products"
-                    onClick={() => setShowDropdown(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-900/50 transition-colors"
-                  >
-                    All Products
-                  </Link>
-                  {categories.map((category) => (
+                  <div className="grid grid-cols-2 gap-10 p-8">
+
+                    {/* Function (Industries) */}
+                    <div>
+                      <h3 className="text-white font-semibold text-lg mb-4 border-b border-slate-800 pb-2">
+                        By Industry
+                      </h3>
+
+                      <div className="flex flex-col gap-2">
+                        {functionCategories.map((item) => (
+                          <Link
+                            key={item}
+                            to={`/industries`}
+                            onClick={() => setShowDropdown(false)}
+                            className="text-slate-400 hover:text-white transition-colors py-1"
+                          >
+                            {item}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Type (Product Categories) */}
+                    <div>
+                      <h3 className="text-white font-semibold text-lg mb-4 border-b border-slate-800 pb-2">
+                        By Type
+                      </h3>
+
+                      <div className="flex flex-col gap-2">
+                        {typeCategories.map((item) => (
+                          <Link
+                            key={item}
+                            to={`/products/${encodeURIComponent(item.toLowerCase())}`}
+                            onClick={() => setShowDropdown(false)}
+                            className="text-slate-400 hover:text-white transition-colors py-1"
+                          >
+                            {item}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Button */}
+                  <div className="border-t border-slate-800 p-4 bg-slate-900/50">
                     <Link
-                      key={category}
-                      to={`/products/${encodeURIComponent(category.toLowerCase())}`}
-                      onClick={() => {
-                        setShowDropdown(false)
-                      }}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-900/50 transition-colors"
+                      to="/products"
+                      onClick={() => setShowDropdown(false)}
+                      className="block text-center text-white font-medium hover:text-slate-300 transition-colors"
                     >
-                      {category}
+                      View All Products →
                     </Link>
-                  ))}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -117,16 +176,16 @@ const Header = ({ onCategorySelect }) => {
                 className={`relative px-3 py-2 text-[13px] font-medium tracking-wide text-slate-200 transition-colors duration-300 rounded-lg hover:text-white group`}
               >
                 <span className="relative uppercase z-10">{item.name}</span>
-                
+
                 {/* Active Link Highlight Capsule */}
                 {isActive && (
-                  <motion.div 
+                  <motion.div
                     layoutId="activeTabCapsule"
                     className="absolute inset-0 bg-white/10 border border-white/10 rounded-lg z-0"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
-                
+
                 {/* Hover Indicator Line */}
                 {!isActive && (
                   <span className="absolute bottom-0 left-4 right-4 h-[1px] bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
@@ -172,7 +231,7 @@ const Header = ({ onCategorySelect }) => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-              onClick={(e) => e.stopPropagation()} 
+              onClick={(e) => e.stopPropagation()}
             >
               {/* Products Section */}
               <div className="border-b border-slate-900 pb-3 mb-2">
@@ -184,7 +243,7 @@ const Header = ({ onCategorySelect }) => {
                   All Products
                   <ChevronRight size={14} className="text-slate-600" />
                 </Link>
-                {categories.map((category) => (
+                {typeCategories.map((category) => (
                   <Link
                     key={category}
                     to={`/products/${encodeURIComponent(category.toLowerCase())}`}
@@ -204,8 +263,8 @@ const Header = ({ onCategorySelect }) => {
                     key={item.name}
                     to={item.path}
                     className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200
-                      ${isActive 
-                        ? 'text-white bg-white/10 border border-white/10' 
+                      ${isActive
+                        ? 'text-white bg-white/10 border border-white/10'
                         : 'text-slate-400 hover:text-white hover:bg-white/5'
                       }`}
                     onClick={() => setIsOpen(false)}

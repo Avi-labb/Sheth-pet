@@ -1,0 +1,38 @@
+<motion.div variants={itemVariants}>
+            <div className="bg-slate-900/40 border border-slate-900 p-6 rounded-2xl space-y-5 backdrop-blur-sm">
+              <h3 className="text-xs font-bold text-white tracking-widest uppercase">
+                Corporate Office
+              </h3>
+              
+              <div className="flex gap-3.5 items-start text-sm">
+                <MapPin size={18} className="flex-shrink-0 text-red-500 mt-0.5" />
+                <span className="text-slate-400 leading-relaxed">
+                  Sheth PET And Polymers Pvt. Ltd.<br />
+                  Unit 510, B Wing, Lodha Supremus II,<br />
+                  Wagle Industrial Estate, Thane - 400604
+                </span>
+              </div>
+
+              <div className="h-px bg-slate-800/60 w-full" />
+
+              <div className="space-y-3">
+                <a 
+                  href="tel:+918047833997" 
+                  className="flex gap-3.5 items-center text-sm text-slate-400 hover:text-white transition-colors group"
+                >
+                  <Phone size={16} className="text-slate-500 group-hover:text-red-500 transition-colors" />
+                  <span>+91 80478 33997</span>
+                </a>
+                
+                <a 
+                  href="mailto:info@sethpet.com" 
+                  className="flex gap-3.5 items-center text-sm text-slate-400 hover:text-white transition-colors group"
+                >
+                  <Mail size={16} className="text-slate-500 group-hover:text-red-500 transition-colors" />
+                  <div className="flex flex-col">
+                    <span>info@sethpet.com</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </motion.div>

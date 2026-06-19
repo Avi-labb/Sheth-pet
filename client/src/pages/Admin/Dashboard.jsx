@@ -21,7 +21,7 @@ const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Containers']);
+  const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms']);
 
   const [dataGridFile, setDataGridFile] = useState(null);
   const [assetImages, setAssetImages] = useState([]);

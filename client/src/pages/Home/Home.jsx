@@ -35,7 +35,7 @@ const Home = () => {
 
   const [selectedCategory, setSelectedCategory] = useState(null)
 
-  const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Containers'])
+  const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms'])
 
 
 
@@ -73,11 +73,11 @@ const Home = () => {
 
     },
 
-    'Containers': {
+    'Preforms': {
 
       icon: Box,
 
-      description: 'Versatile containers for industrial and commercial use',
+      description: 'High-density, structurally consistent preforms optimized for seamless blow molding',
 
       color: 'from-orange-500 to-red-500'
 
@@ -310,173 +310,85 @@ const Home = () => {
 
      
       {/* ================= ABOUT SECTION ================= */}
+<section className="py-16 md:py-24 lg:py-32 bg-white/95 border-y border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="w-full"
+        >
+          {/* 
+            CARD CONTAINER: 
+            - Mobile: p-6 (Compact padding)
+            - Tablet/Desktop: md:p-12 lg:p-16 (Deep, premium padding)
+          */}
+          <div className="rounded-2xl p-6 md:p-12 lg:p-16 shadow-xl md:shadow-2xl bg-white border border-[#E6E1D6]">
+            
+            {/* 
+              GRID CONTROLLER: 
+              - Mobile: 1 Column stack
+              - Desktop: 12-Column grid to cleanly divide the pure text content 
+            */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+              
+              {/* LEFT HALF (Desktop: 7 Columns) - Main Typography Branding */}
+              <div className="lg:col-span-7">
+                <span className="wwa-body block mb-3 text-xs font-bold tracking-[0.2em] uppercase text-[#A8312A]">
+                  Who We Are
+                </span>
 
-      <section className="py-20 md:py-32 bg-white/95 border-y border-slate-400">
-
-        <div className="max-w-7xl mx-auto px-5 md:px-12">
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-
-
-
-            <motion.div
-
-              initial={{ opacity: 0, x: -30 }}
-
-              whileInView={{ opacity: 1, x: 0 }}
-
-              viewport={{ once: true, margin: "-100px" }}
-
-              transition={{ duration: 0.7, ease: "easeOut" }}
-
-              className="lg:col-span-7"
-
-            >
-
-              <span className="text-xs font-bold tracking-[0.2em] text-red-500 uppercase block mb-2">Who We Are</span>
-
-              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 md:mb-6 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-
-                Sheth PET And Polymers Private Limited
-
-              </h2>
-
-              <p className="text-base md:text-xl text-slate-700 mb-4 md:mb-6 font-light leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-
-                Established in the year <strong className="font-semibold text-slate-900">1996</strong>, we are engaged in <strong className="font-semibold text-slate-900">manufacturing, selling and exporting</strong> of <strong className="font-semibold text-slate-900">PET bottles, Jars and Preforms.</strong> We also manufacture a variety of caps.
-
-              </p>
-
-
-
-              {/* Trust badges & info from reference website */}
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 mb-6">
-
-                <div className="p-4 bg-slate-50 border border-slate-300 rounded-xl flex items-center gap-3 hover:bg-slate-100 transition-colors">
-
-                  <CheckCircle2 size={20} className="text-green-500 flex-shrink-0" />
-
-                  <div>
-
-                    <div className="text-[10px] text-slate-600 uppercase tracking-wider font-bold">Nature of Business</div>
-
-                    <div className="text-sm text-slate-900 font-medium">Manufacturer</div>
-
-                  </div>
-
+                <h2 className="wwa-display text-2xl sm:text-4xl md:text-[2.8rem] font-semibold leading-[1.15] md:leading-[1.1] text-[#1A1815]">
+                  Thirty years of <br className="hidden md:inline" />
+                  moulding precision
+                </h2>
+                
+                {/* Big Metric Display brought upfront for design balance on desktop */}
+                <div className="flex items-end gap-4 mt-6 lg:mt-10">
+                  <span className="wwa-display text-6xl md:text-7xl font-semibold leading-none text-[#A8312A]">
+                    30+
+                  </span>
+                  <span className="wwa-body text-xs font-semibold uppercase tracking-[0.15em] leading-tight pb-1.5 text-[#6B6459]">
+                    Years of<br />Engineering Excellence
+                  </span>
                 </div>
-
-                <div className="p-4 bg-slate-50 border border-slate-300 rounded-xl flex items-center gap-3 hover:bg-slate-100 transition-colors">
-
-                  <CheckCircle2 size={20} className="text-green-500 flex-shrink-0" />
-
-                  <div>
-
-                    <div className="text-[10px] text-slate-600 uppercase tracking-wider font-bold">Legal Status</div>
-
-                    <div className="text-sm text-slate-900 font-medium">Limited Company</div>
-
-                  </div>
-
-                </div>
-
-                <div className="p-4 bg-slate-50 border border-slate-300 rounded-xl flex items-center gap-3 hover:bg-slate-100 transition-colors">
-
-                  <CheckCircle2 size={20} className="text-green-500 flex-shrink-0" />
-
-                  <div>
-
-                    <div className="text-[10px] text-slate-600 uppercase tracking-wider font-bold">GST Registration</div>
-
-                    <div className="text-sm text-slate-900 font-medium">01-07-2017</div>
-
-                  </div>
-
-                </div>
-
-                <div className="p-4 bg-slate-50 border border-slate-300 rounded-xl flex items-center gap-3 hover:bg-slate-100 transition-colors">
-
-                  <CheckCircle2 size={20} className="text-green-500 flex-shrink-0" />
-
-                  <div>
-
-                    <div className="text-[10px] text-slate-600 uppercase tracking-wider font-bold">GST No.</div>
-
-                    <div className="text-sm text-slate-900 font-semibold">27AABCS4075P1ZT</div>
-
-                  </div>
-
-                </div>
-
               </div>
 
-
-
-              <p className="text-sm text-slate-600 font-semibold leading-relaxed font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
-
-                Our continuous investment in high-end automated tooling infrastructures guarantees client orders exit molding cycles with tight geometric tolerance tracking. Every tier follows a strict zero-compromise supervision model.
-
-              </p>
-
-            </motion.div>
-
-
-
-            <motion.div
-
-              initial={{ opacity: 0, x: 30 }}
-
-              whileInView={{ opacity: 1, x: 0 }}
-
-              viewport={{ once: true, margin: "-100px" }}
-
-              transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
-
-              className="lg:col-span-5"
-
-            >
-
-              <div className="relative p-10 md:p-12 bg-slate-50 border border-slate-300 rounded-2xl flex items-center justify-center text-center overflow-hidden shadow-lg group">
-
-                <div className="absolute top-0 right-0 w-24 md:w-32 h-24 md:h-32 bg-red-100 rounded-full blur-3xl pointer-events-none" />
-
-                <div>
-
-                  <div className="text-6xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-red-600 to-red-800 mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-
-                    25+
-
-                  </div>
-
-                  <div className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-slate-600" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-
-                    Years of Engineering Excellence
-
-                  </div>
-
-                  <div className="mt-4 p-3 bg-white rounded-lg border border-slate-200 inline-block shadow-sm">
-
-                    <div className="text-xs text-slate-600 flex items-center justify-center gap-1.5">
-
-                      📍 Thane, Maharashtra
-
-                    </div>
-
-                  </div>
-
+              {/* RIGHT HALF (Desktop: 5 Columns) - Corporate Data & Details */}
+              <div className="lg:col-span-5 lg:pt-8">
+                <div className="space-y-4 mb-6">
+                  <p className="wwa-body text-[15px] md:text-base leading-relaxed text-[#44403A]">
+                    Established in <strong className="text-[#1A1815]">1996</strong>, Sheth PET And
+                    Polymers Private Limited manufactures, sells and exports{" "}
+                    <strong className="text-[#1A1815]">PET bottles, jars and preforms</strong>.
+                  </p>
+                  <p className="wwa-body text-[15px] md:text-base leading-relaxed text-[#44403A]">
+                    We also manufacture a variety of <strong className="text-[#1A1815]">Caps</strong>.
+                  </p>
                 </div>
 
+                <div className="h-px w-full mb-6 bg-[#E6E1D6]" />
+
+                <div className="space-y-1.5 text-sm leading-relaxed text-[#6B6459]">
+                  <p className="wwa-body">
+                    A GST-registered <strong className="text-[#1A1815]">Limited Company</strong>
+                    <span className="text-[#9C9587] block sm:inline sm:ml-1">· GST 27AABCS4075P1ZT</span>
+                  </p>
+                  <p className="wwa-body">
+                    Manufacturing under one roof in Thane since day one.
+                  </p>
+                </div>
               </div>
 
-            </motion.div>
+            </div>
 
           </div>
+        </motion.div>
 
-        </div>
-
-      </section>
-      {/* ================= PRODUCTS SECTION ================= */}
+      </div>
+    </section>
 
       <section className="py-20 md:py-32 bg-white/95 relative">
 
@@ -577,63 +489,78 @@ const Home = () => {
         </div>
 
       </section>
+<section className="py-20 md:py-20 bg-gradient-to-br from-slate-50 to-white overflow-hidden">
+  <div className="w-full mx-auto px-5 md:px-12">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="text-center mb-12 md:mb-16"
+    >
+      <span className="text-xs font-bold tracking-[0.3em] text-red-500 uppercase block mb-2">Client Trust</span>
+      <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        Our biggest testimonial is our client
+      </h2>
+      <p className="text-lg md:text-xl text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+        Long-standing clients who have trusted us with their packaging for over twenty years.
+      </p>
+    </motion.div>
 
-<section className="py-20 md:py-20 bg-gradient-to-br from-slate-50 to-white">
-
-        <div className="max-full mx-auto px-5 md:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-center mb-12 md:mb-16"
+    {/* Continuous scrolling container */}
+    <div className="relative w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
+      <div 
+        className="flex gap-6 w-max animate-scroll"
+        style={{
+          animation: 'scroll 30s linear infinite' // Slowed down slightly for a smoother look
+        }}
+      >
+        {/* Original Set */}
+        {clientLogos.map((logo, index) => (
+          <div
+            key={`orig-${logo.name}-${index}`}
+            className="flex-shrink-0 flex items-center justify-center w-32 md:w-48 h-20 md:h-28 bg-white rounded-2xl shadow-sm border border-slate-200 p-4"
           >
-            <span className="text-xs font-bold tracking-[0.3em] text-red-500 uppercase block mb-2">Client Trust</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Our biggest testimonial is our client
-            </h2>
-            <p className="text-lg md:text-xl text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Long-standing clients who have trusted us with their packaging for over twenty years.
-            </p>
-          </motion.div>
-
-          {/* Continuous scrolling container */}
-          <div className="overflow-hidden relative">
-            <div 
-              className="flex gap-12 md:gap-16 animate-scroll"
-              style={{
-                animation: 'scroll 15s linear infinite'
-              }}
-            >
-              {/* Duplicate logos for seamless loop */}
-              {[...clientLogos, ...clientLogos].map((logo, index) => (
-                <div
-                  key={`${logo.name}-${index}`}
-                  className="flex-shrink-0 flex items-center justify-center w-32 md:w-48 h-20 md:h-28 bg-white rounded-2xl shadow-sm border border-slate-200 p-4"
-                >
-                  <img
-                    src={logo.src}
-                    alt={logo.name}
-                    className="max-w-full max-h-full object-contain  transition-all duration-300"
-                  />
-                </div>
-              ))}
-            </div>
+            <img
+              src={logo.src}
+              alt={logo.name}
+              className="max-w-full max-h-full object-contain transition-all duration-300 hover:scale-105"
+            />
           </div>
-        </div>
+        ))}
+        
+        {/* Duplicate Set for Seamless Loop */}
+        {clientLogos.map((logo, index) => (
+          <div
+            key={`dup-${logo.name}-${index}`}
+            className="flex-shrink-0 flex items-center justify-center w-32 md:w-48 h-20 md:h-28 bg-white rounded-2xl shadow-sm border border-slate-200 p-4"
+          >
+            <img
+              src={logo.src}
+              alt={logo.name}
+              className="max-w-full max-h-full object-contain transition-all duration-300 hover:scale-105"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
 
-        {/* Add animation styles */}
-        <style>{`
-          @keyframes scroll {
-            0% {
-              transform: translateX(0);
-            }
-            100% {
-              transform: translateX(-50%);
-            }
-          }
-        `}</style>
-      </section>
+  {/* CSS Keyframes */}
+  <style>{`
+    @keyframes scroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(calc(-50% - 12px)); /* -50% plus half of the 24px (gap-6) layout gap */
+      }
+    }
+    .animate-scroll:hover {
+      animation-play-state: paused; /* Optional: pauses the marquee when a user hovers */
+    }
+  `}</style>
+</section>
 
 
       {/* ================= INDUSTRIES WE SERVE ================= */}
@@ -772,8 +699,7 @@ const Home = () => {
 
             <p className="text-sm md:text-lg mb-8 md:mb-10 max-w-xl mx-auto opacity-90 font-light" style={{ fontFamily: "'Inter', sans-serif" }}>
 
-              Connect directly with our engineering floor managers to verify delivery timelines, blueprint tooling designs, and volume scale parameters.
-
+            Connect directly with us to verify delivery timelines, blueprint tooling designs, and scale volume parameters
             </p>
 
             <motion.button

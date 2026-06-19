@@ -6,155 +6,187 @@ const Footer = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      transition: { staggerChildren: 0.05 }
     }
   }
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 12, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.5 }
+      transition: { duration: 0.5, ease: [0.215, 0.610, 0.355, 1.000] }
     }
   }
 
+  const socialLinks = [
+    { icon: Globe, href: '#', label: 'Website' },
+    { icon: MessageCircle, href: '#', label: 'WhatsApp' },
+    { icon: Share2, href: '#', label: 'Share' },
+    { icon: ExternalLink, href: '#', label: 'Portal' },
+  ]
+
+  const quickLinks = [
+    { name: 'Products', href: '/products' },
+    { name: 'Manufacturing', href: '/manufacturing' },
+    { name: 'About Us', href: '/about' },
+    { name: 'Careers', href: '/careers' },
+  ]
+
+  const industries = [
+    { name: 'Food & Beverage', href: '/industries' },
+    { name: 'Personal Care', href: '/industries' },
+    { name: 'Pharmaceuticals', href: '/industries' },
+    { name: 'Home Care', href: '/industries' },
+    { name: 'Industrial', href: '/industries' },
+
+  ]
+
   return (
-    <footer className="bg-slate-900 text-white py-20 pb-8">
-      <div className="max-w-full mx-auto px-12">
+    <footer className="bg-slate-950 text-slate-400 pt-15 pb-10 border-t border-slate-900/60 antialiased font-sans tracking-normal">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        
+        {/* Main Content Sections */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-12"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2.2fr_1fr_1fr_2fr] gap-x-12 gap-y-16 pb-16"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: '-40px' }}
         >
-          <motion.div variants={itemVariants}>
-            <div className="flex flex-col leading-tight mb-4">
-              <span className="font-bold text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+          {/* Brand/Identity Column */}
+          <motion.div variants={itemVariants} className="space-y-6">
+            <div className="flex flex-col select-none space-y-0.5">
+              <span className="font-extrabold text-2xl tracking-tight text-white font-display uppercase">
                 SHETH
               </span>
-              <span className="text-xs text-gray-400 font-medium tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <span className="text-[9px] text-red-500 font-bold tracking-[0.3em] uppercase">
                 PET & POLYMERS
               </span>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Precision PET Packaging. Bottles, jars, caps and preforms engineered for scale — since 1996.
+            
+            <p className="text-slate-400 text-[14px] leading-relaxed max-w-sm font-normal">
+              Precision PET Packaging. Bottles, jars, caps, and preforms engineered for enterprise scale — shaping global reliability since 1996.
             </p>
-            <div className="flex gap-3">
-              <a href="#" className="w-11 h-11 flex items-center justify-center bg-white/10 text-white rounded-lg transition-all duration-300 hover:bg-red-600 hover:-translate-y-1">
-                <Globe size={20} />
-              </a>
-              <a href="#" className="w-11 h-11 flex items-center justify-center bg-white/10 text-white rounded-lg transition-all duration-300 hover:bg-red-600 hover:-translate-y-1">
-                <MessageCircle size={20} />
-              </a>
-              <a href="#" className="w-11 h-11 flex items-center justify-center bg-white/10 text-white rounded-lg transition-all duration-300 hover:bg-red-600 hover:-translate-y-1">
-                <Share2 size={20} />
-              </a>
-              <a href="#" className="w-11 h-11 flex items-center justify-center bg-white/10 text-white rounded-lg transition-all duration-300 hover:bg-red-600 hover:-translate-y-1">
-                <ExternalLink size={20} />
-              </a>
+
+            {/* Premium Minimal Social Bar */}
+            <div className="flex gap-3 pt-1">
+              {socialLinks.map((social, idx) => {
+                const Icon = social.icon
+                return (
+                  <a
+                    key={idx}
+                    href={social.href}
+                    className="w-9 h-9 flex items-center justify-center bg-slate-900/60 border border-slate-800 text-slate-400 rounded-lg transition-all duration-300 hover:bg-slate-900 hover:text-white hover:border-slate-700 group"
+                    aria-label={social.label}
+                  >
+                    <Icon size={16} className="transition-transform group-hover:scale-105" />
+                    <span className="sr-only">{social.label}</span>
+                  </a>
+                )
+              })}
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants}>
-            <h3 className="text-base font-semibold text-white mb-5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+          {/* Quick Links Column */}
+          <motion.div variants={itemVariants} className="lg:pl-2">
+            <h3 className="text-[11px] font-bold text-slate-200 tracking-[0.2em] uppercase mb-6 font-display">
               Quick Links
             </h3>
-            <ul className="list-none">
-              <li className="mb-3">
-                <a href="/products" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white hover:pl-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Products
-                </a>
-              </li>
-              <li className="mb-3">
-                <a href="/manufacturing" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white hover:pl-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Manufacturing
-                </a>
-              </li>
-              <li className="mb-3">
-                <a href="/about" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white hover:pl-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  About Us
-                </a>
-              </li>
-              <li className="mb-3">
-                <a href="/careers" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white hover:pl-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Careers
-                </a>
-              </li>
+            <ul className="space-y-4">
+              {quickLinks.map((link) => (
+                <li key={link.name}>
+                  <a 
+                    href={link.href} 
+                    className="text-[14px] text-slate-400 hover:text-white transition-colors relative duration-200 pb-0.5 inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-px after:bottom-0 after:left-0 after:bg-red-500 after:origin-bottom-left after:transition-transform after:duration-200 hover:after:scale-x-100"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
             </ul>
           </motion.div>
 
+          {/* Industries Column */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-base font-semibold text-white mb-5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+            <h3 className="text-[11px] font-bold text-slate-200 tracking-[0.2em] uppercase mb-6 font-display">
               Industries
             </h3>
-            <ul className="list-none">
-              <li className="mb-3">
-                <a href="/industries" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white hover:pl-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Food & Beverage
-                </a>
-              </li>
-              <li className="mb-3">
-                <a href="/industries" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white hover:pl-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Personal Care
-                </a>
-              </li>
-              <li className="mb-3">
-                <a href="/industries" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white hover:pl-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Pharmaceuticals
-                </a>
-              </li>
-              <li className="mb-3">
-                <a href="/industries" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white hover:pl-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Home Care
-                </a>
-              </li>
+            <ul className="space-y-3">
+              {industries.map((link, idx) => (
+                <li key={idx}>
+                  <a 
+                    href={link.href} 
+                    className="text-[14px] text-slate-400 hover:text-white transition-colors relative duration-200 pb-0.5 inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-px after:bottom-0 after:left-0 after:bg-red-500 after:origin-bottom-left after:transition-transform after:duration-200 hover:after:scale-x-100"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
             </ul>
           </motion.div>
 
+          {/* High-Contrast Corporate Office Card */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-base font-semibold text-white mb-5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Contact
-            </h3>
-            <ul className="list-none">
-              <li className="flex gap-3 mb-4 text-gray-400 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                <MapPin size={18} className="flex-shrink-0 text-red-600 mt-0.5" />
-                <span>Sheth PET And Polymers Private Limited<br/>Unit No 510, B Wing, Lodha Supremus II,<br/>Road No 22, Wagle Industrial Estate,<br/>Thane - 400604, Maharashtra, India</span>
-              </li>
-              <li className="flex gap-3 mb-4 text-gray-400 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                <Phone size={18} className="flex-shrink-0 text-red-600 mt-0.5" />
-                <span>+91 80478 33997</span>
-              </li>
-              <li className="flex gap-3 mb-4 text-gray-400 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                <Mail size={18} className="flex-shrink-0 text-red-600 mt-0.5" />
-                <span>info@sethpet.com<br/>sales@sethpet.com</span>
-              </li>
-            </ul>
+            <div className="bg-slate-900/30 border border-slate-900 p-6 rounded-xl space-y-5 backdrop-blur-sm transition-all duration-500 hover:border-slate-800/80 hover:shadow-[0_0_30px_rgba(239,68,68,0.03)]">
+              <h3 className="text-[11px] font-bold text-white tracking-[0.2em] uppercase font-display">
+                Corporate Office
+              </h3>
+              
+              <div className="flex gap-3.5 items-start text-[13.5px]">
+                <MapPin size={16} className="flex-shrink-0 text-red-500 mt-0.5" />
+                <span className="text-slate-400 leading-relaxed font-sans">
+                  Sheth PET And Polymers Pvt. Ltd.<br />
+                  Unit 510, B Wing, Lodha Supremus II,<br />
+                  Wagle Industrial Estate, Thane - 400604
+                </span>
+              </div>
+
+              <div className="h-px bg-slate-900 w-full" />
+
+              <div className="space-y-3">
+                <a 
+                  href="tel:+918047833997" 
+                  className="flex gap-3.5 items-center text-[13.5px] text-slate-400 hover:text-white transition-colors group"
+                >
+                  <Phone size={14} className="text-slate-500 group-hover:text-red-500 transition-colors" />
+                  <span className="font-sans">+91 80478 33997</span>
+                </a>
+                
+                <a 
+                  href="mailto:info@sethpet.com" 
+                  className="flex gap-3.5 items-center text-[13.5px] text-slate-400 hover:text-white transition-colors group"
+                >
+                  <Mail size={14} className="text-slate-500 group-hover:text-red-500 transition-colors" />
+                  <span className="font-sans">info@sethpet.com</span>
+                  <span className="font-sans">sales@sethpet.com</span>
+                </a>
+              </div>
+            </div>
           </motion.div>
         </motion.div>
 
+        {/* Bottom Tier Copyright Meta */}
         <motion.div 
-          className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left"
+          className="pt-8 border-t border-slate-900/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.2 }}
         >
-          <p className="text-gray-400 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-            &copy; 2026 Sheth PET & Polymers. All rights reserved.
+          <p className="text-slate-500 text-[13px] font-sans">
+            &copy; {new Date().getFullYear()} Sheth PET & Polymers. All rights reserved.
           </p>
-          <div className="flex gap-6">
-            <a href="#" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+          <div className="flex gap-6 text-[13px] font-sans">
+            <a href="#" className="text-slate-500 transition-colors duration-200 hover:text-slate-300">
               Privacy Policy
             </a>
-            <a href="#" className="text-gray-400 text-sm no-underline transition-all duration-300 hover:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <a href="#" className="text-slate-500 transition-colors duration-200 hover:text-slate-300">
               Terms of Service
             </a>
           </div>
         </motion.div>
+
       </div>
     </footer>
   )

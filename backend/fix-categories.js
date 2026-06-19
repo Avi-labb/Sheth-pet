@@ -17,7 +17,7 @@ const fixCategories = async () => {
     console.log("✅ All categories deleted!");
 
     console.log("\n3. Creating default categories...");
-    const defaultCategories = ['Bottles', 'Jars', 'Caps', 'Containers'];
+    const defaultCategories = ['Bottles', 'Jars', 'Caps', 'Preforms'];
     
     for (const catName of defaultCategories) {
       await Category.create({ name: catName });
