@@ -60,7 +60,7 @@ export default function SingleUpload({
       </div>
 
       <form onSubmit={handleAddProduct} className="bg-neutral-950 border border-neutral-900 p-5 sm:p-8 rounded-2xl space-y-5 shadow-xl">
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Product Name</label>
             <input
@@ -70,6 +70,16 @@ export default function SingleUpload({
               required
               className="w-full bg-[#050506] border border-neutral-600 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-500 transition-colors"
               placeholder="Name..."
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">SKU</label>
+            <input
+              type="text"
+              value={newProduct.sku}
+              onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value })}
+              className="w-full bg-[#050506] border border-neutral-600 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-500 transition-colors"
+              placeholder="SKU..."
             />
           </div>
         </div>
@@ -405,7 +415,7 @@ export default function SingleUpload({
                 <input
                   type="text"
                   value={newProduct.height}
-                  onChange={(e) => setNewProduct({ ...newProduct, height: e.target.value })}
+                  onChange={(e) => set`NewProduct`({ ...newProduct, height: e.target.value })}
                   className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
                   placeholder="Height"
                 />

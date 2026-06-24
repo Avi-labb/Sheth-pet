@@ -39,6 +39,7 @@ const Dashboard = () => {
 
   const [newProduct, setNewProduct] = useState({
     name: '',
+    sku: '',
     category: '',
     productType: '',
     color: [],
@@ -64,6 +65,7 @@ const Dashboard = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [editProductData, setEditProductData] = useState({
     name: '',
+    sku: '',
     category: '',
     productType: '',
     color: [],
@@ -183,6 +185,7 @@ const Dashboard = () => {
       if (result.ok) {
         setNewProduct({
           name: '',
+          sku: '',
           category: '',
           productType: '',
           color: [],
@@ -253,13 +256,14 @@ const Dashboard = () => {
     const initialEditImagesPreview = {};
     if (product.images) {
       Object.entries(product.images).forEach(([colorName, filename]) => {
-        //initialEditImagesPreview[colorName] = `http://localhost:5000/uploads/${filename}`;
+       // initialEditImagesPreview[colorName] = `http://localhost:5000/uploads/${filename}`;
         initialEditImagesPreview[colorName] = `/uploads/${filename}`;
       });
     }
     
     setEditProductData({
       name: product.name || '',
+      sku: product.sku || '',
       category: product.category || '',
       productType: product.productType || '',
       color: initialColor,
@@ -283,7 +287,7 @@ const Dashboard = () => {
       length: product.length || '',
     });
     if (product.image) {
-         //   setEditImagePreview(`http://localhost:5000/uploads/${product.image}`);
+      //setEditImagePreview(`http://localhost:5000/uploads/${product.image}`);
       setEditImagePreview(`/uploads/${product.image}`);
     } else {
       setEditImagePreview(null);
@@ -333,6 +337,7 @@ const Dashboard = () => {
       
       // Add all fields to formData
       formData.append('name', editProductData.name);
+      if (editProductData.sku) formData.append('sku', editProductData.sku);
       if (editProductData.category) formData.append('category', editProductData.category);
       if (editProductData.productType) formData.append('productType', editProductData.productType);
       if (editProductData.capType) formData.append('capType', editProductData.capType);
@@ -378,6 +383,7 @@ const Dashboard = () => {
         setEditingProduct(null);
         setEditProductData({
           name: '',
+          sku: '',
           category: '',
           productType: '',
           color: [],
@@ -856,7 +862,7 @@ const Dashboard = () => {
               <div key={color} className="aspect-square bg-neutral-950 border border-neutral-800/80 rounded-xl overflow-hidden flex items-center justify-center p-3 group relative">
                 <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded text-xs font-mono text-white uppercase">{color}</div>
                 <img
-                  // src={`http://localhost:5000/uploads/${filename}`}
+                 // src={`http://localhost:5000/uploads/${filename}`}
                   src={`/uploads/${filename}`}
                   alt={`${selectedProduct.name} - ${color}`}
                   className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
@@ -868,9 +874,9 @@ const Dashboard = () => {
           <div className="aspect-square w-full bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden flex items-center justify-center p-6 group relative">
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent pointer-events-none" />
             <img
-              // src={`http://localhost:5000/uploads/${selectedProduct.image}`}
-              src={`/uploads/${selectedProduct.image}`}
-              alt={selectedProduct.name}
+             // src={`http://localhost:5000/uploads/${selectedProduct.image}`}
+               src={`/uploads/${selectedProduct.image}`}
+             alt={selectedProduct.name}
               className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
             />
           </div>
@@ -980,6 +986,7 @@ const Dashboard = () => {
               </div>
 
               <form onSubmit={handleUpdateProduct} className="p-6 space-y-5">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Product Name</label>
                   <input
@@ -991,7 +998,17 @@ const Dashboard = () => {
                     placeholder="PET Bottle 500ml"
                   />
                 </div>
-
+                <div className="space-y-2">
+                  <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">SKU</label>
+                  <input
+                    type="text"
+                    value={editProductData.sku}
+                    onChange={(e) => setEditProductData({ ...editProductData, sku: e.target.value })}
+                    className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
+                    placeholder="SKU..."
+                  />
+                </div>
+                </div>
                
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">

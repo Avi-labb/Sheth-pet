@@ -185,7 +185,6 @@ export const bulkUploadProducts = async (req, res) => {
               usage: usage,
               keySpecs: keySpecs,
               image: imageFilename,
-              images,
               showInPopup: false,
               marketSegments: marketSegments,
               volume: volume,
@@ -213,7 +212,6 @@ export const bulkUploadProducts = async (req, res) => {
             usage: usage,
             keySpecs: keySpecs,
             image: imageFilename,
-            images,
             showInPopup: false,
             marketSegments: marketSegments,
             volume: volume,
@@ -294,7 +292,6 @@ export const addProduct = async (req, res) => {
       volume,
       neckSize,
       weight,
-      // New fields
       neckProfile,
       ofc,
       height,
@@ -437,14 +434,32 @@ export const addProduct = async (req, res) => {
 
 export const getProducts = async (req, res) => {
   try {
-    const { category } = req.query;
-    const filter = category ? { category: { $regex: new RegExp(`^${category}$`, 'i') } } : {};
-    const products = await Product.find(filter).sort({ createdAt: -1 });
+    const { category, marketSegment } = req.query;
+    console.log('getProducts called with:', { category, marketSegment });
+    let products = await Product.find().sort({ createdAt: -1 });
+    
+    if (category) {
+      products = products.filter(p => 
+        p.category && p.category.toLowerCase() === category.toLowerCase()
+      );
+    }
+    
+    if (marketSegment) {
+      products = products.filter(p => 
+        p.marketSegments && p.marketSegments.some(seg => 
+          seg.toLowerCase() === marketSegment.toLowerCase()
+        )
+      );
+    }
+    
+    console.log(`Filtered to ${products.length} products`);
+    products.forEach(p => console.log(`- ${p.name}: marketSegments = ${p.marketSegments}`));
     return res.status(200).json({
       success: true,
       products,
     });
   } catch (error) {
+    console.error('Error in getProducts:', error);
     return res.status(500).json({
       success: false,
       message: error.message,

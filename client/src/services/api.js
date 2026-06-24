@@ -65,8 +65,11 @@ export const adminAPI = {
 
 // Product API functions
 export const productAPI = {
-  getProducts: async (category) => {
-    const queryParams = category ? `?category=${encodeURIComponent(category)}` : "";
+  getProducts: async (category, marketSegment) => {
+    const params = new URLSearchParams();
+    if (category) params.append("category", category);
+    if (marketSegment) params.append("marketSegment", marketSegment);
+    const queryParams = params.toString() ? `?${params.toString()}` : "";
     return apiRequest(PRODUCT_API_BASE_URL, queryParams, { method: "GET" });
   },
 

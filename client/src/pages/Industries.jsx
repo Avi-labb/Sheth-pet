@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, Phone, MapPin } from 'lucide-react'
+import { ArrowUpRight, Phone, MapPin, ChevronRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 // Import all industry images
 import pharma200ml from '../assets/images/industry/200ml Pharma PET Bottle.webp'
@@ -33,168 +34,175 @@ import pharmaGlassBottles from '../assets/images/industry/pharmaceutical-glass-b
 import pushPullCap from '../assets/images/industry/push-pull-bottle-cap.webp'
 import teaJar from '../assets/images/industry/tea jar.jpg'
 
-const categories = ['All', 'Pharma', 'Cosmetic', 'Food & Beverage', 'Home care', 'Caps & preforms']
+const categories = [
+  { name: 'All', link: null },
+  { name: 'Pharmaceutical', link: '/pharmaceutical' },
+  { name: 'Personal Care', link: '/personal-care' },
+  { name: 'Food & Beverages', link: '/food-beverages' },
+  { name: 'Home Care', link: '/home-care' },
+  { name: 'Industrial', link: '/industrial' }
+]
 
 const products = [
   {
     name: '40ml Pharma PET Bottle',
-    tag: 'Pharma',
+    tag: 'Pharmaceutical',
     note: '40ml, clean-room moulded',
     image: pharma40ml,
   },
   {
     name: '200ml Pharma PET Bottle',
-    tag: 'Pharma',
+    tag: 'Pharmaceutical',
     note: '200ml, pharmaceutical grade',
     image: pharma200ml,
   },
   {
     name: '250ml Pharma PET Bottle',
-    tag: 'Pharma',
+    tag: 'Pharmaceutical',
     note: '250ml, tamper-evident',
     image: pharma250ml,
   },
   {
     name: '500ml Pharma PET Bottle',
-    tag: 'Pharma',
+    tag: 'Pharmaceutical',
     note: '500ml, high-quality',
     image: pharma500ml,
   },
   {
     name: 'Pharma Bottles Collection',
-    tag: 'Pharma',
+    tag: 'Pharmaceutical',
     note: 'Complete range for pharma packaging',
     image: pharmaBottles,
   },
   {
     name: 'Cosmetic Jar',
-    tag: 'Cosmetic',
+    tag: 'Personal Care',
     note: 'Cream jars, 50ml–200ml',
     image: cosmeticJarImg,
   },
   {
     name: 'Cosmetic Spray Bottle',
-    tag: 'Cosmetic',
+    tag: 'Personal Care',
     note: 'Fine-mist, 100ml',
     image: cosmeticSpray,
   },
   {
     name: 'PET Cosmetic Bottle',
-    tag: 'Cosmetic',
+    tag: 'Personal Care',
     note: 'Lotion & serum bottles',
     image: petCosmetic,
   },
   {
     name: 'Pet Lotion Container',
-    tag: 'Cosmetic',
+    tag: 'Personal Care',
     note: 'Premium cosmetic packaging',
     image: petLotionContainer,
   },
   {
     name: 'PET Cream Jars',
-    tag: 'Cosmetic',
+    tag: 'Personal Care',
     note: 'Luxury cosmetic containers',
     image: petCreamJars,
   },
   {
     name: 'Cosmetic Bottle',
-    tag: 'Cosmetic',
+    tag: 'Personal Care',
     note: 'Multi-purpose cosmetic bottle',
     image: cosmeticBottle,
   },
   {
     name: 'Juice & Beverage Bottle',
-    tag: 'Food & Beverage',
+    tag: 'Food & Beverages',
     note: '200ml – 1000ml',
     image: foodDrinkBottle,
   },
   {
     name: 'Food Bottle',
-    tag: 'Food & Beverage',
+    tag: 'Food & Beverages',
     note: 'Squash & juice bottles',
     image: foodBottle,
   },
   {
     name: 'Spice & Tea Jar',
-    tag: 'Food & Beverage',
+    tag: 'Food & Beverages',
     note: '70ml – 200ml wide-mouth',
     image: teaJar,
   },
   {
     name: 'Food Jar',
-    tag: 'Food & Beverage',
+    tag: 'Food & Beverages',
     note: 'Food-safe PET containers',
     image: foodJar,
   },
   {
     name: 'Food Big Jar',
-    tag: 'Food & Beverage',
+    tag: 'Food & Beverages',
     note: 'Large capacity food storage',
     image: foodBigJar,
   },
   {
     name: 'Hand Wash Bottle',
-    tag: 'Home care',
+    tag: 'Home Care',
     note: 'Trigger & flip-top ready',
     image: handWash,
   },
   {
     name: 'Home Care Container',
-    tag: 'Home care',
+    tag: 'Home Care',
     note: 'Chemical-resistant packaging',
     image: homeContainer,
   },
   {
     name: 'HDPE Containers',
-    tag: 'Home care',
+    tag: 'Home Care',
     note: 'Heavy-duty containers',
     image: hdpeContainers,
   },
   {
     name: 'Big Home Care Container',
-    tag: 'Home care',
+    tag: 'Home Care',
     note: 'Large format packaging',
     image: bigHomeCare,
   },
   {
     name: 'Flip Top Cap',
-    tag: 'Caps & preforms',
+    tag: 'Industrial',
     note: 'Easy-to-use flip top',
     image: flipTopCap,
   },
   {
     name: 'Flip Top Cap for Tablets',
-    tag: 'Caps & preforms',
+    tag: 'Pharmaceutical',
     note: 'Child-resistant option',
     image: flipTopCapTablet,
   },
   {
     name: 'Cosmetic Screw Caps',
-    tag: 'Caps & preforms',
+    tag: 'Personal Care',
     note: '19mm – 53mm',
     image: cosmeticScrewCaps,
   },
   {
     name: 'Golden Screw Cap',
-    tag: 'Caps & preforms',
+    tag: 'Personal Care',
     note: 'Premium finish',
     image: goldenScrewCap,
   },
   {
     name: 'Plastic Jar Cap',
-    tag: 'Caps & preforms',
+    tag: 'Food & Beverages',
     note: 'Wide-mouth jar caps',
     image: plasticJarCap,
   },
   {
     name: 'Plastic Seal Cap',
-    tag: 'Caps & preforms',
+    tag: 'Industrial',
     note: 'Tamper-evident seals',
     image: plasticSealCap,
   },
   {
     name: 'Push Pull Bottle Cap',
-    tag: 'Caps & preforms',
+    tag: 'Home Care',
     note: 'Convenient dispensing',
     image: pushPullCap,
   },
@@ -308,11 +316,25 @@ const Industries = () => {
           {/* filter chips */}
           <div className="flex flex-wrap gap-2 mb-10" role="group" aria-label="Filter by category">
             {categories.map((cat) => {
-              const isActive = cat === active
-              return (
+              const isActive = cat.name === active
+              return cat.link ? (
+                <Link
+                  key={cat.name}
+                  to={cat.link}
+                  className="font-bold text-sm px-4 py-2 rounded-full border transition-all duration-300 inline-flex items-center gap-2"
+                  style={{
+                    background: isActive ? '#DC2626' : 'transparent',
+                    color: isActive ? '#FFFFFF' : '#475569',
+                    borderColor: isActive ? '#DC2626' : '#E2E8F0',
+                  }}
+                >
+                  {cat.name}
+                  <ChevronRight size={14} />
+                </Link>
+              ) : (
                 <button
-                  key={cat}
-                  onClick={() => setActive(cat)}
+                  key={cat.name}
+                  onClick={() => setActive(cat.name)}
                   aria-pressed={isActive}
                   className="font-bold text-sm px-4 py-2 rounded-full border transition-all duration-300"
                   style={{
@@ -321,7 +343,7 @@ const Industries = () => {
                     borderColor: isActive ? '#DC2626' : '#E2E8F0',
                   }}
                 >
-                  {cat}
+                  {cat.name}
                 </button>
               )
             })}

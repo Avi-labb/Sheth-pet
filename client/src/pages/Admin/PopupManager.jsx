@@ -65,12 +65,13 @@ const PopupManager = ({ products, setActiveTab, fetchProducts }) => {
   const getProductImage = (product) => {
     if (product.images && Object.keys(product.images).length > 0) {
       const firstColor = Object.keys(product.images)[0];
-      //return `http://localhost:5000/uploads/${product.images[firstColor]}`;
+     // return `http://localhost:5000/uploads/${product.images[firstColor]}`;
       return `/uploads/${product.images[firstColor]}`;
     }
     if (product.image) {
       //return `http://localhost:5000/uploads/${product.image}`;
       return `/uploads/${product.image}`;
+      
     }
     return null;
   };

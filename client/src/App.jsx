@@ -4,6 +4,7 @@ import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
 import Home from './pages/Home/Home'
 import Products from './pages/Products'
+import ProductDetail from './pages/ProductDetail'
 import Manufacturing from './pages/Manufacturing'
 import Industries from './pages/Industries'
 import Sustainability from './pages/Sustainability'
@@ -16,6 +17,11 @@ import AdminLogin from './pages/Admin/AdminLogin'
 import Dashboard from './pages/Admin/Dashboard'
 import BulkUpload from './pages/Admin/bulkupload'
 import CategoryPage from './pages/Category/CategoryPage'
+import Pharmaceutical from './pages/Category/Pharmaceutical'
+import PersonalCare from './pages/Category/Personal Care'
+import FoodBeverages from './pages/Category/Food & Beverages'
+import HomeCare from './pages/Category/Home Care'
+import Industrial from './pages/Category/Industrial'
 import './App.css'
 
 // Test comment for HMR
@@ -69,6 +75,36 @@ function App() {
           <Route path="/products/:categoryName" element={
             <PublicLayout>
               <CategoryPage />
+            </PublicLayout>
+          } />
+          <Route path="/pharmaceutical" element={
+            <PublicLayout>
+              <Pharmaceutical />
+            </PublicLayout>
+          } />
+          <Route path="/personal-care" element={
+            <PublicLayout>
+              <PersonalCare />
+            </PublicLayout>
+          } />
+          <Route path="/food-beverages" element={
+            <PublicLayout>
+              <FoodBeverages />
+            </PublicLayout>
+          } />
+          <Route path="/home-care" element={
+            <PublicLayout>
+              <HomeCare />
+            </PublicLayout>
+          } />
+          <Route path="/industrial" element={
+            <PublicLayout>
+              <Industrial />
+            </PublicLayout>
+          } />
+          <Route path="/product/:productId" element={
+            <PublicLayout>
+              <ProductDetail />
             </PublicLayout>
           } />
           <Route path="/manufacturing" element={

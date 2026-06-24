@@ -16,18 +16,18 @@ const navItems = [
 ]
 
 const functionCategories = [
-  "Pharmaceutical",
-  "Personal Care",
-  "Food & Beverages",
-  "Home Care",
-  "Industrial",
+  { name: "Pharmaceutical", path: "/pharmaceutical" },
+  { name: "Personal Care", path: "/personal-care" },
+  { name: "Food & Beverages", path: "/food-beverages" },
+  { name: "Home Care", path: "/home-care" },
+  { name: "Industrial", path: "/industrial" },
 ]
 
 const typeCategories = [
-  "Bottles",
-  "Jars",
-  "Preforms",
-  "Caps",
+  { name: "Bottles", path: "/products/Bottles" },
+  { name: "Jars", path: "/products/Jars" },
+  { name: "Preforms", path: "/products/Preforms" },
+  { name: "Caps", path: "/products/Caps" },
 ]
 
 const Header = ({ onCategorySelect }) => {
@@ -36,7 +36,7 @@ const Header = ({ onCategorySelect }) => {
   const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms'])
   const location = useLocation()
   const { theme, toggleTheme } = useTheme()
-  
+
   // Don't show toggle on admin routes
   const isAdminRoute = location.pathname.startsWith('/admin')
 
@@ -57,12 +57,11 @@ const Header = ({ onCategorySelect }) => {
 
   return (
     <nav
-        className={`fixed py-10 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 backdrop-blur-xl h-16 shadow-lg ${
-          theme === 'light' 
-            ? 'bg-white/80 border-slate-200 shadow-gray-200/20' 
-            : 'bg-slate-900/80 border-slate-800 shadow-black/20'
+      className={`fixed py-10 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 backdrop-blur-xl h-16 shadow-lg ${theme === 'light'
+          ? 'bg-white/80 border-slate-200 shadow-gray-200/20'
+          : 'bg-slate-900/80 border-slate-800 shadow-black/20'
         }`}
-      >
+    >
       <div className="max-w-8xl mx-auto px-5 sm:px-10 h-full flex items-center justify-between">
 
         {/* Brand Logo Wrapper (Left Aligned) */}
@@ -85,14 +84,12 @@ const Header = ({ onCategorySelect }) => {
             />
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 leading-tight text-center">
-            <span className={`text-lg sm:text-lg font-bold tracking-wider ${
-              theme === 'light' ? 'text-slate-900' : 'text-white'
-            }`}>
+            <span className={`text-lg sm:text-lg font-bold tracking-wider ${theme === 'light' ? 'text-slate-900' : 'text-white'
+              }`}>
               SHETH
             </span>
-            <span className={`text-xs sm:text-sm font-medium uppercase tracking-wider ${
-              theme === 'light' ? 'text-slate-600' : 'text-slate-400'
-            }`}>
+            <span className={`text-xs sm:text-sm font-medium uppercase tracking-wider ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'
+              }`}>
               Pet & Polymers
             </span>
           </div>
@@ -107,11 +104,10 @@ const Header = ({ onCategorySelect }) => {
             onMouseLeave={() => setShowDropdown(false)}
           >
             <button
-              className={`relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group flex items-center gap-1 ${
-                theme === 'light' 
-                  ? 'text-slate-700 hover:text-slate-900' 
+              className={`relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group flex items-center gap-1 ${theme === 'light'
+                  ? 'text-slate-700 hover:text-slate-900'
                   : 'text-slate-300 hover:text-white'
-              }`}
+                }`}
             >
               <span className="relative uppercase z-10">Products</span>
               <ChevronDown
@@ -129,88 +125,90 @@ const Header = ({ onCategorySelect }) => {
                   transition={{ duration: 0.2 }}
                   className={`absolute top-full left-1/2 -translate-x-1/2 mt-4
                              rounded-2xl shadow-2xl
-                             min-w-[650px] overflow-hidden ${
-                               theme === 'light' 
-                                 ? 'bg-white border border-slate-200' 
-                                 : 'bg-slate-900 border border-slate-800'
-                             }`}
+                             min-w-[500px] overflow-hidden ${theme === 'light'
+                      ? 'bg-white/10 border border-slate-200'
+                      : 'bg-slate-900 border border-slate-800'
+                    }`}
+                ><div
+                  className={`w-full max-w-lg mx-auto rounded-2xl shadow-xl border overflow-hidden transition-all duration-300 ${theme === 'light'
+                      ? 'bg-white border-slate-100 text-slate-600'
+                      : 'bg-slate-900 border-slate-800 text-slate-400'
+                    }`}
                 >
-                  <div className="grid grid-cols-2 gap-10 p-8">
+                    {/* Categories Grid Container */}
+                    <div className="grid grid-cols-2 gap-x-12 gap-y-2 p-8">
 
-                    {/* Function (Industries) */}
-                    <div>
-                      <h3 className={`font-semibold text-lg mb-4 border-b pb-2 ${
-                        theme === 'light' 
-                          ? 'text-slate-900 border-slate-200' 
-                          : 'text-white border-slate-800'
-                      }`}>
-                        By Industry
-                      </h3>
+                      {/* Column 1: By Industry */}
+                      <div className="flex flex-col">
+                        <h3 className={`font-bold text-xl tracking-tight mb-5 border-b pb-3 ${theme === 'light'
+                            ? 'text-slate-900 border-slate-100'
+                            : 'text-white border-slate-800'
+                          }`}>
+                          By Industry
+                        </h3>
 
-                      <div className="flex flex-col gap-2">
-                        {functionCategories.map((item) => (
-                          <Link
-                            key={item}
-                            to={`/industries`}
-                            onClick={() => setShowDropdown(false)}
-                            className={`transition-colors py-1 ${
-                              theme === 'light' 
-                                ? 'text-slate-600 hover:text-slate-900' 
-                                : 'text-slate-400 hover:text-white'
-                            }`}
-                          >
-                            {item}
-                          </Link>
-                        ))}
+                        <div className="flex flex-col gap-2">
+                          {functionCategories.map((item) => (
+                            <Link
+                              key={item.name}
+                              to={item.path}
+                              onClick={() => setShowDropdown(false)}
+                              className={`transition-colors duration-200 py-1 text-[15px] font-medium ${theme === 'light'
+                                  ? 'text-slate-700 hover:text-slate-900'
+                                  : 'text-slate-400 hover:text-white'
+                                }`}
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Column 2: By Type */}
+                      <div className="flex flex-col">
+                        <h3 className={`font-bold text-xl tracking-tight mb-5 border-b pb-3 ${theme === 'light'
+                            ? 'text-slate-900 border-slate-100'
+                            : 'text-white border-slate-800'
+                          }`}>
+                          By Type
+                        </h3>
+
+                        <div className="flex flex-col gap-3">
+                          {typeCategories.map((item) => (
+                            <Link
+                              key={item.name}
+                              to={item.path}
+                              onClick={() => setShowDropdown(false)}
+                              className={`transition-colors duration-200 py-1 text-[15px] font-medium ${theme === 'light'
+                                  ? 'text-slate-700 hover:text-slate-900'
+                                  : 'text-slate-400 hover:text-white'
+                                }`}
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
-                    {/* Type (Product Categories) */}
-                    <div>
-                      <h3 className={`font-semibold text-lg mb-4 border-b pb-2 ${
-                        theme === 'light' 
-                          ? 'text-slate-900 border-slate-200' 
-                          : 'text-white border-slate-800'
-                      }`}>
-                        By Type
-                      </h3>
-
-                      <div className="flex flex-col gap-2">
-                        {typeCategories.map((item) => (
-                          <Link
-                            key={item}
-                            to={`/products/${encodeURIComponent(item.toLowerCase())}`}
-                            onClick={() => setShowDropdown(false)}
-                            className={`transition-colors py-1 ${
-                              theme === 'light' 
-                                ? 'text-slate-600 hover:text-slate-900' 
-                                : 'text-slate-400 hover:text-white'
-                            }`}
-                          >
-                            {item}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bottom Button */}
-                  <div className={`border-t p-4 ${
-                    theme === 'light' 
-                      ? 'border-slate-200 bg-slate-50/50' 
-                      : 'border-slate-800 bg-slate-800/50'
-                  }`}>
-                    <Link
-                      to="/products"
-                      onClick={() => setShowDropdown(false)}
-                      className={`block text-center font-medium transition-colors ${
-                        theme === 'light' 
-                          ? 'text-slate-900 hover:text-slate-700' 
-                          : 'text-white hover:text-slate-300'
-                      }`}
+                    {/* Dropdown Footer: View All Products */}
+                    <div
+                      className={`border-t py-4 text-center transition-colors duration-200 ${theme === 'light'
+                          ? 'bg-slate-100 border-slate-100 hover:bg-slate-200/20'
+                          : 'bg-slate-950/40 border-slate-800 hover:bg-slate-950/80'
+                        }`}
                     >
-                      View All Products →
-                    </Link>
+                      <Link
+                        to="/products"
+                        onClick={() => setShowDropdown(false)}
+                        className={`block text-center font-medium transition-colors ${theme === 'light'
+                            ? 'text-slate-900 hover:text-slate-700'
+                            : 'text-white hover:text-slate-300'
+                          }`}
+                      >
+                        View All Products →
+                      </Link>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -223,11 +221,10 @@ const Header = ({ onCategorySelect }) => {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group ${
-                  theme === 'light' 
-                    ? 'text-slate-700 hover:text-slate-900' 
+                className={`relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group ${theme === 'light'
+                    ? 'text-slate-700 hover:text-slate-900'
                     : 'text-slate-300 hover:text-white'
-                }`}
+                  }`}
               >
                 <span className="relative uppercase z-10">{item.name}</span>
 
@@ -235,20 +232,18 @@ const Header = ({ onCategorySelect }) => {
                 {isActive && (
                   <motion.div
                     layoutId="activeTabCapsule"
-                    className={`absolute inset-0 border rounded-lg z-0 ${
-                      theme === 'light' 
-                        ? 'bg-slate-900/10 border-slate-900/10' 
+                    className={`absolute inset-0 border rounded-lg z-0 ${theme === 'light'
+                        ? 'bg-slate-900/10 border-slate-900/10'
                         : 'bg-white/10 border-white/10'
-                    }`}
+                      }`}
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
 
                 {/* Hover Indicator Line */}
                 {!isActive && (
-                  <span className={`absolute bottom-0 left-4 right-4 h-[1px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center ${
-                    theme === 'light' ? 'bg-slate-900' : 'bg-white'
-                  }`} />
+                  <span className={`absolute bottom-0 left-4 right-4 h-[1px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center ${theme === 'light' ? 'bg-slate-900' : 'bg-white'
+                    }`} />
                 )}
               </Link>
             )
@@ -261,17 +256,16 @@ const Header = ({ onCategorySelect }) => {
           {!isAdminRoute && (
             <button
               onClick={toggleTheme}
-              className={`p-2 rounded-full transition-all duration-200 border ${
-                theme === 'light' 
-                  ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200' 
+              className={`p-2 rounded-full transition-all duration-200 border ${theme === 'light'
+                  ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200'
                   : 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
-              }`}
+                }`}
               aria-label="Toggle theme"
             >
               {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
             </button>
           )}
-          
+
           {/* Enquire CTA Button */}
           <Link
             to="/contact"
@@ -287,24 +281,22 @@ const Header = ({ onCategorySelect }) => {
           {!isAdminRoute && (
             <button
               onClick={toggleTheme}
-              className={`p-2 rounded-full transition-all duration-200 border ${
-                theme === 'light' 
-                  ? 'bg-slate-100 border-slate-200 text-slate-900' 
+              className={`p-2 rounded-full transition-all duration-200 border ${theme === 'light'
+                  ? 'bg-slate-100 border-slate-200 text-slate-900'
                   : 'bg-slate-800 border-slate-700 text-white'
-              }`}
+                }`}
               aria-label="Toggle theme"
             >
               {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
             </button>
           )}
-          
+
           {/* Mobile Menu Toggle */}
           <button
-            className={`relative z-50 p-2 rounded-full transition-all duration-200 border ${
-              theme === 'light' 
-                ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200' 
+            className={`relative z-50 p-2 rounded-full transition-all duration-200 border ${theme === 'light'
+                ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200'
                 : 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
-            }`}
+              }`}
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle Menu"
           >
@@ -317,18 +309,16 @@ const Header = ({ onCategorySelect }) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className={`fixed inset-0 top-0 left-0 w-full h-screen backdrop-blur-lg lg:hidden z-40 ${
-              theme === 'light' ? 'bg-slate-900/40' : 'bg-black/40'
-            }`}
+            className={`fixed inset-0 top-0 left-0 w-full h-screen backdrop-blur-lg lg:hidden z-40 ${theme === 'light' ? 'bg-slate-900/40' : 'bg-black/40'
+              }`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
           >
             <motion.div
-              className={`absolute right-0 top-0 h-full w-full max-w-xs border-l shadow-2xl flex flex-col pt-24 pb-8 px-6 gap-2 ${
-                theme === 'light' ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'
-              }`}
+              className={`absolute right-0 top-0 h-full w-full max-w-xs border-l shadow-2xl flex flex-col pt-24 pb-8 px-6 gap-2 ${theme === 'light' ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'
+                }`}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -336,38 +326,63 @@ const Header = ({ onCategorySelect }) => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Products Section */}
-              <div className={`border-b pb-3 mb-2 ${
-                theme === 'light' ? 'border-slate-200' : 'border-slate-800'
-              }`}>
+              <div className={`border-b pb-3 mb-2 ${theme === 'light' ? 'border-slate-200' : 'border-slate-800'
+                }`}>
                 <Link
                   to="/products"
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide ${
-                    theme === 'light' ? 'text-slate-900' : 'text-white'
-                  }`}
+                  className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide ${theme === 'light' ? 'text-slate-900' : 'text-white'
+                    }`}
                 >
                   All Products
                   <ChevronRight size={14} className={
                     theme === 'light' ? 'text-slate-400' : 'text-slate-500'
                   } />
                 </Link>
-                {typeCategories.map((category) => (
-                  <Link
-                    key={category}
-                    to={`/products/${encodeURIComponent(category.toLowerCase())}`}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center justify-between w-full px-4 py-2 pl-8 rounded-xl text-sm font-medium tracking-wide transition-colors ${
-                      theme === 'light' 
-                        ? 'text-slate-600 hover:text-slate-900' 
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {category}
-                    <ChevronRight size={14} className={
-                      theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                    } />
-                  </Link>
-                ))}
+
+                {/* Product Types */}
+                <div className="pl-4 mb-2">
+                  <p className={`text-xs font-semibold uppercase tracking-wider mb-2 ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                    }`}>By Type</p>
+                  {typeCategories.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.path}
+                      onClick={() => setIsOpen(false)}
+                      className={`flex items-center justify-between w-full px-4 py-2 pl-4 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
+                          ? 'text-slate-600 hover:text-slate-900'
+                          : 'text-slate-400 hover:text-white'
+                        }`}
+                    >
+                      {item.name}
+                      <ChevronRight size={14} className={
+                        theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                      } />
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Industries */}
+                <div className="pl-4">
+                  <p className={`text-xs font-semibold uppercase tracking-wider mb-2 ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                    }`}>By Industry</p>
+                  {functionCategories.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.path}
+                      onClick={() => setIsOpen(false)}
+                      className={`flex items-center justify-between w-full px-4 py-2 pl-4 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
+                          ? 'text-slate-600 hover:text-slate-900'
+                          : 'text-slate-400 hover:text-white'
+                        }`}
+                    >
+                      {item.name}
+                      <ChevronRight size={14} className={
+                        theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                      } />
+                    </Link>
+                  ))}
+                </div>
               </div>
 
               {navItems.map((item) => {
@@ -379,18 +394,18 @@ const Header = ({ onCategorySelect }) => {
                     className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200
                       ${isActive
                         ? (theme === 'light'
-                          ? 'text-slate-900 bg-slate-100 border border-slate-200' 
+                          ? 'text-slate-900 bg-slate-100 border border-slate-200'
                           : 'text-white bg-slate-800 border border-slate-700')
-                        : (theme === 'light' 
-                          ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' 
+                        : (theme === 'light'
+                          ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                           : 'text-slate-400 hover:text-white hover:bg-slate-800')
                       }`}
                     onClick={() => setIsOpen(false)}
                   >
                     <span>{item.name}</span>
                     <ChevronRight size={14} className={
-                      isActive 
-                        ? (theme === 'light' ? 'text-slate-900' : 'text-white') 
+                      isActive
+                        ? (theme === 'light' ? 'text-slate-900' : 'text-white')
                         : (theme === 'light' ? 'text-slate-400' : 'text-slate-500')
                     } />
                   </Link>
@@ -398,9 +413,8 @@ const Header = ({ onCategorySelect }) => {
               })}
 
               {/* Mobile Enquire CTA placement */}
-              <div className={`mt-auto pt-6 border-t ${
-                theme === 'light' ? 'border-slate-200' : 'border-slate-800'
-              }`}>
+              <div className={`mt-auto pt-6 border-t ${theme === 'light' ? 'border-slate-200' : 'border-slate-800'
+                }`}>
                 <Link
                   to="/contact"
                   className="flex items-center justify-center w-full py-3 text-xs font-bold uppercase tracking-widest text-white bg-teal-600 rounded-xl hover:bg-teal-700 transition-colors"
