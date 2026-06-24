@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Package, ChevronRight, X, Box, Layers, Settings } from 'lucide-react'
+import { Package, ChevronRight, X, Box, Layers, Settings, Circle } from 'lucide-react'
 import { productAPI } from '../../services/api'
 
 const Bottle = () => {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
   const [selectedProductDetail, setSelectedProductDetail] = useState(null)
+  const [selectedColor, setSelectedColor] = useState(null)
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,6 +26,38 @@ const Bottle = () => {
     fetchProducts()
   }, [])
 
+  const getProductImage = (product, color = null) => {
+    if (color && product.images && product.images[color]) {
+      return `http://localhost:5000/uploads/${product.images[color]}`
+    }
+    if (product.image) {
+      return `http://localhost:5000/uploads/${product.image}`
+    }
+    return null
+  }
+
+  const getProductColors = (product) => {
+    return Array.isArray(product.color) ? product.color : (product.color ? [product.color] : [])
+  }
+
+  const getMoqForColor = (product, color) => {
+    if (!product.moqPackaging) return ''
+    if (typeof product.moqPackaging === 'object' && product.moqPackaging[color]) {
+      return product.moqPackaging[color]
+    }
+    if (typeof product.moqPackaging === 'string') {
+      return product.moqPackaging
+    }
+    return ''
+  }
+
+  useEffect(() => {
+    if (selectedProductDetail) {
+      const colors = getProductColors(selectedProductDetail)
+      setSelectedColor(colors.length > 0 ? colors[0] : null)
+    }
+  }, [selectedProductDetail])
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-red-500 selection:text-white">
       {/* Hero Section */}
@@ -41,7 +74,7 @@ const Bottle = () => {
             PET Bottle Solutions
           </h1>
           <p className="text-sm md:text-base text-slate-400 max-w-xl mx-auto font-normal leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-            Engineered for durability, pristine clarity, and awless performance across all commercial industries.
+            Engineered for durability, pristine clarity, and flawless performance across all commercial industries.
           </p>
         </motion.div>
       </section>
@@ -67,75 +100,99 @@ const Bottle = () => {
           ) : products.length > 0 ? (
             /* Product Grid */
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {products.map((product, index) => (
-                <motion.div
-                  key={product._id}
-                  className="bg-slate-900 border border-slate-800/60 rounded-2xl overflow-hidden cursor-pointer group flex flex-col justify-between h-full relative"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.03 }}
-                  whileHover={{ y: -4, borderColor: 'rgba(239, 68, 68, 0.25)' }}
-                  onClick={() => setSelectedProductDetail(product)}
-                >
-                  <div>
-                    {/* Product Image Wrapper */}
-                    <div className="relative aspect-[4/3] bg-slate-950 border-b border-slate-900/50 flex items-center justify-center overflow-hidden group-hover:bg-slate-900/20 transition-colors duration-300">
-                      {product.image ? (
-                        <img
-                          //src={`http://localhost:5000/uploads/${product.image}`}
-                          src={`/uploads/${product.image}`}
-                          alt={product.name}
-                          className="w-full h-full object-contain p-6 md:p-8 transform group-hover:scale-103 transition-transform duration-300 ease-out"
-                        />
-                      ) : (
-                        <div className="text-slate-800 flex flex-col items-center gap-2">
-                          <Package size={38} strokeWidth={1} />
-                          <span className="text-[9px] uppercase tracking-widest text-slate-600 font-bold">Staging Image</span>
-                        </div>
-                      )}
+              {products.map((product, index) => {
+                const colors = getProductColors(product)
+                const firstColor = colors.length > 0 ? colors[0] : null
+                const productImage = getProductImage(product, firstColor)
+                return (
+                  <motion.div
+                    key={product._id}
+                    className="bg-slate-900 border border-slate-800/60 rounded-2xl overflow-hidden cursor-pointer group flex flex-col justify-between h-full relative"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.03 }}
+                    whileHover={{ y: -4, borderColor: 'rgba(239, 68, 68, 0.25)' }}
+                    onClick={() => setSelectedProductDetail(product)}
+                  >
+                    <div>
+                      {/* Product Image Wrapper */}
+                      <div className="relative aspect-[4/3] bg-slate-950 border-b border-slate-900/50 flex items-center justify-center overflow-hidden group-hover:bg-slate-900/20 transition-colors duration-300">
+                        {productImage ? (
+                          <img
+                            src={productImage}
+                            alt={product.name}
+                            className="w-full h-full object-contain p-6 md:p-8 transform group-hover:scale-103 transition-transform duration-300 ease-out"
+                          />
+                        ) : (
+                          <div className="text-slate-800 flex flex-col items-center gap-2">
+                            <Package size={38} strokeWidth={1} />
+                            <span className="text-[9px] uppercase tracking-widest text-slate-600 font-bold">Staging Image</span>
+                          </div>
+                        )}
 
-                      {/* Category Badge */}
-                      {product.category && (
-                        <span className="absolute top-3 left-3 inline-block px-2 py-0.5 bg-slate-900/90 text-slate-400 text-[9px] font-bold uppercase tracking-wider rounded border border-slate-800/80 backdrop-blur-sm">
-                          {product.category}
-                        </span>
-                      )}
-                    </div>
+                        {/* Category Badge */}
+                        {product.category && (
+                          <span className="absolute top-3 left-3 inline-block px-2 py-0.5 bg-slate-900/90 text-slate-400 text-[9px] font-bold uppercase tracking-wider rounded border border-slate-800/80 backdrop-blur-sm">
+                            {product.category}
+                          </span>
+                        )}
+                      </div>
 
-                    {/* Product Info Content */}
-                    <div className="p-5 md:p-6">
-                      <h3 
-                        className="text-base md:text-lg font-bold text-slate-100 group-hover:text-red-500 transition-colors duration-200 line-clamp-1 mb-1" 
-                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                      >
-                        {product.name}
-                      </h3>
+                      {/* Product Info Content */}
+                      <div className="p-5 md:p-6">
+                        <h3 
+                          className="text-base md:text-lg font-bold text-slate-100 group-hover:text-red-500 transition-colors duration-200 line-clamp-1 mb-1" 
+                          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                        >
+                          {product.name}
+                        </h3>
 
-                      {product.sku && (
-                        <p className="text-[10px] font-mono text-slate-500 tracking-wider mb-2.5">
-                          REF: {product.sku}
+                        {product.sku && (
+                          <p className="text-[10px] font-mono text-slate-500 tracking-wider mb-2.5">
+                            REF: {product.sku}
+                          </p>
+                        )}
+
+                        {/* Color Dots */}
+                        {colors.length > 0 && (
+                          <div className="flex gap-2 mb-3">
+                            {colors.map((color) => (
+                              <div 
+                                key={color}
+                                className="w-4 h-4 rounded-full border border-slate-700"
+                                style={{
+                                  backgroundColor: 
+                                    color.toLowerCase().includes('amber') ? '#f59e0b' :
+                                    color.toLowerCase().includes('clear') ? '#e0e7ff' :
+                                    color.toLowerCase().includes('white') ? '#ffffff' :
+                                    color.toLowerCase().includes('black') ? '#171717' : '#64748b'
+                                }}
+                                title={color}
+                              />
+                            ))}
+                          </div>
+                        )}
+
+                        <p 
+                          className="text-xs md:text-sm text-slate-400 line-clamp-2 leading-relaxed" 
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          {product.keySpecs || product.description || 'Premium industrial design optimized for distribution integrity.'}
                         </p>
-                      )}
-
-                      <p 
-                        className="text-xs md:text-sm text-slate-400 line-clamp-2 leading-relaxed" 
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        {product.keySpecs || product.description || 'Premium industrial design optimized for distribution integrity.'}
-                      </p>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Action Area */}
-                  <div className="px-5 pb-5 pt-1 md:px-6 md:pb-6">
-                    <div className="w-full py-2 px-3 bg-slate-800/30 hover:bg-red-600 border border-slate-800 hover:border-red-600 rounded-xl flex items-center justify-center text-slate-300 hover:text-white text-[11px] font-bold uppercase tracking-wider transition-all duration-200 group/btn">
-                      <span>View Specs</span>
-                      <ChevronRight size={12} className="ml-1 transform group-hover/btn:translate-x-1 transition-transform" />
+                    {/* Action Area */}
+                    <div className="px-5 pb-5 pt-1 md:px-6 md:pb-6">
+                      <div className="w-full py-2 px-3 bg-slate-800/30 hover:bg-red-600 border border-slate-800 hover:border-red-600 rounded-xl flex items-center justify-center text-slate-300 hover:text-white text-[11px] font-bold uppercase tracking-wider transition-all duration-200 group/btn">
+                        <span>View Specs</span>
+                        <ChevronRight size={12} className="ml-1 transform group-hover/btn:translate-x-1 transition-transform" />
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                )
+              })}
             </div>
           ) : (
             /* Empty State */
@@ -178,7 +235,7 @@ const Bottle = () => {
               {/* Close Button Trigger */}
               <button
                 onClick={() => setSelectedProductDetail(null)}
-                className="absolute top-3 right-3 z-20 p-2 bg-slate-950/80 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-all duration-200 group"
+                className="absolute top-3 right-3 z-20 p-2 bg-slate-950/90 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-400 hover:text-white transition-all duration-200 group"
               >
                 <X size={16} className="group-hover:rotate-90 transition-transform duration-200" />
               </button>
@@ -198,10 +255,9 @@ const Bottle = () => {
                     )}
 
                     <div className="w-full aspect-square max-w-[180px] md:max-w-[200px] flex items-center justify-center py-2">
-                      {selectedProductDetail.image ? (
+                      {getProductImage(selectedProductDetail, selectedColor) ? (
                         <img
-                          //src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
-                          src={`/uploads/${selectedProductDetail.image}`}
+                          src={getProductImage(selectedProductDetail, selectedColor)}
                           alt={selectedProductDetail.name}
                           className="w-full h-full object-contain object-center max-h-[200px]"
                         />
@@ -209,6 +265,27 @@ const Bottle = () => {
                         <Package size={54} className="text-slate-800" strokeWidth={1} />
                       )}
                     </div>
+
+                    {/* Color Selector */}
+                    {getProductColors(selectedProductDetail).length > 0 && (
+                      <div className="flex justify-center gap-3 mt-3">
+                        {getProductColors(selectedProductDetail).map((color) => (
+                          <button
+                            key={color}
+                            onClick={() => setSelectedColor(color)}
+                            className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === color ? 'border-white scale-110' : 'border-slate-600 hover:border-slate-400'}`}
+                            style={{
+                              backgroundColor: 
+                                color.toLowerCase().includes('amber') ? '#f59e0b' :
+                                color.toLowerCase().includes('clear') ? '#e0e7ff' :
+                                color.toLowerCase().includes('white') ? '#ffffff' :
+                                color.toLowerCase().includes('black') ? '#171717' : '#64748b'
+                            }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Right Side: Specifications Panel */}
@@ -236,10 +313,16 @@ const Bottle = () => {
                         <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2.5">Structural Metrics</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {[
-                            { label: 'Color Specs', value: selectedProductDetail.color, icon: <div className="w-2 h-2 rounded-full bg-slate-400" /> },
-                            { label: 'Volume/Size', value: selectedProductDetail.size, icon: <Box size={12} className="text-slate-400" /> },
+                            { label: 'Color Specs', value: selectedColor, icon: <Circle size={12} className="text-slate-400 fill-slate-400" /> },
+                            { label: 'Volume/Size', value: selectedProductDetail.volume, icon: <Box size={12} className="text-slate-400" /> },
                             { label: 'Closure System', value: selectedProductDetail.capType, icon: <Settings size={12} className="text-slate-400" /> },
-                            { label: 'Minimum MOQ', value: selectedProductDetail.moqPackaging, icon: <Layers size={12} className="text-slate-400" /> }
+                            { label: 'Minimum MOQ', value: getMoqForColor(selectedProductDetail, selectedColor), icon: <Layers size={12} className="text-slate-400" /> },
+                            { label: 'Neck Size', value: selectedProductDetail.neckSize, icon: <Box size={12} className="text-slate-400" /> },
+                            { label: 'Neck Profile', value: selectedProductDetail.neckProfile, icon: <Box size={12} className="text-slate-400" /> },
+                            { label: 'OFC', value: selectedProductDetail.ofc, icon: <Box size={12} className="text-slate-400" /> },
+                            { label: 'Height', value: selectedProductDetail.height, icon: <Box size={12} className="text-slate-400" /> },
+                            { label: 'Diameter', value: selectedProductDetail.diameter, icon: <Box size={12} className="text-slate-400" /> },
+                            { label: 'Weight', value: selectedProductDetail.weight, icon: <Box size={12} className="text-slate-400" /> }
                           ].map((spec, i) => spec.value ? (
                             <div key={i} className="p-2.5 bg-slate-950/40 border border-slate-800/80 rounded-lg flex items-center gap-3">
                               <div className="w-7 h-7 rounded bg-slate-900 border border-slate-800 flex items-center justify-center flex-shrink-0">
@@ -254,9 +337,23 @@ const Bottle = () => {
                         </div>
                       </div>
 
-                      {selectedProductDetail.usage && (
+                      {/* Market Segments */}
+                      {selectedProductDetail.marketSegments && selectedProductDetail.marketSegments.length > 0 && (
                         <div className="p-3 bg-slate-950/30 border border-slate-800/60 rounded-lg">
                           <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Applications</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedProductDetail.marketSegments.map((segment, i) => (
+                              <span key={i} className="px-3 py-1 bg-slate-800 text-slate-300 text-xs rounded-full">
+                                {segment}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedProductDetail.usage && (
+                        <div className="p-3 bg-slate-950/30 border border-slate-800/60 rounded-lg">
+                          <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Details</h4>
                           <p className="text-xs text-slate-400 leading-relaxed">{selectedProductDetail.usage}</p>
                         </div>
                       )}

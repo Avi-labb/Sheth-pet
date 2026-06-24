@@ -1,0 +1,5 @@
+Name,SKU,Category,Colors,MOQ_Amber,MOQ_Clear,MOQ_Opaque_White,MOQ_Opaque_Black,Neck_Size,Neck_Profile,Volume,OFC,Weight,Height,Diameter,Pilfer,Length,Cap_Type,Usage,Market_Segments,Image_Amber,Image_Clear,Image_Opaque_White,Image_Opaque_Black
+500ml PET Bottle,BOTTLE-001,Bottles,"Amber,Clear",2000,1000,,,28mm,PCO 1881,500ml,38mm,20g,250mm,100mm,,,Screw Cap,Beverages,"Food & Beverages,Pharmaceutical",500ml-amber-bottle.jpg,500ml-clear-bottle.jpg,,
+250ml Cosmetic Jar,JAR-001,Jars,"Opaque White,Opaque Black",,3000,,2500,38mm,Lug,250ml,,30g,150mm,100mm,,,Flip Top,Cosmetics,"Personal Care,Home Care",,250ml-white-jar.jpg,,250ml-black-jar.jpg
+1000g Preform,PREFORM-001,Preforms,Clear,,800,,,,48mm,PCO 1810,,,,,,200mm,25g,,,,1000g-preform.jpg,,
+Child Resistant Cap,CAP-001,Caps,Opaque Black,,,,2000,28mm,PCO 1881,,,,Yes,20mm,5g,,,Snap Cap,Pharmaceutical,,,,child-resistant-cap.jpg

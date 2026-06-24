@@ -115,6 +115,40 @@ export const productAPI = {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   },
+
+  updateProduct: async (id, formData) => {
+    try {
+      console.log('updateProduct called with id:', id);
+      console.log('FormData contents:');
+      for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}:`, value);
+      }
+      const response = await fetch(`${PRODUCT_API_BASE_URL}/update-product/${id}`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      const data = await response.json();
+      console.log('updateProduct response:', data);
+      return { ok: response.ok, data };
+    } catch (error) {
+      console.error('updateProduct error:', error);
+      return { ok: false, data: { message: "Network error. Please try again." } };
+    }
+  },
+
+  deleteProduct: async (id) => {
+    try {
+      const response = await fetch(`${PRODUCT_API_BASE_URL}/delete-product/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = await response.json();
+      return { ok: response.ok, data };
+    } catch (error) {
+      return { ok: false, data: { message: "Network error. Please try again." } };
+    }
+  }
 };
 
 export default apiRequest;

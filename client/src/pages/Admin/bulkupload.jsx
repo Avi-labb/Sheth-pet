@@ -13,10 +13,17 @@ const BulkUpload = () => {
   const [status, setStatus] = useState('idle'); // 'idle' | 'uploading' | 'success' | 'error'
   const [message, setMessage] = useState('');
   const [uploadStats, setUploadStats] = useState(null);
+  const [debugInfo, setDebugInfo] = useState([]); // For debug messages
+  const [showDebugPanel, setShowDebugPanel] = useState(false); // Toggle debug panel
   const fileInputRef = useRef(null);
   const imagesInputRef = useRef(null);
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, logout } = useAuth();
+  
+  const addDebugLog = (msg) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setDebugInfo(prev => [...prev, `[${timestamp}] ${msg}`]);
+  };
   
   const handleLogout = () => {
     logout();
@@ -26,6 +33,7 @@ const BulkUpload = () => {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
+      addDebugLog(`Selected spreadsheet file: ${file.name} (${Math.round(file.size / 1024)} KB)`);
       const validTypes = [
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'text/csv',
@@ -38,6 +46,7 @@ const BulkUpload = () => {
       if (!isValid) {
         setMessage('Please select a CSV or Excel file (.csv, .xlsx)');
         setStatus('error');
+        addDebugLog('ERROR: Invalid file type!');
         return;
       }
       setSelectedFile(file);
@@ -52,25 +61,37 @@ const BulkUpload = () => {
     setUploading(true);
     setStatus('uploading');
     setMessage('Processing file...');
+    addDebugLog('Starting upload process...');
     
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
+      addDebugLog(`Added spreadsheet file: ${selectedFile.name}`);
       
-      selectedImages.forEach(image => {
+      addDebugLog(`Adding ${selectedImages.length} image(s) to FormData:`);
+      selectedImages.forEach((image, i) => {
+        addDebugLog(`  [${i}] Image name: "${image.name}"`);
         formData.append('images', image);
       });
       
+      addDebugLog('Sending bulk upload request to API...');
       const result = await productAPI.bulkUploadProducts(formData);
+      addDebugLog(`API response - ok: ${result.ok}`);
+      addDebugLog(`API data: ${JSON.stringify(result.data)}`);
+      
       if (result.ok) {
         setUploadStats(result.data);
         setStatus('success');
         setMessage(`Success! Imported ${result.data.imported}, Updated ${result.data.updated}, Failed ${result.data.failed}`);
+        addDebugLog('Upload successful!');
       } else {
         setStatus('error');
         setMessage(result.data.message || 'Upload failed');
+        addDebugLog(`Upload failed: ${result.data.message}`);
       }
     } catch (error) {
+      addDebugLog(`Upload error: ${error.message}`);
+      console.error('[DEBUG] Upload error:', error);
       setStatus('error');
       setMessage('Upload failed');
     }
@@ -80,6 +101,7 @@ const BulkUpload = () => {
   const handleImagesSelect = (e) => {
     const files = Array.from(e.target.files);
     setSelectedImages(files);
+    addDebugLog(`Selected ${files.length} image(s)`);
 
     // Generate previews
     const previews = files.map(file => URL.createObjectURL(file));
@@ -89,6 +111,7 @@ const BulkUpload = () => {
   };
 
   const handleReset = () => {
+    addDebugLog('Resetting form...');
     setSelectedFile(null);
     setSelectedImages([]);
     setImagePreviews([]);
@@ -104,7 +127,12 @@ const BulkUpload = () => {
   };
 
   const downloadTemplate = () => {
-    const csvContent = "Name,SKU,Category,Color,Size,MOQ_Packaging,Cap_Type,Usage,Key_Specs,Image_Filename\nPET Bottle 500ml,PET-001,Bottles,Clear,500ml,1000,Screw Cap,Water,BPA Free,";
+    const csvContent = 
+`Name,SKU,Category,Colors,MOQ_Amber,MOQ_Clear,MOQ_Opaque_White,MOQ_Opaque_Black,Neck_Size,Neck_Profile,Volume,OFC,Weight,Height,Diameter,Pilfer,Length,Cap_Type,Usage,Market_Segments,Image_Amber,Image_Clear,Image_Opaque_White,Image_Opaque_Black
+500ml PET Bottle,BOTTLE-001,Bottles,"Amber,Clear",2000,1000,,,28mm,PCO 1881,500ml,38mm,20g,250mm,100mm,,,Screw Cap,Beverages,"Food & Beverages,Pharmaceutical",500ml-amber-bottle.jpg,500ml-clear-bottle.jpg,,
+250ml Cosmetic Jar,JAR-001,Jars,"Opaque White,Opaque Black",,3000,,2500,38mm,Lug,250ml,,30g,150mm,100mm,,,Flip Top,Cosmetics,"Personal Care,Home Care",,,250ml-white-jar.jpg,250ml-black-jar.jpg
+1000g Preform,PREFORM-001,Preforms,"Clear",,800,,,,48mm,PCO 1810,,,,,,200mm,25g,,Screw Cap,Industrial,Industrial,,1000g-preform.jpg,,
+Child Resistant Cap,CAP-001,Caps,"Opaque Black",,,,,28mm,PCO 1881,,,,Yes,20mm,5g,,,Snap Cap,Pharmaceutical,Pharmaceutical,,,child-resistant-cap.jpg`;
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -148,14 +176,42 @@ const BulkUpload = () => {
             </div>
           </div>
           
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-neutral-950 border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900 rounded-lg transition-all text-xs font-medium tracking-wider uppercase text-neutral-300"
-          >
-            <LogOut size={16} />
-            Log Out
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowDebugPanel(!showDebugPanel)}
+              className="flex items-center gap-2 px-4 py-2 bg-neutral-900 border border-neutral-700 hover:border-neutral-600 hover:bg-neutral-800 rounded-lg transition-all text-xs font-medium tracking-wider uppercase text-neutral-300"
+            >
+              {showDebugPanel ? 'Hide Debug' : 'Show Debug'}
+            </button>
+            
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-neutral-950 border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900 rounded-lg transition-all text-xs font-medium tracking-wider uppercase text-neutral-300"
+            >
+              <LogOut size={16} />
+              Log Out
+            </button>
+          </div>
         </div>
+        
+        {/* Debug Panel */}
+        {showDebugPanel && (
+          <div className="mb-6 bg-neutral-900 border border-neutral-700 rounded-xl p-4">
+            <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-yellow-500" />
+              Debug Console
+            </h3>
+            <div className="bg-black border border-neutral-700 rounded-lg p-3 h-48 overflow-y-auto font-mono text-[10px]">
+              {debugInfo.length === 0 ? (
+                <p className="text-neutral-600">No debug messages yet... Do an upload to see logs!</p>
+              ) : (
+                debugInfo.map((msg, i) => (
+                  <p key={i} className="mb-1 text-neutral-300">{msg}</p>
+                ))
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Upload Cards */}
@@ -355,7 +411,19 @@ const BulkUpload = () => {
               <ul className="space-y-3 text-sm text-neutral-500">
                 <li className="flex gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-neutral-600 mt-2 shrink-0" />
-                  Your file must include columns: Name, SKU, Category, Color, Size
+                  Your file must include columns: Name, SKU, Category
+                </li>
+                <li className="flex gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-neutral-600 mt-2 shrink-0" />
+                  Colors: comma-separated (e.g., "Amber,Clear")
+                </li>
+                <li className="flex gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-neutral-600 mt-2 shrink-0" />
+                  MOQ per color: use respective columns
+                </li>
+                <li className="flex gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-neutral-600 mt-2 shrink-0" />
+                  Category-based fields: Volume, Neck Size (Bottles/Jars), Weight (Preforms)
                 </li>
                 <li className="flex gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-neutral-600 mt-2 shrink-0" />

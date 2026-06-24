@@ -33,6 +33,12 @@ app.use(
 
 app.use(cookieParser());
 
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 // Static uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -42,6 +48,19 @@ connectDB();
 // API Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRouter);
+
+// Global error handler - this will catch any errors from middleware or routes
+app.use((error, req, res, next) => {
+  console.error('\n❌ UNHANDLED ERROR ❌');
+  console.error('Error message:', error.message);
+  console.error('Error stack:', error.stack);
+  console.error('❌ END OF ERROR ❌\n');
+  res.status(500).json({
+    success: false,
+    message: error.message,
+    stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+  });
+});
 
 // Test Route
 app.get("/test", (req, res) => {

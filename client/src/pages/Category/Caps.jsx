@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Package, ChevronRight, X, Box, Layers, Settings } from 'lucide-react'
+import { Package, ChevronRight, X, Box, Layers, Settings, Circle } from 'lucide-react'
 import { productAPI } from '../../services/api'
 
 const Caps = () => {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
   const [selectedProductDetail, setSelectedProductDetail] = useState(null)
+  const [selectedColor, setSelectedColor] = useState(null)
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -24,6 +25,40 @@ const Caps = () => {
     
     fetchProducts()
   }, [])
+
+  const getProductImage = (product, color = null) => {
+    // First try to get color-specific image
+    if (color && product.images && product.images[color]) {
+      return `http://localhost:5000/uploads/${product.images[color]}`
+    }
+    // Fallback to main image
+    if (product.image) {
+      return `http://localhost:5000/uploads/${product.image}`
+    }
+    return null
+  }
+
+  const getProductColors = (product) => {
+    return Array.isArray(product.color) ? product.color : (product.color ? [product.color] : [])
+  }
+
+  const getMoqForColor = (product, color) => {
+    if (!product.moqPackaging) return ''
+    if (typeof product.moqPackaging === 'object' && product.moqPackaging[color]) {
+      return product.moqPackaging[color]
+    }
+    if (typeof product.moqPackaging === 'string') {
+      return product.moqPackaging
+    }
+    return ''
+  }
+
+  useEffect(() => {
+    if (selectedProductDetail) {
+      const colors = getProductColors(selectedProductDetail)
+      setSelectedColor(colors.length > 0 ? colors[0] : null)
+    }
+  }, [selectedProductDetail])
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -64,7 +99,11 @@ const Caps = () => {
             </div>
           ) : products.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product, index) => (
+              {products.map((product, index) => {
+                const colors = getProductColors(product)
+                const firstColor = colors.length > 0 ? colors[0] : null
+                const productImage = getProductImage(product, firstColor)
+                return (
                 <motion.div
                   key={product._id}
                   className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden cursor-pointer group"
@@ -77,10 +116,9 @@ const Caps = () => {
                 >
                   <div className="p-8">
                     <div className="w-16 h-16 mb-6 flex items-center justify-center bg-red-600/10 text-red-500 border border-red-500/20 rounded-xl group-hover:bg-red-600 group-hover:text-white transition-all duration-200 overflow-hidden">
-                      {product.image ? (
+                      {productImage ? (
                         <img 
-                          //src={`http://localhost:5000/uploads/${product.image}`} 
-                          src={`/uploads/${product.image}`} 
+                          src={productImage} 
                           alt={product.name} 
                           className="w-full h-full object-cover"
                         />
@@ -99,6 +137,27 @@ const Caps = () => {
                     {product.sku && (
                       <p className="text-slate-500 text-xs font-mono mb-4">{product.sku}</p>
                     )}
+                    
+                    {/* Color dots */}
+                    {colors.length > 0 && (
+                      <div className="flex gap-2 mb-4">
+                        {colors.map((color) => (
+                          <div 
+                            key={color}
+                            className="w-4 h-4 rounded-full border border-slate-700"
+                            style={{
+                              backgroundColor: 
+                                color.toLowerCase().includes('amber') ? '#f59e0b' :
+                                color.toLowerCase().includes('clear') ? '#e0e7ff' :
+                                color.toLowerCase().includes('white') ? '#ffffff' :
+                                color.toLowerCase().includes('black') ? '#171717' : '#64748b'
+                            }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    )}
+                    
                     <p className="text-sm text-slate-400 leading-relaxed mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>
                       {product.keySpecs || product.description || 'Premium quality packaging solution'}
                     </p>
@@ -107,7 +166,7 @@ const Caps = () => {
                     </div>
                   </div>
                 </motion.div>
-              ))}
+              )})}
             </div>
           ) : (
             <div className="text-center py-20">
@@ -161,11 +220,10 @@ const Caps = () => {
                   <div className="absolute bottom-0 left-0 w-32 h-32 bg-orange-600/10 rounded-full blur-2xl" />
                   
                   <div className="relative">
-                    <div className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-8 flex items-center justify-center bg-gradient-to-br from-red-600/20 to-red-600/5 border border-red-500/20 rounded-3xl overflow-hidden">
-                      {selectedProductDetail.image ? (
+                    <div className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-6 flex items-center justify-center bg-gradient-to-br from-red-600/20 to-red-600/5 border border-red-500/20 rounded-3xl overflow-hidden">
+                      {getProductImage(selectedProductDetail, selectedColor) ? (
                         <img
-                         // src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
-                          src={`/uploads/${selectedProductDetail.image}`}
+                          src={getProductImage(selectedProductDetail, selectedColor)}
                           alt={selectedProductDetail.name}
                           className="w-full h-full object-cover"
                         />
@@ -173,6 +231,27 @@ const Caps = () => {
                         <Package size={64} className="text-red-500" />
                       )}
                     </div>
+                    
+                    {/* Color Selector */}
+                    {getProductColors(selectedProductDetail).length > 0 && (
+                      <div className="flex justify-center gap-3 mb-6">
+                        {getProductColors(selectedProductDetail).map((color) => (
+                          <button
+                            key={color}
+                            onClick={() => setSelectedColor(color)}
+                            className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === color ? 'border-white scale-110' : 'border-slate-600 hover:border-slate-400'}`}
+                            style={{
+                              backgroundColor: 
+                                color.toLowerCase().includes('amber') ? '#f59e0b' :
+                                color.toLowerCase().includes('clear') ? '#e0e7ff' :
+                                color.toLowerCase().includes('white') ? '#ffffff' :
+                                color.toLowerCase().includes('black') ? '#171717' : '#64748b'
+                            }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    )}
                     
                     <div className="text-center">
                       {selectedProductDetail.category && (
@@ -205,29 +284,27 @@ const Caps = () => {
 
                     {/* Specifications Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {selectedProductDetail.color && (
-                        <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
-                              <div className="w-3 h-3 rounded-full bg-slate-400" />
-                            </div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Color</p>
+                      {/* Selected Color */}
+                      <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
+                            <Circle size={14} className="text-slate-400 fill-slate-400" />
                           </div>
-                          <p className="text-slate-200 font-medium">{selectedProductDetail.color}</p>
+                          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Color</p>
                         </div>
-                      )}
+                        <p className="text-slate-200 font-medium">{selectedColor || '-'}</p>
+                      </div>
                       
-                      {selectedProductDetail.size && (
-                        <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
-                              <Box size={14} className="text-slate-400" />
-                            </div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Size</p>
+                      {/* MOQ for selected color */}
+                      <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
+                            <Layers size={14} className="text-slate-400" />
                           </div>
-                          <p className="text-slate-200 font-medium">{selectedProductDetail.size}</p>
+                          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">MOQ</p>
                         </div>
-                      )}
+                        <p className="text-slate-200 font-medium">{getMoqForColor(selectedProductDetail, selectedColor) || '-'}</p>
+                      </div>
                       
                       {selectedProductDetail.capType && (
                         <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
@@ -241,23 +318,85 @@ const Caps = () => {
                         </div>
                       )}
                       
-                      {selectedProductDetail.moqPackaging && (
+                      {selectedProductDetail.neckSize && (
                         <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
                           <div className="flex items-center gap-3 mb-2">
                             <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
-                              <Layers size={14} className="text-slate-400" />
+                              <Box size={14} className="text-slate-400" />
                             </div>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">MOQ</p>
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Neck Size</p>
                           </div>
-                          <p className="text-slate-200 font-medium">{selectedProductDetail.moqPackaging}</p>
+                          <p className="text-slate-200 font-medium">{selectedProductDetail.neckSize}</p>
+                        </div>
+                      )}
+                      
+                      {selectedProductDetail.neckProfile && (
+                        <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
+                              <Box size={14} className="text-slate-400" />
+                            </div>
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Neck Profile</p>
+                          </div>
+                          <p className="text-slate-200 font-medium">{selectedProductDetail.neckProfile}</p>
+                        </div>
+                      )}
+                      
+                      {selectedProductDetail.pilfer && (
+                        <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
+                              <Settings size={14} className="text-slate-400" />
+                            </div>
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Pilfer</p>
+                          </div>
+                          <p className="text-slate-200 font-medium">{selectedProductDetail.pilfer}</p>
+                        </div>
+                      )}
+                      
+                      {selectedProductDetail.height && (
+                        <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
+                              <Box size={14} className="text-slate-400" />
+                            </div>
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Height</p>
+                          </div>
+                          <p className="text-slate-200 font-medium">{selectedProductDetail.height}</p>
+                        </div>
+                      )}
+                      
+                      {selectedProductDetail.weight && (
+                        <div className="p-5 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
+                              <Box size={14} className="text-slate-400" />
+                            </div>
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Weight</p>
+                          </div>
+                          <p className="text-slate-200 font-medium">{selectedProductDetail.weight}</p>
                         </div>
                       )}
                     </div>
 
+                    {/* Market Segments */}
+                    {selectedProductDetail.marketSegments && selectedProductDetail.marketSegments.length > 0 && (
+                      <div className="p-5 bg-gradient-to-r from-slate-900 to-slate-900/50 border border-slate-800 rounded-xl">
+                        <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Applications</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedProductDetail.marketSegments.map((segment, idx) => (
+                            <span key={idx} className="px-3 py-1 bg-slate-800 text-slate-300 text-xs rounded-full">
+                              {segment}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
                     {/* Usage */}
                     {selectedProductDetail.usage && (
                       <div className="p-5 bg-gradient-to-r from-slate-900 to-slate-900/50 border border-slate-800 rounded-xl">
-                        <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Applications</h4>
+                        <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Details</h4>
                         <p className="text-slate-300">{selectedProductDetail.usage}</p>
                       </div>
                     )}

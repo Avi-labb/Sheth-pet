@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, ChevronRight, ChevronDown } from 'lucide-react'
+import { Menu, X, ChevronRight, ChevronDown, Sun, Moon } from 'lucide-react'
 import { productAPI } from '../../services/api'
 import logo from '../../assets/images/radhe-logo.png'
+import { useTheme } from '../../contexts/ThemeContext'
 
 const navItems = [
   { name: 'Manufacturing', path: '/manufacturing' },
@@ -34,6 +35,10 @@ const Header = ({ onCategorySelect }) => {
   const [showDropdown, setShowDropdown] = useState(false)
   const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms'])
   const location = useLocation()
+  const { theme, toggleTheme } = useTheme()
+  
+  // Don't show toggle on admin routes
+  const isAdminRoute = location.pathname.startsWith('/admin')
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -52,14 +57,24 @@ const Header = ({ onCategorySelect }) => {
 
   return (
     <nav
-      className={'fixed py-10 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 bg-slate-950/80 backdrop-blur-md border-slate-800/60 h-16 shadow-lg shadow-black/20'}
-    >
+        className={`fixed py-10 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 backdrop-blur-xl h-16 shadow-lg ${
+          theme === 'light' 
+            ? 'bg-white/80 border-slate-200 shadow-gray-200/20' 
+            : 'bg-slate-900/80 border-slate-800 shadow-black/20'
+        }`}
+      >
       <div className="max-w-8xl mx-auto px-5 sm:px-10 h-full flex items-center justify-between">
 
         {/* Brand Logo Wrapper (Left Aligned) */}
         <Link
           to="/"
-          onClick={() => onCategorySelect && onCategorySelect(null)}
+          onClick={(e) => {
+            e.preventDefault()
+            if (onCategorySelect) {
+              onCategorySelect(null)
+            }
+            window.location.href = '/'
+          }}
           className="flex items-center gap-3 group focus:outline-none z-50"
         >
           <div className="w-25 h-25 shrink-0 transition-transform duration-300 group-hover:scale-105">
@@ -70,10 +85,14 @@ const Header = ({ onCategorySelect }) => {
             />
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 leading-tight text-center">
-            <span className="text-lg sm:text-lg font-bold tracking-wider text-white">
+            <span className={`text-lg sm:text-lg font-bold tracking-wider ${
+              theme === 'light' ? 'text-slate-900' : 'text-white'
+            }`}>
               SHETH
             </span>
-            <span className="text-xs sm:text-sm font-medium text-slate-300 uppercase tracking-wider">
+            <span className={`text-xs sm:text-sm font-medium uppercase tracking-wider ${
+              theme === 'light' ? 'text-slate-600' : 'text-slate-400'
+            }`}>
               Pet & Polymers
             </span>
           </div>
@@ -88,7 +107,11 @@ const Header = ({ onCategorySelect }) => {
             onMouseLeave={() => setShowDropdown(false)}
           >
             <button
-              className="relative px-3 py-2 text-[13px] font-medium tracking-wide text-slate-200 transition-colors duration-300 rounded-lg hover:text-white group flex items-center gap-1"
+              className={`relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group flex items-center gap-1 ${
+                theme === 'light' 
+                  ? 'text-slate-700 hover:text-slate-900' 
+                  : 'text-slate-300 hover:text-white'
+              }`}
             >
               <span className="relative uppercase z-10">Products</span>
               <ChevronDown
@@ -104,16 +127,23 @@ const Header = ({ onCategorySelect }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 15 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-4
-                             bg-slate-950 border border-slate-800
+                  className={`absolute top-full left-1/2 -translate-x-1/2 mt-4
                              rounded-2xl shadow-2xl
-                             min-w-[650px] overflow-hidden"
+                             min-w-[650px] overflow-hidden ${
+                               theme === 'light' 
+                                 ? 'bg-white border border-slate-200' 
+                                 : 'bg-slate-900 border border-slate-800'
+                             }`}
                 >
                   <div className="grid grid-cols-2 gap-10 p-8">
 
                     {/* Function (Industries) */}
                     <div>
-                      <h3 className="text-white font-semibold text-lg mb-4 border-b border-slate-800 pb-2">
+                      <h3 className={`font-semibold text-lg mb-4 border-b pb-2 ${
+                        theme === 'light' 
+                          ? 'text-slate-900 border-slate-200' 
+                          : 'text-white border-slate-800'
+                      }`}>
                         By Industry
                       </h3>
 
@@ -123,7 +153,11 @@ const Header = ({ onCategorySelect }) => {
                             key={item}
                             to={`/industries`}
                             onClick={() => setShowDropdown(false)}
-                            className="text-slate-400 hover:text-white transition-colors py-1"
+                            className={`transition-colors py-1 ${
+                              theme === 'light' 
+                                ? 'text-slate-600 hover:text-slate-900' 
+                                : 'text-slate-400 hover:text-white'
+                            }`}
                           >
                             {item}
                           </Link>
@@ -133,7 +167,11 @@ const Header = ({ onCategorySelect }) => {
 
                     {/* Type (Product Categories) */}
                     <div>
-                      <h3 className="text-white font-semibold text-lg mb-4 border-b border-slate-800 pb-2">
+                      <h3 className={`font-semibold text-lg mb-4 border-b pb-2 ${
+                        theme === 'light' 
+                          ? 'text-slate-900 border-slate-200' 
+                          : 'text-white border-slate-800'
+                      }`}>
                         By Type
                       </h3>
 
@@ -143,7 +181,11 @@ const Header = ({ onCategorySelect }) => {
                             key={item}
                             to={`/products/${encodeURIComponent(item.toLowerCase())}`}
                             onClick={() => setShowDropdown(false)}
-                            className="text-slate-400 hover:text-white transition-colors py-1"
+                            className={`transition-colors py-1 ${
+                              theme === 'light' 
+                                ? 'text-slate-600 hover:text-slate-900' 
+                                : 'text-slate-400 hover:text-white'
+                            }`}
                           >
                             {item}
                           </Link>
@@ -153,11 +195,19 @@ const Header = ({ onCategorySelect }) => {
                   </div>
 
                   {/* Bottom Button */}
-                  <div className="border-t border-slate-800 p-4 bg-slate-900/50">
+                  <div className={`border-t p-4 ${
+                    theme === 'light' 
+                      ? 'border-slate-200 bg-slate-50/50' 
+                      : 'border-slate-800 bg-slate-800/50'
+                  }`}>
                     <Link
                       to="/products"
                       onClick={() => setShowDropdown(false)}
-                      className="block text-center text-white font-medium hover:text-slate-300 transition-colors"
+                      className={`block text-center font-medium transition-colors ${
+                        theme === 'light' 
+                          ? 'text-slate-900 hover:text-slate-700' 
+                          : 'text-white hover:text-slate-300'
+                      }`}
                     >
                       View All Products →
                     </Link>
@@ -173,7 +223,11 @@ const Header = ({ onCategorySelect }) => {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`relative px-3 py-2 text-[13px] font-medium tracking-wide text-slate-200 transition-colors duration-300 rounded-lg hover:text-white group`}
+                className={`relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group ${
+                  theme === 'light' 
+                    ? 'text-slate-700 hover:text-slate-900' 
+                    : 'text-slate-300 hover:text-white'
+                }`}
               >
                 <span className="relative uppercase z-10">{item.name}</span>
 
@@ -181,52 +235,100 @@ const Header = ({ onCategorySelect }) => {
                 {isActive && (
                   <motion.div
                     layoutId="activeTabCapsule"
-                    className="absolute inset-0 bg-white/10 border border-white/10 rounded-lg z-0"
+                    className={`absolute inset-0 border rounded-lg z-0 ${
+                      theme === 'light' 
+                        ? 'bg-slate-900/10 border-slate-900/10' 
+                        : 'bg-white/10 border-white/10'
+                    }`}
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
 
                 {/* Hover Indicator Line */}
                 {!isActive && (
-                  <span className="absolute bottom-0 left-4 right-4 h-[1px] bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
+                  <span className={`absolute bottom-0 left-4 right-4 h-[1px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center ${
+                    theme === 'light' ? 'bg-slate-900' : 'bg-white'
+                  }`} />
                 )}
               </Link>
             )
           })}
         </div>
 
-        {/* Right Action Enquire CTA Button */}
-        <div className="hidden lg:flex items-center">
+        {/* Right side: Theme toggle + Enquire CTA */}
+        <div className="hidden lg:flex items-center gap-4">
+          {/* Theme Toggle Button */}
+          {!isAdminRoute && (
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-full transition-all duration-200 border ${
+                theme === 'light' 
+                  ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200' 
+                  : 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
+              }`}
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+            </button>
+          )}
+          
+          {/* Enquire CTA Button */}
           <Link
             to="/contact"
-            className="px-6 py-2.5 text-xs font-semibold tracking-widest text-white uppercase border border-white/30 rounded-full bg-white/5 hover:bg-white hover:text-slate-950 hover:border-white transition-all duration-300 shadow-inner"
+            className="px-6 py-2.5 text-xs font-semibold tracking-widest text-white uppercase border border-teal-600 rounded-full bg-teal-600 hover:bg-teal-700 hover:text-white transition-all duration-300 shadow-md"
           >
             Enquire
           </Link>
         </div>
 
-        {/* Mobile Toggle Trigger Button */}
-        <button
-          className="lg:hidden relative z-50 p-2 rounded-full border-0 bg-white/5 backdrop-blur-md text-white border border-white/10 hover:bg-white/20 transition-colors focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle Menu"
-        >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        {/* Mobile Toggle Trigger Button + Theme Toggle (mobile) */}
+        <div className="flex items-center gap-2 lg:hidden">
+          {/* Mobile Theme Toggle */}
+          {!isAdminRoute && (
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-full transition-all duration-200 border ${
+                theme === 'light' 
+                  ? 'bg-slate-100 border-slate-200 text-slate-900' 
+                  : 'bg-slate-800 border-slate-700 text-white'
+              }`}
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+            </button>
+          )}
+          
+          {/* Mobile Menu Toggle */}
+          <button
+            className={`relative z-50 p-2 rounded-full transition-all duration-200 border ${
+              theme === 'light' 
+                ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200' 
+                : 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
+            }`}
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle Menu"
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Drawer Overlay Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 top-0 left-0 w-full h-screen bg-slate-950/60 backdrop-blur-lg lg:hidden z-40"
+            className={`fixed inset-0 top-0 left-0 w-full h-screen backdrop-blur-lg lg:hidden z-40 ${
+              theme === 'light' ? 'bg-slate-900/40' : 'bg-black/40'
+            }`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
           >
             <motion.div
-              className="absolute right-0 top-0 h-full w-full max-w-xs bg-slate-950/95 border-l border-slate-800/80 shadow-2xl flex flex-col pt-24 pb-8 px-6 gap-2"
+              className={`absolute right-0 top-0 h-full w-full max-w-xs border-l shadow-2xl flex flex-col pt-24 pb-8 px-6 gap-2 ${
+                theme === 'light' ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'
+              }`}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -234,24 +336,36 @@ const Header = ({ onCategorySelect }) => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Products Section */}
-              <div className="border-b border-slate-900 pb-3 mb-2">
+              <div className={`border-b pb-3 mb-2 ${
+                theme === 'light' ? 'border-slate-200' : 'border-slate-800'
+              }`}>
                 <Link
                   to="/products"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide text-white"
+                  className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide ${
+                    theme === 'light' ? 'text-slate-900' : 'text-white'
+                  }`}
                 >
                   All Products
-                  <ChevronRight size={14} className="text-slate-600" />
+                  <ChevronRight size={14} className={
+                    theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                  } />
                 </Link>
                 {typeCategories.map((category) => (
                   <Link
                     key={category}
                     to={`/products/${encodeURIComponent(category.toLowerCase())}`}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-between w-full px-4 py-2 pl-8 rounded-xl text-sm font-medium tracking-wide text-slate-400 hover:text-white"
+                    className={`flex items-center justify-between w-full px-4 py-2 pl-8 rounded-xl text-sm font-medium tracking-wide transition-colors ${
+                      theme === 'light' 
+                        ? 'text-slate-600 hover:text-slate-900' 
+                        : 'text-slate-400 hover:text-white'
+                    }`}
                   >
                     {category}
-                    <ChevronRight size={14} className="text-slate-600" />
+                    <ChevronRight size={14} className={
+                      theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                    } />
                   </Link>
                 ))}
               </div>
@@ -264,22 +378,32 @@ const Header = ({ onCategorySelect }) => {
                     to={item.path}
                     className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200
                       ${isActive
-                        ? 'text-white bg-white/10 border border-white/10'
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        ? (theme === 'light'
+                          ? 'text-slate-900 bg-slate-100 border border-slate-200' 
+                          : 'text-white bg-slate-800 border border-slate-700')
+                        : (theme === 'light' 
+                          ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-50' 
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800')
                       }`}
                     onClick={() => setIsOpen(false)}
                   >
                     <span>{item.name}</span>
-                    <ChevronRight size={14} className={isActive ? 'text-white' : 'text-slate-600'} />
+                    <ChevronRight size={14} className={
+                      isActive 
+                        ? (theme === 'light' ? 'text-slate-900' : 'text-white') 
+                        : (theme === 'light' ? 'text-slate-400' : 'text-slate-500')
+                    } />
                   </Link>
                 )
               })}
 
               {/* Mobile Enquire CTA placement */}
-              <div className="mt-auto pt-6 border-t border-slate-900">
+              <div className={`mt-auto pt-6 border-t ${
+                theme === 'light' ? 'border-slate-200' : 'border-slate-800'
+              }`}>
                 <Link
                   to="/contact"
-                  className="flex items-center justify-center w-full py-3 text-xs font-bold uppercase tracking-widest text-slate-950 bg-white rounded-xl hover:bg-slate-200 transition-colors"
+                  className="flex items-center justify-center w-full py-3 text-xs font-bold uppercase tracking-widest text-white bg-teal-600 rounded-xl hover:bg-teal-700 transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   Enquire

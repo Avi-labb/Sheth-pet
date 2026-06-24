@@ -125,8 +125,8 @@ const CategoryPage = () => {
                     <div className="relative aspect-[4/3] bg-slate-50 border-b border-slate-400/60 flex items-center justify-center overflow-hidden  transition-colors duration-300">
                       {product.image ? (
                         <img
-                          //src={`http://localhost:5000/uploads/${product.image}`}
-                          src={`/uploads/${product.image}`}
+                          src={`http://localhost:5000/uploads/${product.image}`}
+                          //src={`/uploads/${product.image}`}
                           alt={product.name}
                           className="w-full h-full object-contain p-6 md:p-8 transform group-hover:scale-105 transition-transform duration-500 ease-out"
                         />
@@ -237,8 +237,8 @@ const CategoryPage = () => {
                     <div className="w-full aspect-square max-w-[150px] lg:max-w-[450px]  flex items-center justify-center">
                       {selectedProductDetail.image ? (
                         <img
-                         // src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
-                          src={`/uploads/${selectedProductDetail.image}`}
+                          src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
+                         // src={`/uploads/${selectedProductDetail.image}`}
                           alt={selectedProductDetail.name}
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-500 object-center max-h-[400px] "
                         />

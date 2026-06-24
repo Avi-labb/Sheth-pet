@@ -9,6 +9,8 @@ import { productAPI } from '../../services/api'
 import { Link } from 'react-router-dom'
 
 import Header from '../../components/Header/Header'
+import NewProductPopup from '../../components/NewProductPopup'
+import { useTheme } from '../../contexts/ThemeContext'
 
 // Import client logos
 import Abhay from '../../assets/images/images/ABHAY.png'
@@ -26,15 +28,11 @@ import Soulflower from '../../assets/images/images/SOULFLOWER.png'
 import Tiger from '../../assets/images/images/TIGER.png'
 
 const Home = () => {
-
+  const { theme } = useTheme()
   const [products, setProducts] = useState([])
-
   const [loadingProducts, setLoadingProducts] = useState(false)
-
   const [selectedProduct, setSelectedProduct] = useState(null)
-
   const [selectedCategory, setSelectedCategory] = useState(null)
-
   const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms'])
 
 
@@ -209,9 +207,10 @@ const Home = () => {
   ];
   const displayProducts = products.length > 0 ? products : fallbackProducts;
   return (
-    <div className="bg-slate-950 text-slate-100 overflow-hidden min-h-screen">
+    <div className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden min-h-screen">
+      <NewProductPopup />
       <Header />
-      <section className="relative min-h-screen flex flex-col justify-between lg:justify-end overflow-hidden bg-slate-950">
+      <section className="relative min-h-screen flex flex-col justify-between lg:justify-end overflow-hidden bg-white dark:bg-slate-950">
 
         {/* Floating 3D Shapes - Only on larger screens */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -310,7 +309,7 @@ const Home = () => {
 
      
       {/* ================= ABOUT SECTION ================= */}
-<section className="py-16 md:py-24 lg:py-32 bg-white/95 border-y border-slate-200">
+<section className="py-16 md:py-24 lg:py-32 bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
         
         <motion.div
@@ -325,7 +324,7 @@ const Home = () => {
             - Mobile: p-6 (Compact padding)
             - Tablet/Desktop: md:p-12 lg:p-16 (Deep, premium padding)
           */}
-          <div className="rounded-2xl p-6 md:p-12 lg:p-16 shadow-xl md:shadow-2xl bg-white border border-[#E6E1D6]">
+          <div className="rounded-2xl p-6 md:p-12 lg:p-16 shadow-xl md:shadow-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
             
             {/* 
               GRID CONTROLLER: 
@@ -818,8 +817,7 @@ const Home = () => {
 
                         <img
 
-                          //src={`http://localhost:5000/uploads/${selectedProduct.image}`}
-                          src={`/uploads/${selectedProduct.image}`}
+                          src={`http://localhost:5000/uploads/${selectedProduct.image}`}
 
                           alt={selectedProduct.name || selectedProduct.title}
 
