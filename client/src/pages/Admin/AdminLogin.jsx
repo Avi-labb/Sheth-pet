@@ -69,7 +69,7 @@ const AdminLogin = () => {
     setIsLoading(false);
     if (result.ok) {
       login(result.data.token);
-      navigate('/dashboard');
+      navigate('/admin/dashboard');
     } else {
       setMessage(result.data.message || 'Identity verification rejected');
       setMessageType('error');

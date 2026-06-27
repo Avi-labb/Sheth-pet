@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Package, ChevronRight, X, Box, Layers, Settings, Filter } from 'lucide-react'
+import { Package, ChevronRight, Filter, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../services/api'
-import { useTheme } from '../contexts/ThemeContext'
 import Header from '../components/Header/Header'
 
 const Products = () => {
-  const { theme } = useTheme()
   const navigate = useNavigate()
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [products, setProducts] = useState([])
@@ -17,50 +15,42 @@ const Products = () => {
 
   const getProductImage = (product, color = null) => {
     if (color && product.images) {
-      // Try exact match first
       if (product.images[color]) {
-        //return `http://localhost:5000/uploads/${product.images[color]}`
+       // return `http://localhost:5000/uploads/${product.images[color]}`
         return `/uploads/${product.images[color]}`
       }
-      // Try case-insensitive match
       const colorLower = color.toLowerCase()
       const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
       if (matchingKey) {
-        // return `http://localhost:5000/uploads/${product.images[matchingKey]}`
+       // return `http://localhost:5000/uploads/${product.images[matchingKey]}`
         return `/uploads/${product.images[matchingKey]}`
       }
     }
-    // Fallback to first image if we have images but no color match
     if (product.images && Object.keys(product.images).length > 0) {
       const firstKey = Object.keys(product.images)[0]
-     // return `http://localhost:5000/uploads/${product.images[firstKey]}`
-      return `/uploads/${product.images[firstKey]}`
+    //  return `http://localhost:5000/uploads/${product.images[firstKey]}`
+        return `/uploads/${product.images[firstKey]}`
     }
-    // Fallback to main product image
     if (product.image) {
       // return `http://localhost:5000/uploads/${product.image}`
-      return `/uploads/${product.image}`
+        return `/uploads/${product.image}`
     }
     return null
   }
 
   const getProductColors = (product) => {
-    // First check for colors in images object
     if (product.images && Object.keys(product.images).length > 0) {
       return Object.keys(product.images)
     }
-    // Fallback to product.color array/string
     return Array.isArray(product.color) ? product.color : (product.color ? [product.color] : [])
   }
 
   const getMoqForColor = (product, color) => {
     if (!product.moqPackaging) return ''
     if (typeof product.moqPackaging === 'object') {
-      // Try exact match first
       if (product.moqPackaging[color]) {
         return product.moqPackaging[color]
       }
-      // Try case-insensitive match
       const colorLower = color.toLowerCase()
       const matchingKey = Object.keys(product.moqPackaging).find(key => key.toLowerCase() === colorLower)
       if (matchingKey) {
@@ -107,6 +97,7 @@ const Products = () => {
 
   const handleCustomize = (e, product) => {
     e.stopPropagation()
+    e.preventDefault()
     const colors = getProductColors(product)
     const currentColor = selectedColor[product._id] || colors[0]
     navigate('/contact', {
@@ -118,39 +109,42 @@ const Products = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-red-500 selection:text-white">
+    <div
+      className="min-h-screen bg-[#FAFAF8] dark:bg-[#15171A] text-[#15171A] dark:text-[#F2F1ED] pt-12 selection:bg-[#D4530F] selection:text-white"
+      style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+    >
       <Header />
-      {/* Main Split Layout Workspace */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
-        <div className="grid grid-cols-1 mt-24 lg:grid-cols-12 gap-8 items-start">
 
-          {/* LEFT SIDEBAR: Categories (Sticky on Desktop, Horizontal Scroll on Mobile) */}
-          <aside className="lg:col-span-3 lg:sticky lg:top-24 z-30 bg-slate-50 dark:bg-slate-900 lg:bg-transparent dark:lg:bg-transparent -mx-4 px-4 sm:mx-0 sm:px-0">
-            <div className="bg-white/80 dark:bg-slate-900/80 lg:bg-white/60 dark:lg:bg-slate-900/60 border border-slate-500 dark:border-slate-700 rounded-none lg:rounded-2xl p-2 lg:p-5 backdrop-blur-md lg:backdrop-blur-none">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-              {/* Desktop Sidebar Title */}
-              <div className="hidden lg:flex items-center gap-2 mb-4 pb-3 border-b border-slate-400/60">
-                <Filter size={16} className="text-red-500" />
-                <span className="text-sm font-bold uppercase tracking-[0.15em] text-slate-700 dark:text-slate-300">Categories</span>
+
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+
+          {/* ── LEFT SIDEBAR: Minimal Grid Navigation ── */}
+          <aside className="lg:col-span-3 lg:sticky lg:top-32 z-30 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="bg-white dark:bg-[#1C1F23] lg:bg-transparent lg:dark:bg-transparent border lg:border-0 border-[#DEDDD6] dark:border-[#2A2D32] p-4 lg:p-0">
+              <div className="hidden lg:flex items-center gap-2 mb-4 pb-2 border-b border-[#DEDDD6] dark:border-[#2A2D32]">
+                <Filter size={16} strokeWidth={1.5} className="text-red-600" />
+                <span className="text-[12px] font-mono uppercase tracking-wider text-slate-800">Tiers / Classes</span>
               </div>
 
-              {/* Flex wrapper supporting horizontal scroll on mobile and stack on desktop */}
-              <div className="flex flex-nowrap lg:flex-col gap-1.5 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 no-scrollbar">
+              <div className="flex flex-nowrap lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 no-scrollbar">
                 {categories.map((category) => {
                   const isActive = selectedCategory === category
                   return (
                     <button
                       key={category}
                       onClick={() => setSelectedCategory(category)}
-                      className={`px-4 lg:px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all duration-200 text-left w-auto lg:w-full border flex items-center justify-between group ${isActive
-                        ? 'bg-red-600 text-white border-red-600 shadow-md shadow-red-600/10'
-                        : 'bg-white/60 dark:bg-slate-800/60 lg:bg-transparent dark:lg:bg-transparent text-slate-700 dark:text-slate-300 border-slate-400 dark:border-slate-700 lg:border-transparent dark:lg:border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
+                      className={`px-4 py-2.5 text-xs font-medium uppercase tracking-wider whitespace-nowrap transition-colors text-left w-auto lg:w-full border flex items-center justify-between group ${isActive
+                          ? 'bg-[#15171A] dark:bg-[#F2F1ED] text-[#FAFAF8] dark:text-[#15171A] border-[#15171A] dark:border-[#F2F1ED]'
+                          : 'bg-transparent text-slate-800 dark:text-[#9B9D9F] border-[#DEDDD6] dark:border-[#2A2D32] lg:border-transparent lg:dark:border-transparent hover:text-[#15171A] dark:hover:text-[#F2F1ED] hover:bg-[#DEDDD6]/30 dark:hover:bg-[#2A2D32]/30'
                         }`}
                     >
                       <span>{category}</span>
                       <ChevronRight
                         size={12}
-                        className={`hidden lg:block transition-transform duration-200 ${isActive ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'
+                        className={`hidden lg:block transition-transform ${isActive ? 'translate-x-0 text-white dark:text-[#15171A]' : '-translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 text-[#8C8E8A]'
                           }`}
                       />
                     </button>
@@ -160,25 +154,20 @@ const Products = () => {
             </div>
           </aside>
 
-          {/* RIGHT GRID: Products Content Workspace */}
+          {/* ── RIGHT MATRIX: Technical Matrix Showcase ── */}
           <main className="lg:col-span-9">
             {loading ? (
-              /* Loading Skeleton */
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl overflow-hidden animate-pulse">
-                    <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-800 w-full"></div>
-                    <div className="p-6 space-y-4">
-                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
-                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-2/3"></div>
-                      <div className="h-12 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
-                    </div>
+                  <div key={index} className="bg-white dark:bg-[#1C1F23] aspect-[4/5] p-6 space-y-6 animate-pulse">
+                    <div className="aspect-square bg-[#FAFAF8] dark:bg-[#15171A]" />
+                    <div className="h-4 bg-[#FAFAF8] dark:bg-[#15171A] w-3/4" />
+                    <div className="h-3 bg-[#FAFAF8] dark:bg-[#15171A] w-1/2" />
                   </div>
                 ))}
               </div>
             ) : products.length > 0 ? (
-              /* High-Fidelity Product Display Matrix */
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product, index) => {
                   const colors = getProductColors(product)
                   const currentColor = selectedColor[product._id] || colors[0]
@@ -186,166 +175,147 @@ const Products = () => {
                   const currentMoq = getMoqForColor(product, currentColor)
 
                   return (
-                    <motion.div
+                    <div
                       key={product._id}
-                      className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-sm transition-all duration-300 hover:shadow-xl dark:border-slate-700 dark:bg-slate-900"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.03 }}
-                      whileHover={{
-                        y: -6,
-                        borderColor: 'rgba(220, 38, 38, 0.3)',
-                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-                      }}
+                      className="group flex flex-col justify-between bg-[#FAFAF8] dark:bg-[#15171A] hover:bg-white dark:hover:bg-[#1C1F23] transition-colors relative border border-[#DEDDD6] dark:border-[#2A2D32]"
                     >
-                      {/* Product Image & Info Link Area */}
-                      <Link to={`/product/${product._id}`} className="flex-1">
+                      {/* Box Frame Link Area */}
+                      <Link to={`/product/${product._id}`} className="flex-1 flex flex-col">
 
-                        {/* Product Image Section */}
-                        <div className="relative aspect-[4/3] overflow-hidden border-b border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center dark:border-slate-700 dark:from-slate-950 dark:to-slate-900">
+                        {/* Technical Aspect Ratio Image Frame */}
+                        <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden border-b border-[#DEDDD6] dark:border-[#2A2D32]">
                           {currentImage ? (
                             <motion.img
-                              key={currentColor || currentImage}
-                              initial={{ opacity: 0, scale: 0.95 }}
-                              animate={{ opacity: 1, scale: 1 }}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
                               whileHover={{ scale: 1.05 }}
-                              transition={{ duration: 0.3, ease: 'easeOut' }}
+                              transition={{ duration: 0.6, ease: 'easeOut' }}
                               src={currentImage}
                               alt={product.name}
-                              className="h-full w-full object-cover"
+                              className="h-full w-full object-cover select-none"
+                              loading="lazy"
+                              style={{ imageRendering: 'auto' }}
                             />
                           ) : (
-                            <div className="flex flex-col items-center gap-3 text-slate-400 dark:text-slate-500">
-                              <Package size={48} strokeWidth={1} />
-                              <span className="text-[10px] font-bold uppercase tracking-[0.3em]">
-                                Image Coming Soon
-                              </span>
+                            <div className="text-[#C8C6BD] dark:text-[#3A3D40] flex flex-col items-center gap-2">
+                              <Package size={32} strokeWidth={1} />
+                              <span className="text-[9px] font-mono tracking-[0.2em] uppercase">No media</span>
                             </div>
-                          )}
-
-                          {/* Category Badge */}
-                          {product.category && (
-                            <span className="absolute top-4 left-4 inline-block rounded-lg border border-slate-200 bg-white/95 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-700 shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-200">
-                              {product.category}
-                            </span>
                           )}
                         </div>
 
-                        {/* Product Details Block */}
-                        <div className="px-4 py-3 flex flex-col gap-4">
-                          {/* Product Title */}
-                          <div>
+                        {/* Text Grid Area */}
+                        <div className="p-4 flex-1 flex flex-col justify-between gap-3">
+                          <div className="space-y-1">
+                            {product.sku && (
+                              <span className="block font-medium text-[10px] text-slate-600">SKU · {product.sku}</span>
+                            )}
                             <h3
-                              className="text-lg font-bold tracking-tight text-slate-900 line-clamp-2 transition-colors duration-300 group-hover:text-red-600 dark:text-slate-100 dark:group-hover:text-red-500"
+                              className="text-[16px] font-bold tracking-tight text-[#15171A] dark:text-[#F2F1ED] line-clamp-2 group-hover:text-red-600 transition-colors"
                               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                             >
                               {product.name}
                             </h3>
                           </div>
 
-                          {/* Subtle Color Selection Layout */}
+                          {/* Inline Minimalist Variations Swatches */}
                           {colors.length > 0 && (
-                            <div className="flex flex-col gap-2 -mt-1">
-                              <div className='flex items-center justify-between'>
-                              <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-slate-600 dark:text-slate-500">
-                                Color
-                              </span>
-                             <h1 className="text-[12px] font-bold tracking-tight text-slate-900 line-clamp-2 transition-colors duration-300 group-hover:text-red-600 dark:text-slate-100 dark:group-hover:text-red-500">
-                                {product.sku}
-                              </h1>
-                            </div>
-                              <div className="flex flex-wrap gap-2">
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between font-medium text-[9px] uppercase tracking-wider text-slate-600">
+                                <span className='text-slate-800'>Variant</span>
+                                <span className="text-[#15171A] dark:text-[#F2F1ED]">{currentColor}</span>
+                              </div>
+                              <div className="flex flex-wrap gap-1">
                                 {colors.map((color, idx) => {
-                                  const isSelected = currentColor === color;
-
+                                  const isSelected = currentColor === color
                                   return (
                                     <button
                                       key={idx}
                                       type="button"
                                       onClick={(e) => {
-                                        e.preventDefault(); // Absolute fix: Prevents the parent <Link> wrapper from activating
-                                        e.stopPropagation(); // Prevents click bubbling up to the wrapper card element
-                                        setSelectedColor({ ...selectedColor, [product._id]: color });
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        setSelectedColor({ ...selectedColor, [product._id]: color })
                                       }}
-                                      className={`relative flex items-center justify-center rounded-md border px-2.5 py-1 font-mono text-[12px] font-medium tracking-wide uppercase transition-all duration-200 ${isSelected
-                                          ? 'border-slate-900 bg-slate-900 text-white dark:border-slate-800 dark:bg-slate-800 scale-105 shadow-sm'
-                                          : 'border-slate-200 bg-white text-white-600 hover:border-slate-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-600 dark:hover:border-slate-600'
+                                      className={`px-2 py-1 text-[10px] font-medium uppercase tracking-wide border transition-all ${isSelected
+                                          ? 'bg-[#15171A] dark:bg-[#F2F1ED] text-[#FAFAF8] dark:text-[#15171A] border-[#15171A] dark:border-[#F2F1ED]'
+                                          : 'bg-white dark:bg-[#1C1F23] text-slate-800 dark:text-[#9B9D9F] border-slate-500 dark:border-[#2A2D32] hover:border-[#8C8E8A]'
                                         }`}
                                     >
                                       {color}
                                     </button>
-                                  );
+                                  )
                                 })}
                               </div>
                             </div>
                           )}
 
-                          {/* Minimum Order Quantity Spec Badge */}
+                          {/* Technical MOQ Block Footer */}
                           {currentMoq && (
-                            <div className="flex items-center justify-between  px-2 py-1 rounded-lg bg-slate-50/50  border border-slate-600 dark:bg-slate-900/30 dark:border-slate-800/50">
-                              <div className="text-[10px] font-bold  tracking-[0.05em] text-slate-600 dark:text-slate-500">
-                                MOQ Spec
-                              </div>
-                              <div className="h-3 w-[1px] bg-slate-200 dark:bg-slate-700" />
-                              <div className="text-sm font-semibold font-mono text-slate-800 dark:text-slate-200">
-                                {currentMoq} units
-                              </div>
+                            <div className="flex items-center justify-between border border-slate-300 dark:border-[#2A2D32] px-3 py-2 bg-white dark:bg-[#1C1F23]">
+                              <span className="text-[9px] font-mono uppercase tracking-wider text-slate-700">Min Order</span>
+                              <span className="font-mono text-xs font-medium">
+                                {currentMoq} <span className="text-[10px] text-slate-700">pcs</span>
+                              </span>
                             </div>
                           )}
                         </div>
                       </Link>
 
-                      {/* Persistent Action Footer Area */}
-                      <div className="px-3 pb-5 mt-auto">
-                        <div className="grid grid-cols-2 gap-3">
-                          <Link
-                            to={`/product/${product._id}`}
-                            className="group/btn py-3 px-2 border border-slate-200 dark:border-slate-800 hover:border-slate-800 dark:hover:border-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl flex items-center justify-center text-slate-700 dark:text-slate-300 text-[11px] font-bold uppercase tracking-wider transition-all duration-200"
-                          >
-                            <span>View Details</span>
-                            <ChevronRight size={14} className="ml-1 transition-transform duration-200 group-hover/btn:translate-x-0.5" />
-                          </Link>
+                      {/* Technical Interaction Matrix Bar */}
+                      <div className="px-4 pb-4 grid grid-cols-2 gap-2">
+                        <Link
+                          to={`/innovate`}
+                          className="py-2 px-3 border border-slate-400 dark:border-[#2A2D32] text-slate-900 dark:text-[#9B9D9F] text-[10px] font-medium uppercase tracking-wider text-center hover:border-[#8C8E8A] transition-colors flex items-center justify-center gap-1 group/btn"
+                        >
+                          customize
+                          <ArrowUpRight size={13} className="text-slate-800 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                        </Link>
 
-                          <button
-                            type="button"
-                            onClick={(e) => handleCustomize(e, product)}
-                            className=" bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border border-red-600 rounded-xl flex items-center justify-center text-white text-[11px] font-bold uppercase tracking-wider transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]"
-                          >
-                            Customize
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => handleCustomize(e, product)}
+                          className="py-2 px-3 bg-red-600 hover:bg-red-700 text-white text-[10px] font-mono uppercase tracking-wider transition-colors text-center"
+                        >
+                          Quote
+                        </button>
                       </div>
-                    </motion.div>
+                    </div>
                   )
                 })}
               </div>
             ) : (
-              /* Empty Suite State */
-              <div className="text-center py-20 border border-dashed border-slate-400 rounded-2xl bg-white/10 max-w-sm mx-auto">
-                <Package size={36} className="mx-auto text-slate-500 mb-3" strokeWidth={1} />
-                <h3 className="text-sm font-bold text-slate-600 mb-1">Category Empty</h3>
-                <p className="text-slate-600 text-[12px] px-4">Our variant collection is currently being revised. Please toggle other tiers.</p>
+              /* High-Fidelity Empty Frame State */
+              <div className="text-center py-24 border border-[#DEDDD6] dark:border-[#2A2D32] bg-white dark:bg-[#1C1F23] max-w-md mx-auto">
+                <Package size={28} className="mx-auto text-[#D4530F] mb-4" strokeWidth={1.5} />
+                <h3 className="text-sm font-bold uppercase tracking-wide mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  Class Vacant
+                </h3>
+                <p className="text-[#5C6066] dark:text-[#9B9D9F] text-xs px-8 leading-relaxed max-w-xs mx-auto">
+                  This precise category array is currently updating. Select alternate configurations.
+                </p>
               </div>
             )}
           </main>
         </div>
       </div>
 
-      {/* Enterprise Custom Request Frame */}
-      <section className="py-12 bg-white dark:bg-slate-900 border-t border-slate-400 dark:border-slate-700 mt-12">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            Need Custom Technical Dimensions?
-          </h2>
-          <p className="text-xs md:text-sm text-slate-600 dark:text-slate-400 mb-5 max-w-lg mx-auto leading-relaxed">
-            We partner directly with industrial procurement leads to configure custom containers.
-          </p>
+      {/* ── FOOTER FRAME: Enterprise Procurement CTA ── */}
+      <section className="py-16 bg-white dark:bg-[#1C1F23] border-t border-[#DEDDD6] dark:border-[#2A2D32] mt-24">
+        <div className="max-w-xl mx-auto px-4 text-center space-y-6">
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold tracking-tight text-[#15171A] dark:text-[#F2F1ED]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              Custom Industrial Dimensioning
+            </h2>
+            <p className="text-xs text-[#5C6066] dark:text-[#9B9D9F] max-w-sm mx-auto leading-relaxed">
+              We interface with deployment engineers and packaging procurement chains directly to configure blueprint modifications.
+            </p>
+          </div>
           <Link
             to="/contact"
-            className="inline-block px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-800 dark:border-slate-600 text-white text-[10px] font-bold uppercase tracking-widest transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-[#15171A] dark:bg-[#F2F1ED] text-white dark:text-[#15171A] text-xs font-mono uppercase tracking-widest transition-opacity hover:opacity-90"
           >
-            Request Design Blueprint
+            Request Engineering Specs
           </Link>
         </div>
       </section>

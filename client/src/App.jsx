@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import Header from './components/Header/Header'
 import Footer from './components/Footer/Footer'
@@ -6,7 +6,7 @@ import Home from './pages/Home/Home'
 import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
 import Manufacturing from './pages/Manufacturing'
-import Industries from './pages/Industries'
+import Innovate from './pages/Innovate'
 import Sustainability from './pages/Sustainability'
 import Clients from './pages/Clients'
 import About from './pages/About/About'
@@ -16,6 +16,8 @@ import Contact from './pages/Contact/Contact'
 import AdminLogin from './pages/Admin/AdminLogin'
 import Dashboard from './pages/Admin/Dashboard'
 import BulkUpload from './pages/Admin/bulkupload'
+import BlogManagement from './pages/Admin/BlogManagement'
+import CareerManagement from './pages/Admin/CareerManagement'
 import CategoryPage from './pages/Category/CategoryPage'
 import Pharmaceutical from './pages/Category/Pharmaceutical'
 import PersonalCare from './pages/Category/Personal Care'
@@ -58,8 +60,13 @@ function App() {
         <Routes>
           {/* Admin Routes (no header/footer) */}
           <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/bulk-upload" element={<BulkUpload />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/bulk-upload" element={<BulkUpload />} />
+          <Route path="/admin/blogs" element={<BlogManagement />} />
+          <Route path="/admin/careers" element={<CareerManagement />} />
+          {/* Backward compatible redirects */}
+          <Route path="/dashboard" element={<Navigate replace to="/admin/dashboard" />} />
+          <Route path="/bulk-upload" element={<Navigate replace to="/admin/bulk-upload" />} />
           
           {/* Public Routes */}
           <Route path="/" element={
@@ -112,9 +119,9 @@ function App() {
               <Manufacturing />
             </PublicLayout>
           } />
-          <Route path="/industries" element={
+          <Route path="/innovate" element={
             <PublicLayout>
-              <Industries />
+              <Innovate />
             </PublicLayout>
           } />
           <Route path="/sustainability" element={

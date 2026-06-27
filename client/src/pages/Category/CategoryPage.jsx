@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Package, ChevronRight, X, Box, Layers, Settings } from 'lucide-react'
+import { useParams, Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { Package, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../../services/api'
 
 const CategoryPage = () => {
   const { categoryName } = useParams()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
-  const [selectedProductDetail, setSelectedProductDetail] = useState(null)
+  const [selectedColor, setSelectedColor] = useState({})
   const [displayCategoryName, setDisplayCategoryName] = useState('')
 
   // Format category name for display (find correct case)
@@ -29,10 +29,41 @@ const CategoryPage = () => {
     return name.charAt(0).toUpperCase() + name.slice(1)
   }
 
+  const getProductImage = (product, color = null) => {
+    if (color && product.images) {
+      if (product.images[color]) {
+        // return `http://localhost:5000/uploads/${product.images[color]}`
+        return `/uploads/${product.images[color]}`
+      }
+      const colorLower = color.toLowerCase()
+      const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
+      if (matchingKey) {
+        //return `http://localhost:5000/uploads/${product.images[matchingKey]}`
+        return `/uploads/${product.images[matchingKey]}`
+      }
+    }
+    if (product.images && Object.keys(product.images).length > 0) {
+      const firstKey = Object.keys(product.images)[0]
+     // return `http://localhost:5000/uploads/${product.images[firstKey]}`
+       return `/uploads/${product.images[firstKey]}`
+    }
+    if (product.image) {
+      //return `http://localhost:5000/uploads/${product.image}`
+       return `/uploads/${product.image}`
+    }
+    return null
+  }
+
+  const getProductColors = (product) => {
+    if (product.images && Object.keys(product.images).length > 0) {
+      return Object.keys(product.images)
+    }
+    return Array.isArray(product.color) ? product.color : (product.color ? [product.color] : [])
+  }
+
   const fetchProducts = async () => {
     setLoading(true)
     try {
-      // Get all categories first to find the correct case
       const categoriesResult = await productAPI.getCategories()
       let actualCategoryName = categoryName
       
@@ -67,260 +98,188 @@ const CategoryPage = () => {
   }, [categoryName])
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-red-500 selection:text-white">
-      
-      
-      {/* Product Section */}
-      <section className="py-12 md:py-16 bg-slate-50">
-        <div className="max-w-7xl mx-auto mt-10 px-4 sm:px-6">
-<header className="mb-5 md:mb-5">
-          <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-slate-700 uppercase ">
-            <span>Catalog</span>
-            <ChevronRight size={12} className="text-slate-600" />
-            <span className="text-slate-700 mt-1">{displayCategoryName || 'Loading...'}</span>
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-[#3FB893] selection:text-white">
+      {/* HERO SECTION */}
+      <section className="relative mt-20 sm:mt-20 overflow-hidden border-b border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 mt-5 pb-20 relative z-10">
+          <div className="flex items-center gap-2 text-[11px] sm:text-[13px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-6">
+            <Link to="/" className="hover:text-red-600 transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-slate-900 font-semibold">{displayCategoryName || 'Category'}</span>
           </div>
-          <h1 
-            className="text-4xl md:text-5xl font-black tracking-tight text-slate-900"
-            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-          >
-            {displayCategoryName || 'Category Collection'}
-            <span className="text-red-600">.</span>
-          </h1>
-          <p className="mt-2 text-xs md:text-sm text-slate-600 max-w-2xl leading-relaxed">
-            Discover precision-engineered components designed to optimize distribution integrity and aesthetic appeal.
-          </p>
-        </header>
+
+          <div className="max-w-3xl">
+            <h1
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-950 mb-6"
+              style={{ fontFamily: '"Space Grotesk", sans-serif' }}
+            >
+              {displayCategoryName || 'Category'} <span className="text-red-600">Packaging.</span>
+            </h1>
+            <p className="text-sm sm:text-lg text-slate-950 font-medium leading-relaxed max-w-2xl">
+              Discover precision-engineered components designed to optimize distribution integrity and aesthetic appeal.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRODUCT MATRIX LAYOUT SECTION ── */}
+      <section className="py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <div className="flex items-center justify-between mb-8 pb-3 border-b border-slate-600 dark:border-[#2A2D32]">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-slate-700">
+              Class Classification Matrix
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-slate-700">
+              Showing {products.length} Items
+            </span>
+          </div>
 
           {loading ? (
-            /* Skeleton Loader */
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="bg-slate-100/60 border border-slate-400 rounded-2xl overflow-hidden animate-pulse">
-                  <div className="aspect-[4/3] bg-slate-200/40 w-full" />
-                  <div className="p-5 space-y-3">
-                    <div className="h-4 bg-slate-200/40 rounded w-1/4" />
-                    <div className="h-5 bg-slate-200/40 rounded w-3/4" />
-                    <div className="h-3 bg-slate-200/40 rounded w-full" />
-                    <div className="h-9 bg-slate-200/40 rounded w-full mt-3" />
-                  </div>
+            /* Seamless Grid Skeleton matching layout */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="bg-white dark:bg-[#1C1F23] aspect-[4/5] p-6 space-y-4 animate-pulse border border-slate-600 dark:border-[#2A2D32]">
+                  <div className="aspect-[4/3] bg-[#FAFAF8] dark:bg-[#15171A]" />
+                  <div className="h-4 bg-[#FAFAF8] dark:bg-[#15171A] w-3/4" />
+                  <div className="h-3 bg-[#FAFAF8] dark:bg-[#15171A] w-1/2" />
                 </div>
               ))}
             </div>
           ) : products.length > 0 ? (
-            /* Product Grid */
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {products.map((product, index) => (
-                <motion.div
-                  key={product._id}
-                  className="bg-white border border-slate-400 rounded-2xl overflow-hidden cursor-pointer group flex flex-col justify-between h-full relative shadow-sm"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.03 }}
-                  whileHover={{ y: -4, borderColor: 'rgba(239, 68, 68, 0.25)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                  onClick={() => setSelectedProductDetail(product)}
-                >
-                  <div>
-                    {/* Product Image Wrapper */}
-                    <div className="relative aspect-[4/3] bg-slate-50 border-b border-slate-400/60 flex items-center justify-center overflow-hidden  transition-colors duration-300">
-                      {product.image ? (
-                        <img
-                          src={`http://localhost:5000/uploads/${product.image}`}
-                          //src={`/uploads/${product.image}`}
-                          alt={product.name}
-                          className="w-full h-full object-contain p-6 md:p-8 transform group-hover:scale-105 transition-transform duration-500 ease-out"
-                        />
-                      ) : (
-                        <div className="text-slate-300 flex flex-col items-center gap-2">
-                          <Package size={38} strokeWidth={1} />
-                          <span className="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Staging Image</span>
+            /* Sharp Seamless Border Grid Matrix */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map((product, index) => {
+                const colors = getProductColors(product)
+                const currentColor = selectedColor[product._id] || colors[0]
+                const currentImage = getProductImage(product, currentColor)
+
+                return (
+                  <motion.div
+                    key={product._id}
+                    className="group flex flex-col justify-between bg-white dark:bg-[#15171A] hover:bg-white dark:hover:bg-[#1C1F23] transition-colors relative border border-slate-400 dark:border-[#2A2D32]"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: index * 0.03 }}
+                  >
+                    {/* Upper Click Box Area */}
+                    <Link to={`/product/${product._id}`} className="flex-1 flex flex-col">
+
+                      {/* Image Frame Area */}
+                      <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden border-b border-slate-400 dark:border-[#2A2D32]">
+                        {currentImage ? (
+                          <motion.img
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.6, ease: 'easeOut' }}
+                            src={currentImage}
+                            alt={product.name}
+                            className="h-full w-full object-cover select-none"
+                            loading="lazy"
+                            style={{ imageRendering: 'auto' }}
+                          />
+                        ) : (
+                          <div className="text-[#C8C6BD] dark:text-[#3A3D40] flex flex-col items-center gap-2">
+                            <Package size={28} strokeWidth={1.5} />
+                            <span className="text-[9px] font-mono tracking-[0.2em] uppercase">No media</span>
+                          </div>
+                        )}
+
+                        {product.category && (
+                          <div className="absolute top-4 font-semibold left-4">
+                            <span className="inline-flex items-center px-2 py-0.5 bg-[#FAFAF8] dark:bg-[#15171A] border border-slate-400 dark:border-[#2A2D32] text-slate-800 dark:text-[#F2F1ED] text-[10px] font-mono uppercase tracking-widest">
+                              {product.category}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content details frame */}
+                      <div className="p-4 flex-1 flex flex-col justify-between gap-4">
+                        <div className="space-y-1">
+                          {product.sku && (
+                            <span className="block font-mono text-[10px] text-slate-700">SKU · {product.sku}</span>
+                          )}
+                          <h3
+                            className="text-[18px] font-bold tracking-tight text-[#15171A] dark:text-[#F2F1ED] line-clamp-2 group-hover:text-red-600 transition-colors"
+                            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                          >
+                            {product.name}
+                          </h3>
                         </div>
-                      )}
 
-                      
-                    </div>
+                        {/* Flat Minimalist Swatches */}
+                        {colors.length > 0 && (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-slate-700">
+                              <span>Variant Color</span>
+                              <span className="text-slate-700 text-[11px] font-medium dark:text-[#F2F1ED]">{currentColor}</span>
+                            </div>
+                            <div className="flex flex-wrap gap-1">
+                              {colors.map((color, idx) => {
+                                const isSelected = currentColor === color
+                                return (
+                                  <button
+                                    key={idx}
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      setSelectedColor({ ...selectedColor, [product._id]: color })
+                                    }}
+                                    className={`px-2 py-1 text-[12px] font-mono uppercase tracking-wide border transition-all ${isSelected
+                                      ? 'bg-[#15171A] dark:bg-[#F2F1ED] text-[#FAFAF8] dark:text-[#15171A] border-[#15171A] dark:border-[#F2F1ED]'
+                                      : 'bg-white dark:bg-[#1C1F23] text-slate-800 dark:text-[#9B9D9F] border-slate-400 dark:border-[#2A2D32] hover:border-[#8C8E8A]'
+                                      }`}
+                                  >
+                                    {color}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </Link>
 
-                    {/* Product Info Content */}
-                    <div className="p-5 md:p-6">
-                      <h3 
-                        className="text-base md:text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors duration-200 line-clamp-1 mb-1" 
-                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                      >
-                        {product.name}
-                      </h3>
+                    {/* Uniform Structural Footer Interactor Bar */}
+                    <div className="px-4 pb-4 grid grid-cols-2 gap-2">
+                        <Link
+                          to={`/innovate`}
+                          className="py-2 px-3 border border-slate-400 dark:border-[#2A2D32] text-slate-900 dark:text-[#9B9D9F] text-[10px] font-medium uppercase tracking-wider text-center hover:border-[#8C8E8A] transition-colors flex items-center justify-center gap-1 group/btn"
+                        >
+                          customize
+                          <ArrowUpRight size={13} className="text-slate-800 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                        </Link>
 
-                      {product.sku && (
-                        <p className="text-[9px] font-mono text-slate-500 tracking-wider mb-2.5">
-                          REF: {product.sku}
-                        </p>
-                      )}
-
-                      <p 
-                        className="text-xs md:text-sm text-slate-600 line-clamp-2 leading-relaxed" 
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        {product.keySpecs || product.description || 'Premium industrial design optimized for distribution integrity.'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Action Area */}
-                  <div className="px-5 pb-5 pt-1 md:px-6 md:pb-6">
-                    <div className="w-full py-2 px-3 bg-slate-100 group-hover:bg-red-600 border border-slate-400 hover:border-red-600 rounded-xl flex items-center justify-center text-slate-600 hover:text-white text-[11px] font-bold uppercase tracking-wider transition-all duration-200 group/btn">
-                      <span>View Specs</span>
-                      <ChevronRight size={12} className="ml-1 transform group-hover/btn:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                        <button
+                          type="button"
+                          onClick={(e) => handleCustomize(e, product)}
+                          className="py-2 px-3 bg-red-600 hover:bg-red-700 text-white text-[10px] font-mono uppercase tracking-wider transition-colors text-center"
+                        >
+                          Quote
+                        </button>
+                      </div>
+                  </motion.div>
+                )
+              })}
             </div>
           ) : (
-            /* Empty State */
-            <div className="text-center py-20 border border-dashed border-slate-400 rounded-2xl bg-white/10 max-w-sm mx-auto">
-              <Package size={40} className="mx-auto text-slate-500 mb-3" strokeWidth={1} />
-              <h3 className="text-base font-bold text-slate-600 mb-1">Catalog Entry Empty</h3>
-              <p className="text-slate-600 text-[12px] px-4">Our structural product suite is currently getting updated. Please revisit shortly.</p>
+            /* Flat Empty Layout Workspace */
+            <div className="text-center py-24 border border-[#DEDDD6] dark:border-[#2A2D32] bg-white dark:bg-[#1C1F23] max-w-md mx-auto">
+              <Package size={28} className="mx-auto text-[#D4530F] mb-4" strokeWidth={1.5} />
+              <h3 className="text-sm font-bold uppercase tracking-wide mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                Class Vacant
+              </h3>
+              <p className="text-[#5C6066] dark:text-[#9B9D9F] text-xs px-8 leading-relaxed max-w-xs mx-auto">
+                No active product metrics matched this profile configuration query. Contact engineering.
+              </p>
             </div>
           )}
         </div>
       </section>
-
-      {/* Product Detail Pop-up */}
-      <AnimatePresence>
-        {selectedProductDetail && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
-            onClick={() => setSelectedProductDetail(null)}
-          >
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm w-full "
-            />
-            
-            {/* Modal Box */}
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.99 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.99 }}
-              transition={{ type: "spring", damping: 25, stiffness: 380 }}
-              className="relative bg-white border border-slate-400 rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl my-auto max-h-[calc(100vh-2rem)] flex flex-col"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close Button Trigger */}
-              <button
-                onClick={() => setSelectedProductDetail(null)}
-                className="absolute top-3 right-3 z-20 p-2 bg-slate-100/80 hover:bg-slate-200 border border-slate-400 rounded-lg text-slate-600 hover:text-slate-900 transition-all duration-200 group"
-              >
-                <X size={16} className="group-hover:rotate-90 transition-transform duration-200" />
-              </button>
-
-              {/* Scrollable Container Box */}
-              <div className="overflow-y-auto flex-1 dynamic-scrollbar">
-                <div className="grid grid-cols-1 lg:grid-cols-5">
-                  
-                  {/* Left Side: Product Image Display Panel */}
-                  <div className="lg:col-span-2 relative bg-slate-50 border-b md:border-b-0 md:border-r border-slate-400 p-3 flex flex-col justify-center items-center min-h-[220px] md:min-h-[380px]">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.03),transparent_70%)] pointer-events-none" />
-                    
-                    {selectedProductDetail.category && (
-                      <span className="absolute top-4 left-4 inline-block px-3 py-0.5 bg-red-50/40 border border-red-200/50 text-red-600 text-[10px] font-black uppercase tracking-widest rounded">
-                        {selectedProductDetail.category}
-                      </span>
-                    )}
-
-                    <div className="w-full aspect-square max-w-[150px] lg:max-w-[450px]  flex items-center justify-center">
-                      {selectedProductDetail.image ? (
-                        <img
-                          src={`http://localhost:5000/uploads/${selectedProductDetail.image}`}
-                         // src={`/uploads/${selectedProductDetail.image}`}
-                          alt={selectedProductDetail.name}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500 object-center max-h-[400px] "
-                        />
-                      ) : (
-                        <Package size={54} className="text-slate-300" strokeWidth={1} />
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Right Side: Specifications Panel */}
-                  <div className="lg:col-span-3 p-5 md:p-6 bg-white/20 flex flex-col justify-between">
-                    <div className="space-y-4 md:space-y-5">
-                      <div>
-                        <h2 className="text-base md:text-lg font-bold text-slate-900 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                          {selectedProductDetail.name}
-                        </h2>
-                        {selectedProductDetail.sku && (
-                          <p className="text-[9px] font-mono text-slate-500 mt-0.5">SKU: {selectedProductDetail.sku}</p>
-                        )}
-                      </div>
-                        
-                      <div>
-                        <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2.5">Structural Metrics</h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                          {[
-                            { label: 'Color Specs', value: selectedProductDetail.color, icon: <div className="w-2 h-2 rounded-full bg-slate-400" /> },
-                            { label: 'Volumetric Size', value: selectedProductDetail.size, icon: <Box size={12} className="text-slate-500" /> },
-                            { label: 'Closure System', value: selectedProductDetail.capType, icon: <Settings size={12} className="text-slate-500" /> },
-                            { label: 'Minimum MOQ', value: selectedProductDetail.moqPackaging, icon: <Layers size={12} className="text-slate-500" /> }
-                          ].map((spec, i) => spec.value ? (
-                            <div key={i} className="p-2.5 bg-slate-50/40 border border-slate-400/80 rounded-xl flex items-center gap-3">
-                              <div className="w-7 h-7 rounded bg-white border border-slate-400 flex items-center justify-center flex-shrink-0">
-                                {spec.icon}
-                              </div>
-                              <div className="min-w-0">
-                                <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wider truncate">{spec.label}</p>
-                                <p className="text-xs font-semibold text-slate-800 truncate">{spec.value}</p>
-                              </div>
-                            </div>
-                          ) : null)}
-                        </div>
-
-                      <hr className="border-slate-400" />
-                        
-                      <div>
-                        <h4 className="text-[9px] mt-2 font-bold text-slate-500 uppercase tracking-widest mb-1.5">Description</h4>
-                        <p className="text-xs md:text-sm text-slate-700 leading-relaxed font-normal">
-                          {selectedProductDetail.keySpecs || selectedProductDetail.description || 'Premium grade packaging component manufactured under structural quality guidelines.'}
-                        </p>
-                      </div>
-
-                       </div>
-
-                      {selectedProductDetail.usage && (
-                        <div className="p-3 bg-slate-50/30 border border-slate-400/60 rounded-lg">
-                          <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Applications</h4>
-                          <p className="text-xs text-slate-600 leading-relaxed">{selectedProductDetail.usage}</p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Action Triggers Footer inside Right Box for structural layout */}
-                    <div className="flex flex-col sm:flex-row gap-2 pt-5 mt-5 border-t border-slate-400/60">
-                      <button className="w-full sm:flex-1 py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all duration-200">
-                        Request Quote
-                      </button>
-                      <button
-                        onClick={() => setSelectedProductDetail(null)}
-                        className="w-full sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all duration-200 border border-slate-400"
-                      >
-                        Dismiss
-                      </button>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

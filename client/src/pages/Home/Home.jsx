@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-
-import { Box, Layers, Package, Settings, Target, Eye, ArrowUpRight, PhoneCall, X, CheckCircle2 } from 'lucide-react'
+import { Box, MapPin, ShieldCheck, Award,Layers, Package, Settings,Beaker, Target, Eye, ArrowUpRight, PhoneCall, X, Pill, Sparkles, Utensils, Factory } from 'lucide-react'
 
 import { useState, useEffect } from 'react'
 
@@ -27,6 +26,92 @@ import Simandhar from '../../assets/images/images/SIMANDHAR.png'
 import Soulflower from '../../assets/images/images/SOULFLOWER.png'
 import Tiger from '../../assets/images/images/TIGER.png'
 
+// Import industry images
+import PharmaImage from '../../assets/images/Pharna.png'
+import PersonalCareImage from '../../assets/images/Personal Care.png'
+import FoodBeveragesImage from '../../assets/images/Food & Beverages.png'
+import HomeCareImage from '../../assets/images/Home care.png'
+import IndustrialImage from '../../assets/images/Industrial.png'
+
+// Import map image
+import MapImage from '../../assets/Map.jpeg'
+
+// Import product images
+import BottleImage from '../../assets/bottle.png'
+import ContainerImage from '../../assets/container.jpeg'
+import CapsImage from '../../assets/caps.png'
+import PreformsImage from '../../assets/preforms.png'
+
+const CAROUSEL_DATA = [
+  {
+    id: 1,
+    title: "Pharmaceutical",
+    description: "High-grade, chemically inert bottles and specialized sealing tapes engineered for safe, contamination-free medical packaging.",
+    tag: "Certified",
+    image: PharmaImage,
+    icon: <Pill className="w-10 h-8" />,
+    link: "/pharmaceutical"
+  },
+  {
+    id: 2,
+    title: "Personal Care",
+    description: "Premium, aesthetically sleek PET bottles and dispensing solutions designed for cosmetics, lotions, and luxury hygiene products.",
+    tag: "Premium",
+    image: PersonalCareImage,
+    icon: <Sparkles className="w-10 h-8" />,
+    link: "/personal-care"
+  },
+  {
+    id: 3,
+    title: "Food & Beverages",
+    description: "FDA-approved, food-safe containers and non-slip safety elements built to handle varying storage temperatures seamlessly.",
+    tag: "FDA Approved",
+    image: FoodBeveragesImage,
+    icon: <Utensils className="w-10 h-8" />,
+    link: "/food-beverages"
+  },
+  {
+    id: 4,
+    title: "Home Care",
+    description: "Durable, ergonomic packaging designed for household cleaners, detergents, and heavy-duty protective thermal insulation.",
+    tag: "Eco-Friendly",
+    image: HomeCareImage,
+      link: "/home-care"
+  },
+  {
+    id: 5,
+    title: "Industrial",
+    description: "High-tensile structural containers and industrial strength bonding adhesives built to withstand extreme mechanical stress.",
+    tag: "Heavy Duty",
+    image: IndustrialImage,
+    icon: <Factory className="w-10 h-8" />,
+    link: "/industrial"
+  }
+];
+
+const PRODUCT_CAROUSEL_DATA = [
+  {
+    id: 1,
+    image: BottleImage,
+    link: "/products/bottles"
+  },
+  {
+    id: 2,
+    image: ContainerImage,
+    link: "/products/jars"
+  },
+  {
+    id: 3,
+    image: CapsImage,
+    link: "/products/caps"
+  },
+  {
+    id: 4,
+    image: PreformsImage,
+    link: "/products/preforms"
+  }
+];
+
 const Home = () => {
   const { theme } = useTheme()
   const [products, setProducts] = useState([])
@@ -34,21 +119,76 @@ const Home = () => {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms'])
+  const [activeIndex, setActiveIndex] = useState(0);
+  const totalItems = CAROUSEL_DATA.length;
+  
+useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((prevIndex) => (prevIndex + 1) % totalItems);
+    }, 1500);
+
+    return () => clearInterval(timer);
+  }, [totalItems]);
 
 
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Category data with icons and descriptions
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleCardClick = (index, link) => {
+    if (index === activeIndex) {
+      window.location.href = link;
+    } else {
+      setActiveIndex(index);
+    }
+  };
+
+
+  const getCardStyles = (index) => {
+    let offset = index - activeIndex;
+
+    if (offset < -2) offset += totalItems;
+    if (offset > 2) offset -= totalItems;
+
+    // No blur on any cards
+    const noBlur = "blur(0px)";
+    
+    // Adjust positions for mobile
+    const sideOffset = isMobile ? "40%" : "55%";
+    const farOffset = isMobile ? "75%" : "100%";
+
+    switch (offset) {
+      case 0: // Center (Front)
+        return { x: "0%", scale: 1, zIndex: 30, opacity: 1, filter: noBlur };
+      case 1: // Right side
+        return { x: sideOffset, scale: 0.8, zIndex: 20, opacity: 0.7, filter: noBlur };
+      case 2: // Far Right (Background)
+        return { x: farOffset, scale: 0.6, zIndex: 10, opacity: 0.3, filter: noBlur };
+      case -1: // Left side
+        return { x: `-${sideOffset}`, scale: 0.8, zIndex: 20, opacity: 0.7, filter: noBlur };
+      case -2: // Far Left (Background)
+        return { x: `-${farOffset}`, scale: 0.6, zIndex: 10, opacity: 0.3, filter: noBlur };
+      default:
+        return { x: "0%", scale: 0.5, zIndex: 0, opacity: 0, filter: noBlur };
+    }
+  };
+
 
   const categoryData = {
 
     'Bottles': {
-
       icon: Package,
-
       description: 'Premium PET bottles in various sizes and shapes',
-
       color: 'from-blue-500 to-cyan-500'
-
     },
 
     'Jars': {
@@ -308,79 +448,90 @@ const Home = () => {
       </section>
 
      
-      {/* ================= ABOUT SECTION ================= */}
-<section className="py-16 md:py-24 lg:py-32 bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+  <section className="py-16 md:py-24 bg-gradient-to-b from-[#FAF9F6] to-white dark:from-slate-950 dark:to-slate-900 border-y border-neutral-200/60 dark:border-slate-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
           className="w-full"
         >
-          {/* 
-            CARD CONTAINER: 
-            - Mobile: p-6 (Compact padding)
-            - Tablet/Desktop: md:p-12 lg:p-16 (Deep, premium padding)
-          */}
-          <div className="rounded-2xl p-6 md:p-12 lg:p-16 shadow-xl md:shadow-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+          {/* Main Layout Grid: Split 12-column setup for Content vs. Map Visual */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center bg-white dark:bg-slate-950 rounded-3xl p-6 md:p-12 lg:p-14 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-neutral-100 dark:border-slate-800">
             
-            {/* 
-              GRID CONTROLLER: 
-              - Mobile: 1 Column stack
-              - Desktop: 12-Column grid to cleanly divide the pure text content 
-            */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
-              
-              {/* LEFT HALF (Desktop: 7 Columns) - Main Typography Branding */}
-              <div className="lg:col-span-7">
-                <span className="wwa-body block mb-3 text-xs font-bold tracking-[0.2em] uppercase text-[#A8312A]">
+            {/* LEFT COLUMN: Strategic Copy & Corporate Metrics (7 Columns) */}
+            <div className="lg:col-span-7 space-y-8">
+              <div>
+                <span className="block mb-3.5 text-xs font-bold tracking-[0.25em] uppercase text-[#A8312A]">
                   Who We Are
                 </span>
-
-                <h2 className="wwa-display text-2xl sm:text-4xl md:text-[2.8rem] font-semibold leading-[1.15] md:leading-[1.1] text-[#1A1815]">
-                  Thirty years of <br className="hidden md:inline" />
-                  moulding precision
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 leading-[1.15]">
+                  Thirty years of <br />
+                  <span className="text-[#A8312A]">moulding precision</span>
                 </h2>
-                
-                {/* Big Metric Display brought upfront for design balance on desktop */}
-                <div className="flex items-end gap-4 mt-6 lg:mt-10">
-                  <span className="wwa-display text-6xl md:text-7xl font-semibold leading-none text-[#A8312A]">
+              </div>
+
+              {/* Core Descriptions */}
+              <div className="space-y-4 max-w-xl">
+                <p className="text-[16px] md:text-[17px] leading-relaxed text-neutral-700 dark:text-slate-300">
+                  Established in <strong className="text-neutral-900 dark:text-white font-semibold">1996</strong>, 
+                  Sheth PET And Polymers Private Limited manufactures, sells, and exports world-class{' '}
+                  <span className="text-neutral-900 dark:text-white font-medium border-b-2 border-[#A8312A]/10">
+                    PET bottles, jars, and preforms
+                  </span>.
+                </p>
+                <p className="text-[16px] md:text-[17px] leading-relaxed text-neutral-700 dark:text-slate-300">
+                  We leverage advanced state-of-the-art tooling to manufacture a versatile array of custom closure caps and specialized systems under one roof.
+                </p>
+              </div>
+
+              <div className="h-px w-full bg-neutral-200/80 dark:bg-slate-800" />
+
+              {/* Integrated Metrics & Capabilities */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ">
+                {/* Years Experience Metric */}
+                <div className="flex items-center gap-4">
+                  <div className="text-5xl md:text-5xl font-bold tracking-tight text-[#A8312A]">
                     30+
-                  </span>
-                  <span className="wwa-body text-xs font-semibold uppercase tracking-[0.15em] leading-tight pb-1.5 text-[#6B6459]">
-                    Years of<br />Engineering Excellence
+                  </div>
+                  <div className="text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-slate-400 leading-snug">
+                    Years of Engineering<br />Excellence
+                  </div>
+                </div>
+
+                {/* Footprint Indicator */}
+                <div className="flex items-start gap-3 bg-neutral-50 dark:bg-slate-900/50 p-3.5 rounded-xl border border-neutral-100 dark:border-slate-800/60">
+                  <MapPin className="w-5 h-5 text-[#A8312A] shrink-0 mt-0.5" />
+                  <div className="text-xs leading-normal text-neutral-700 dark:text-slate-400">
+                    <span className="font-bold text-neutral-800 dark:text-neutral-200 block mb-0.5">Strategic Footprint</span>
+                    Multilocation infrastructure serving domestic & international demands.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN: Interactive Map Component Frame (5 Columns) */}
+            <div className="lg:col-span-5 relative w-full flex justify-center">
+              <div className="relative group w-full max-w-[440px] aspect-[4/3] sm:aspect-square lg:aspect-[11/12] rounded-2xl overflow-hidden bg-neutral-50 dark:bg-slate-900 border border-neutral-100 dark:border-slate-800 shadow-[0_12px_40px_rgba(0,0,0,0.03)]  transition-all duration-300 group-hover:shadow-[0_20px_50px_rgba(168,49,42,0.05)]">
+                            
+                {/* Main Geographic Image Element */}
+                <img
+                  src={MapImage} 
+                  alt="Sheth PET Regional Manufacturing & Facilities Footprint Map"
+                  className="w-full h-full object-cover rounded-xl select-none mix-blend-multiply dark:mix-blend-normal dark:opacity-90 object-center transition-transform duration-700 group-hover:scale-[1.02]"
+                  draggable={false}
+                />
+
+                {/* Floating Map Label Badge */}
+                <div className="absolute bottom-6 left-6 z-20 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md px-3.5 py-2 rounded-lg shadow-md border border-neutral-200/50 dark:border-slate-800 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#A8312A] animate-ping" />
+                  <span className="text-[11px] font-bold tracking-wider text-neutral-800 dark:text-slate-200 uppercase">
+                    Our Manufacturing Hubs
                   </span>
                 </div>
               </div>
-
-              {/* RIGHT HALF (Desktop: 5 Columns) - Corporate Data & Details */}
-              <div className="lg:col-span-5 lg:pt-8">
-                <div className="space-y-4 mb-6">
-                  <p className="wwa-body text-[15px] md:text-base leading-relaxed text-[#44403A]">
-                    Established in <strong className="text-[#1A1815]">1996</strong>, Sheth PET And
-                    Polymers Private Limited manufactures, sells and exports{" "}
-                    <strong className="text-[#1A1815]">PET bottles, jars and preforms</strong>.
-                  </p>
-                  <p className="wwa-body text-[15px] md:text-base leading-relaxed text-[#44403A]">
-                    We also manufacture a variety of <strong className="text-[#1A1815]">Caps</strong>.
-                  </p>
-                </div>
-
-                <div className="h-px w-full mb-6 bg-[#E6E1D6]" />
-
-                <div className="space-y-1.5 text-sm leading-relaxed text-[#6B6459]">
-                  <p className="wwa-body">
-                    A GST-registered <strong className="text-[#1A1815]">Limited Company</strong>
-                    <span className="text-[#9C9587] block sm:inline sm:ml-1">· GST 27AABCS4075P1ZT</span>
-                  </p>
-                  <p className="wwa-body">
-                    Manufacturing under one roof in Thane since day one.
-                  </p>
-                </div>
-              </div>
-
             </div>
 
           </div>
@@ -389,7 +540,100 @@ const Home = () => {
       </div>
     </section>
 
-      <section className="py-20 md:py-32 bg-white/95 relative">
+<section className="relative w-full min-h-[500px] md:min-h-[600px] flex flex-col items-center justify-center bg-white/10 overflow-hidden py-8 md:py-12 px-4">
+      <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="text-center mb-8 md:mb-16 space-y-2"
+        >
+          <span className="font-mono text-[11px] md:text-[13px] font-bold uppercase tracking-[0.2em] text-red-600 block">
+            Industries We Serve
+          </span>
+          <h2 
+            className="text-2xl md:text-4xl font-bold text-[#15171A] dark:text-[#F2F1ED] tracking-tight" 
+            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+          >
+            Serving Diverse Sectors
+          </h2>
+          <p className="text-xs md:text-sm text-[#5C6066] dark:text-[#9B9D9F] max-w-xl mx-auto leading-relaxed">
+            Our custom containment structures cater to distinct commercial and industrial ecosystems with strict performance metrics.
+          </p>
+        </motion.div>
+
+      {/* Main 3D Stage Viewport Container */}
+      <div className="relative w-full max-w-5xl h-[320px] md:h-[380px] flex items-center justify-center persistent-3d-context">
+        {CAROUSEL_DATA.map((item, index) => {
+          const styles = getCardStyles(index);
+          const isCenter = index === activeIndex;
+
+          return (
+            <motion.div
+              key={item.id}
+              className={`absolute w-[180px] sm:w-[280px] md:w-[400px] h-[280px] md:h-[350px] bg-white rounded-2xl shadow-xl border border-neutral-200 p-4 md:p-6 flex flex-col justify-between cursor-pointer group select-none`}
+              animate={styles}
+              transition={{ type: "spring", stiffness: 120, damping: 20 }}
+              onClick={() => handleCardClick(index, item.link)}
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              
+
+              {/* Card Foreground Content */}
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                
+                {/* Header Row: Icon, Title & Badge */}
+                <div className="flex flex-col gap-1 md:gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <div className="p-1.5 md:p-2 bg-slate-50 rounded-lg text-slate-600 border border-slate-300 group-hover:border-red-300 group-hover:text-red-500 transition-colors duration-300">
+                      {item.icon}
+                    </div>
+                    {item.tag && (
+                      <span className="text-[9px] md:text-[10px] font-bold tracking-wider uppercase px-1.5 md:px-2.5 py-0.5 md:py-1 bg-amber-100 text-amber-800 rounded-full shadow-sm">
+                        {item.tag}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <h3 className="text-sm md:text-lg font-bold text-neutral-800 tracking-wide mt-1">
+                    {item.title}
+                  </h3>
+                  
+                  <p className="text-[10px] md:text-xs text-slate-700 font-medium line-clamp-2 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+
+                {/* Centered Image Mockup Container */}
+                <div className="w-full h-[90px] md:h-[140px] flex items-center justify-center mt-2 overflow-hidden rounded-xl bg-neutral-50/50 border border-dashed border-slate-200 group-hover:border-red-300 transition-colors">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="object-contain max-h-full max-w-full drop-shadow-md rounded-xl transition-transform duration-500 group-hover:scale-105"
+                    draggable={false}
+                  />
+                </div>
+
+                {/* Decorative Action Hint */}
+                <div className="h-3 md:h-4 flex items-center justify-center mt-2">
+                  {isCenter ? (
+                    <div className="text-[10px] md:text-xs font-semibold text-red-500 tracking-wider uppercase animate-pulse">
+                      Click to Open Page
+                    </div>
+                  ) : (
+                    <div className="text-[10px] md:text-xs font-medium text-neutral-400 tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      View Details
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+      </section>
+    
+      <section className="py-20 md:py-22 bg-white/95 relative border-t-1 border-slate-200">
 
         <div className="max-w-7xl mx-auto px-5 md:px-12">
           <motion.div
@@ -488,6 +732,7 @@ const Home = () => {
         </div>
 
       </section>
+
 <section className="py-20 md:py-20 bg-gradient-to-br from-slate-50 to-white overflow-hidden">
   <div className="w-full mx-auto px-5 md:px-12">
     <motion.div
@@ -560,113 +805,6 @@ const Home = () => {
     }
   `}</style>
 </section>
-
-
-      {/* ================= INDUSTRIES WE SERVE ================= */}
-
-      <section className="py-20 md:py-20 bg-white/95 border-y border-slate-400">
-
-        <div className="max-w-7xl mx-auto px-5 md:px-12">
-
-          <motion.div
-
-            initial={{ opacity: 0, y: 20 }}
-
-            whileInView={{ opacity: 1, y: 0 }}
-
-            viewport={{ once: true, margin: "-100px" }}
-
-            transition={{ duration: 0.6, ease: "easeOut" }}
-
-            className="text-center mb-12 md:mb-16"
-
-          >
-
-            <span className="text-xs font-bold tracking-[0.2em] text-red-500 uppercase block mb-2">Industries We Serve</span>
-
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-
-              Serving Diverse Sectors
-
-            </h2>
-
-            <p className="text-slate-600 font-semibold text-sm md:text-base max-w-2xl mx-auto font-light leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-
-              Our packaging solutions cater to a wide range of industries with specialized requirements.
-
-            </p>
-
-          </motion.div>
-
-
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
-
-            {[
-
-              { icon: Target, title: 'Pharmaceutical', description: 'GMP-compliant packaging for medicines and healthcare products.' },
-
-              { icon: Eye, title: 'Cosmetic & Personal Care', description: 'Premium packaging for lotions, creams, and beauty products with custom finishes.' },
-
-              { icon: Package, title: 'Food & Beverage', description: 'Food-safe PET bottles and jars for spices, juices, honey, and more.' },
-
-              { icon: Settings, title: 'Home Care & Cleaning', description: 'Durable packaging for hand wash, dish wash, and household chemicals.' }
-
-            ].map((industry, index) => (
-
-              <motion.div
-
-                key={index}
-
-                className="p-6 md:p-8 bg-white/80 border border-slate-300 rounded-2xl relative overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-2 transition-all duration-500"
-
-                initial={{ opacity: 0, y: 20 }}
-
-                whileInView={{ opacity: 1, y: 0 }}
-
-                viewport={{ once: true, margin: "-100px" }}
-
-                transition={{ duration: 0.4, delay: index * 0.08, ease: "easeOut" }}
-
-              >
-
-                <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-2xl mb-5">
-
-                  <industry.icon size={24} className="text-red-600" />
-
-                </div>
-
-                <h3 className="text-xl font-bold text-slate-900 mb-2 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-
-                  {industry.title}
-
-                </h3>
-
-                <p className="text-xs md:text-sm text-slate-600 font-semibold light leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-
-                  {industry.description}
-
-                </p>
-
-              </motion.div>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-
-      {/* ================= CLIENT TESTIMONIALS / LOGOS ================= */}
-
-      
-
-
-
-
 
       {/* ================= CONTACT CTA ================= */}
 
@@ -817,7 +955,8 @@ const Home = () => {
 
                         <img
 
-                          src={`http://localhost:5000/uploads/${selectedProduct.image}`}
+                         // src={`http://localhost:5000/uploads/${selectedProduct.image}`}
+                          src={`/uploads/${selectedProduct.image}`}
 
                           alt={selectedProduct.name || selectedProduct.title}
 

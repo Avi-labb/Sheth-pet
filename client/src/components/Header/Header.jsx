@@ -8,7 +8,7 @@ import { useTheme } from '../../contexts/ThemeContext'
 
 const navItems = [
   { name: 'Manufacturing', path: '/manufacturing' },
-  { name: 'Industries', path: '/industries' },
+  { name: 'Innovate', path: '/innovate' },
   { name: 'Sustainability', path: '/sustainability' },
   { name: 'About', path: '/about' },
   { name: 'Blog', path: '/blog' },
@@ -88,7 +88,7 @@ const Header = ({ onCategorySelect }) => {
               }`}>
               SHETH
             </span>
-            <span className={`text-xs sm:text-sm font-medium uppercase tracking-wider ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'
+            <span className={`text-xs sm:text-lg font-medium uppercase tracking-wider ${theme === 'light' ? 'text-slate-900' : 'text-white'
               }`}>
               Pet & Polymers
             </span>

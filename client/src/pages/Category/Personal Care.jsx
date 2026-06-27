@@ -1,33 +1,36 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Package, ChevronRight } from 'lucide-react'
+import { Package, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../../services/api'
-import personalCareImage from '../../assets/images/Personal Care.jpg'
+import personalCareImage from '../../assets/images/Personal Care.png'
 
 const PersonalCare = () => {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
   const [selectedColor, setSelectedColor] = useState({})
-  const navigate = useNavigate()
 
   const getProductImage = (product, color = null) => {
     if (color && product.images) {
       if (product.images[color]) {
-        return `http://localhost:5000/uploads/${product.images[color]}`
+       // return `http://localhost:5000/uploads/${product.images[color]}`
+        return `/uploads/${product.images[color]}`
       }
       const colorLower = color.toLowerCase()
       const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
       if (matchingKey) {
-        return `http://localhost:5000/uploads/${product.images[matchingKey]}`
+       // return `http://localhost:5000/uploads/${product.images[matchingKey]}`
+        return `/uploads/${product.images[matchingKey]}`
       }
     }
     if (product.images && Object.keys(product.images).length > 0) {
       const firstKey = Object.keys(product.images)[0]
-      return `http://localhost:5000/uploads/${product.images[firstKey]}`
+     // return `http://localhost:5000/uploads/${product.images[firstKey]}`
+        return `/uploads/${product.images[firstKey]}`
     }
     if (product.image) {
-      return `http://localhost:5000/uploads/${product.image}`
+     // return `http://localhost:5000/uploads/${product.image}`
+        return `/uploads/${product.image}`
     }
     return null
   }
@@ -37,24 +40,6 @@ const PersonalCare = () => {
       return Object.keys(product.images)
     }
     return Array.isArray(product.color) ? product.color : (product.color ? [product.color] : [])
-  }
-
-  const getMoqForColor = (product, color) => {
-    if (!product.moqPackaging) return ''
-    if (typeof product.moqPackaging === 'object') {
-      if (product.moqPackaging[color]) {
-        return product.moqPackaging[color]
-      }
-      const colorLower = color.toLowerCase()
-      const matchingKey = Object.keys(product.moqPackaging).find(key => key.toLowerCase() === colorLower)
-      if (matchingKey) {
-        return product.moqPackaging[matchingKey]
-      }
-    }
-    if (typeof product.moqPackaging === 'string') {
-      return product.moqPackaging
-    }
-    return ''
   }
 
   const fetchProducts = async () => {
@@ -74,226 +59,190 @@ const PersonalCare = () => {
     fetchProducts()
   }, [])
 
-  const handleCustomize = (e, product) => {
-    e.stopPropagation()
-    const colors = getProductColors(product)
-    const currentColor = selectedColor[product._id] || colors[0]
-    navigate('/contact', { 
-      state: { 
-        product: product, 
-        selectedColor: currentColor 
-      } 
-    })
-  }
-
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-red-500 selection:text-white">
-      <section 
-        className="py-16 bg-gradient-to-br from-slate-900/90 to-slate-800/90 text-white relative overflow-hidden"
-        style={{
-          backgroundImage: `url(${personalCareImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        {/* Dark overlay for readability */}
-        <div className="absolute inset-0 bg-slate-900/70" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 relative z-10">
-          <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-slate-400 uppercase mb-4">
-            <Link to="/" className="hover:text-red-400 transition-colors">Home</Link>
-            <ChevronRight size={12} />
-            <span>Personal Care</span>
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-[#3FB893] selection:text-white">
+      {/* HERO SECTION */}
+      <section className="relative mt-20 sm:mt-20 overflow-hidden border-b border-gray-200 bg-white">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${personalCareImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20" />
+
+        <div className="max-w-7xl mx-auto px-6 sm:px-8  pb-20 relative z-10">
+          <div className="flex items-center gap-2 text-[11px] mt-5 sm:mt-20 sm:mb-50 sm:text-[15px] font-mono uppercase tracking-[0.2em] text-white mb-6">
+            <Link to="/" className="hover:text-red-600 transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white font-semibold">Personal Care</span>
           </div>
-          <h1 
-            className="text-4xl md:text-5xl font-black tracking-tight mb-4"
-            style={{ fontFamily: '"Space Grotesk", sans-serif' }}
-          >
-            Personal Care Packaging
-          </h1>
-          <p className="text-lg text-slate-300 max-w-3xl leading-relaxed mb-8">
-            Premium packaging solutions for cosmetics, skincare, and personal care products. Designed to enhance product appeal while maintaining quality and integrity.
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                <span className="text-sm font-medium">Elegant Designs</span>
-              </div>
-            </div>
-            <div className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                <span className="text-sm font-medium">Custom Colors</span>
-              </div>
-            </div>
-            <div className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                <span className="text-sm font-medium">Premium Finishes</span>
-              </div>
-            </div>
-            <div className="bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                <span className="text-sm font-medium">Multiple Sizes</span>
-              </div>
-            </div>
+
+          <div className="max-w-3xl">
+            <h1
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6"
+              style={{ fontFamily: '"Space Grotesk", sans-serif' }}
+            >
+              Personal Care <span className="text-red-600">Packaging.</span>
+            </h1>
+            <p className="text-sm sm:text-lg text-white font-medium leading-relaxed max-w-2xl">
+              Premium packaging solutions for cosmetics, skincare, and personal care products. Designed to enhance product appeal while maintaining quality and integrity.
+            </p>
           </div>
         </div>
       </section>
+      <section className="py-12 md:py-16">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
 
-      <section className="py-12 md:py-16 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between mb-8 pb-3 border-b border-slate-600 dark:border-[#2A2D32]">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-slate-700">
+              Class Classification Matrix
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-slate-700">
+              Showing {products.length} items
+            </span>
+          </div>
+
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="bg-white border border-slate-300 rounded-2xl overflow-hidden animate-pulse">
-                  <div className="aspect-[4/3] bg-slate-100 w-full"></div>
-                  <div className="p-6 space-y-4">
-                    <div className="h-6 bg-slate-200 rounded w-1/3"></div>
-                    <div className="h-4 bg-slate-200 rounded w-2/3"></div>
-                    <div className="h-12 bg-slate-200 rounded w-full"></div>
-                  </div>
+            /* Seamless Grid Skeleton matching layout */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="bg-white dark:bg-[#1C1F23] aspect-[4/5] p-6 space-y-4 animate-pulse border border-slate-600 dark:border-[#2A2D32]">
+                  <div className="aspect-[4/3] bg-[#FAFAF8] dark:bg-[#15171A]" />
+                  <div className="h-4 bg-[#FAFAF8] dark:bg-[#15171A] w-3/4" />
+                  <div className="h-3 bg-[#FAFAF8] dark:bg-[#15171A] w-1/2" />
                 </div>
               ))}
             </div>
           ) : products.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            /* Sharp Seamless Border Grid Matrix */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {products.map((product, index) => {
                 const colors = getProductColors(product)
                 const currentColor = selectedColor[product._id] || colors[0]
                 const currentImage = getProductImage(product, currentColor)
-                const currentMoq = getMoqForColor(product, currentColor)
 
                 return (
                   <motion.div
                     key={product._id}
-                    className="bg-white border border-slate-300 rounded-2xl overflow-hidden cursor-pointer group flex flex-col justify-between h-full relative shadow-sm hover:shadow-xl"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    className="group flex flex-col justify-between bg-white dark:bg-[#15171A] hover:bg-white dark:hover:bg-[#1C1F23] transition-colors relative border border-slate-400 dark:border-[#2A2D32]"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.03 }}
-                    whileHover={{ y: -6, borderColor: 'rgba(220, 38, 38, 0.3)', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
+                    transition={{ duration: 0.3, delay: index * 0.03 }}
                   >
-                    <Link to={`/product/${product._id}`} className="flex-1">
-                      <div>
-                        <div className="relative aspect-[4/3] bg-gradient-to-br from-slate-50 to-slate-100 border-b border-slate-200 flex items-center justify-center overflow-hidden">
-                          {currentImage ? (
-                            <motion.img
-                              key={currentColor}
-                              initial={{ opacity: 0, scale: 0.95 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ duration: 0.3 }}
-                              src={currentImage}
-                              alt={product.name}
-                              className="w-full h-full object-contain p-8 transform group-hover:scale-105 transition-transform duration-700 ease-out"
-                            />
-                          ) : (
-                            <div className="text-slate-400 flex flex-col items-center gap-3">
-                              <Package size={48} strokeWidth={1} />
-                              <span className="text-[10px] uppercase tracking-[0.3em] text-slate-400 font-bold">Image Coming Soon</span>
-                            </div>
-                          )}
-                          {product.category && (
-                            <span className="absolute top-4 left-4 inline-block px-3 py-1 bg-white/95 text-slate-700 text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg border border-slate-200 backdrop-blur-sm shadow-sm">
+                    {/* Upper Click Box Area */}
+                    <Link to={`/product/${product._id}`} className="flex-1 flex flex-col">
+
+                      {/* Image Frame Area */}
+                      <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden border-b border-slate-400 dark:border-[#2A2D32]">
+                        {currentImage ? (
+                          <motion.img
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.6, ease: 'easeOut' }}
+                            src={currentImage}
+                            alt={product.name}
+                            className="h-full w-full object-cover select-none"
+                            loading="lazy"
+                            style={{ imageRendering: 'auto' }}
+                          />
+                        ) : (
+                          <div className="text-[#C8C6BD] dark:text-[#3A3D40] flex flex-col items-center gap-2">
+                            <Package size={28} strokeWidth={1.5} />
+                            <span className="text-[9px] font-mono tracking-[0.2em] uppercase">No media</span>
+                          </div>
+                        )}
+
+                        {product.category && (
+                          <div className="absolute top-4 font-semibold left-4">
+                            <span className="inline-flex items-center px-2 py-0.5 bg-[#FAFAF8] dark:bg-[#15171A] border border-slate-400 dark:border-[#2A2D32] text-slate-800 dark:text-[#F2F1ED] text-[10px] font-mono uppercase tracking-widest">
                               {product.category}
                             </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content details frame */}
+                      <div className="p-4 flex-1 flex flex-col justify-between gap-4">
+                        <div className="space-y-1">
+                          {product.sku && (
+                            <span className="block font-mono text-[10px] text-slate-700">SKU · {product.sku}</span>
                           )}
-                        </div>
-                        <div className="p-6">
-                          <h3 
-                            className="text-xl font-bold text-slate-900 group-hover:text-red-600 transition-colors duration-200 line-clamp-2 mb-2" 
-                            style={{ fontFamily: '"Space Grotesk", sans-serif' }}
+                          <h3
+                            className="text-[18px] font-bold tracking-tight text-[#15171A] dark:text-[#F2F1ED] line-clamp-2 group-hover:text-red-600 transition-colors"
+                            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                           >
                             {product.name}
                           </h3>
-                          {product.sku && (
-                            <p className="text-[11px] font-mono text-slate-500 tracking-widest mb-4">
-                              SKU: {product.sku}
-                            </p>
-                          )}
-                          {colors.length > 0 && (
-                            <div className="mb-4">
-                              <p className="text-[11px] font-bold text-slate-700 uppercase tracking-[0.15em] mb-2">
-                                Colors
-                              </p>
-                              <div className="flex flex-wrap gap-2">
-                                {colors.map((color, idx) => (
+                        </div>
+
+                        {/* Flat Minimalist Swatches */}
+                        {colors.length > 0 && (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-slate-700">
+                              <span>Variant Color</span>
+                              <span className="text-slate-700 text-[11px] font-medium dark:text-[#F2F1ED]">{currentColor}</span>
+                            </div>
+                            <div className="flex flex-wrap gap-1">
+                              {colors.map((color, idx) => {
+                                const isSelected = currentColor === color
+                                return (
                                   <button
                                     key={idx}
+                                    type="button"
                                     onClick={(e) => {
+                                      e.preventDefault()
                                       e.stopPropagation()
                                       setSelectedColor({ ...selectedColor, [product._id]: color })
                                     }}
-                                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border-2 ${
-                                      currentColor === color
-                                        ? 'bg-red-600 text-white border-red-600 shadow-md'
-                                        : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                    }`}
+                                    className={`px-2 py-1 text-[12px] font-mono uppercase tracking-wide border transition-all ${isSelected
+                                      ? 'bg-[#15171A] dark:bg-[#F2F1ED] text-[#FAFAF8] dark:text-[#15171A] border-[#15171A] dark:border-[#F2F1ED]'
+                                      : 'bg-white dark:bg-[#1C1F23] text-slate-800 dark:text-[#9B9D9F] border-slate-400 dark:border-[#2A2D32] hover:border-[#8C8E8A]'
+                                      }`}
                                   >
                                     {color}
                                   </button>
-                                ))}
-                              </div>
+                                )
+                              })}
                             </div>
-                          )}
-                          {currentMoq && (
-                            <div className="mb-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-1">
-                                Minimum Order Quantity
-                              </p>
-                              <p className="text-lg font-bold text-slate-900">
-                                {currentMoq}
-                              </p>
-                            </div>
-                          )}
-                          {product.marketSegments && product.marketSegments.length > 0 && (
-                            <div className="mb-2">
-                              <p className="text-[11px] font-bold text-slate-700 uppercase tracking-[0.15em] mb-2">
-                                Suitable For
-                              </p>
-                              <div className="flex flex-col gap-1.5">
-                                {product.marketSegments.map((segment, idx) => (
-                                  <div key={idx} className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></div>
-                                    <span className="text-[13px] text-slate-600 font-medium">
-                                      {segment}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     </Link>
-                    <div className="px-6 pb-6">
-                      <div className="grid grid-cols-2 gap-3">
-                        <Link
-                          to={`/product/${product._id}`}
-                          className="py-3 px-4 bg-slate-100 group-hover:bg-slate-200 border border-slate-300 rounded-xl flex items-center justify-center text-slate-700 text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300"
-                        >
-                          <span>View Details</span>
-                          <ChevronRight size={14} className="ml-1.5" />
-                        </Link>
-                        <button
-                          onClick={(e) => handleCustomize(e, product)}
-                          className="py-3 px-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border border-red-600 hover:border-red-700 rounded-xl flex items-center justify-center text-white text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-sm hover:shadow-md"
-                        >
-                          Customize
-                        </button>
-                      </div>
+                    <div className="px-4 pb-4 grid grid-cols-2 gap-2">
+                      <Link
+                        to={`/innovate`}
+                        className="py-2 px-3 border border-slate-400 dark:border-[#2A2D32] text-slate-900 dark:text-[#9B9D9F] text-[10px] font-medium uppercase tracking-wider text-center hover:border-[#8C8E8A] transition-colors flex items-center justify-center gap-1 group/btn"
+                      >
+                        customize
+                        <ArrowUpRight size={13} className="text-slate-800 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={(e) => handleCustomize(e, product)}
+                        className="py-2 px-3 bg-red-600 hover:bg-red-700 text-white text-[10px] font-mono uppercase tracking-wider transition-colors text-center"
+                      >
+                        Quote
+                      </button>
                     </div>
                   </motion.div>
                 )
               })}
             </div>
           ) : (
-            <div className="text-center py-20 border border-dashed border-slate-400 rounded-2xl bg-white/10 max-w-sm mx-auto">
-              <Package size={48} className="mx-auto text-slate-500 mb-4" strokeWidth={1} />
-              <h3 className="text-lg font-bold text-slate-600 mb-2">No Products Found</h3>
-              <p className="text-slate-600 text-sm px-4">
-                We're working on expanding our product range for this segment. Please check back soon!
+            /* Flat Empty Layout Workspace */
+            <div className="text-center py-24 border border-[#DEDDD6] dark:border-[#2A2D32] bg-white dark:bg-[#1C1F23] max-w-md mx-auto">
+              <Package size={28} className="mx-auto text-[#D4530F] mb-4 " strokeWidth={1.5} />
+              <h3 className="text-sm font-bold uppercase tracking-wide mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                Class Vacant
+              </h3>
+              <p className="text-[#5C6066] dark:text-[#9B9D9F] text-xs px-8 leading-relaxed max-w-xs mx-auto">
+                No active personal care metrics matched this profile configuration query. Contact engineering.
               </p>
             </div>
           )}

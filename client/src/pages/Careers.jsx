@@ -1,37 +1,28 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Clock, DollarSign, Users, Target, Award, Heart } from 'lucide-react'
+import { MapPin, Clock, DollarSign, Users, Target, Award, Heart, GraduationCap } from 'lucide-react'
+import { careerAPI } from '../services/api'
 
 const Careers = () => {
-  const openings = [
-    {
-      title: 'Senior Production Engineer',
-      location: 'Mumbai, India',
-      type: 'Full-time',
-      experience: '5+ years',
-      salary: 'Competitive'
-    },
-    {
-      title: 'Quality Control Supervisor',
-      location: 'Mumbai, India',
-      type: 'Full-time',
-      experience: '3+ years',
-      salary: 'Competitive'
-    },
-    {
-      title: 'Sales Manager',
-      location: 'Mumbai, India',
-      type: 'Full-time',
-      experience: '4+ years',
-      salary: 'Competitive + Incentives'
-    },
-    {
-      title: 'R&D Chemist',
-      location: 'Mumbai, India',
-      type: 'Full-time',
-      experience: '2+ years',
-      salary: 'Competitive'
+  const [careers, setCareers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchCareers = async () => {
+    setLoading(true);
+    try {
+      const result = await careerAPI.getCareers();
+      if (result.ok) {
+        setCareers(result.data.careers.filter(c => c.isActive));
+      }
+    } catch (err) {
+      console.error(err);
     }
-  ]
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchCareers();
+  }, []);
 
   const benefits = [
     { icon: Heart, title: 'Health Insurance', desc: 'Comprehensive medical coverage' },
@@ -121,48 +112,62 @@ const Careers = () => {
             </p>
           </motion.div>
 
-          <div className="space-y-6">
-            {openings.map((opening, index) => (
-              <motion.div
-                key={index}
-                className="p-10 bg-white border border-slate-200 rounded-2xl transition-all duration-300"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                whileHover={{ y: -5, scale: 1.01, transition: { duration: 0.3 } }}
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                  <div className="flex-1">
-                    <h3 className="text-xl md:text-2xl font-semibold text-slate-800 mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                      {opening.title}
-                    </h3>
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex items-center gap-2 text-sm text-slate-500" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        <MapPin size={16} />
-                        {opening.location}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-slate-500" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        <Clock size={16} />
-                        {opening.type}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-slate-500" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        <Users size={16} />
-                        {opening.experience}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-slate-500" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        <DollarSign size={16} />
-                        {opening.salary}
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-slate-500">Loading...</p>
+            </div>
+          ) : careers.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+              <p className="text-slate-500">No current openings. Check back soon!</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {careers.map((career, index) => (
+                <motion.div
+                  key={career._id}
+                  className="p-10 bg-white border border-slate-200 rounded-2xl transition-all duration-300"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.15 }}
+                  whileHover={{ y: -5, scale: 1.01, transition: { duration: 0.3 } }}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex-1">
+                      <h3 className="text-xl md:text-2xl font-semibold text-slate-800 mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        {career.postName}
+                      </h3>
+                      <div className="flex flex-wrap gap-4">
+                        <div className="flex items-center gap-2 text-sm text-slate-500" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          <MapPin size={16} />
+                          {career.location}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-500" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          <Clock size={16} />
+                          {career.employmentType}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-500" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          <Users size={16} />
+                          {career.experience}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-500" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          <GraduationCap size={16} />
+                          {career.education}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-500" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          <DollarSign size={16} />
+                          {career.salary}
+                        </div>
                       </div>
                     </div>
+                    <button className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg border-2 border-red-600 bg-red-600 text-white font-semibold text-sm uppercase tracking-wider cursor-pointer transition-all duration-300 hover:bg-red-700 hover:border-red-700" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                      Apply Now
+                    </button>
                   </div>
-                  <button className="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg border-2 border-red-600 bg-red-600 text-white font-semibold text-sm uppercase tracking-wider cursor-pointer transition-all duration-300 hover:bg-red-700 hover:border-red-700" style={{ fontFamily: "'Poppins', sans-serif" }}>
-                    Apply Now
-                  </button>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

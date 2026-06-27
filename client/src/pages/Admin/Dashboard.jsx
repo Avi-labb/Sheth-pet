@@ -6,7 +6,7 @@ import {
   ExternalLink, BarChart3, Database,
   CheckCircle2, AlertCircle, ArrowRight,
   LogOut, RefreshCw, Menu, X, Image,
-  XCircle, ArrowLeft
+  XCircle, ArrowLeft, BookOpen, Briefcase
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -257,7 +257,7 @@ const Dashboard = () => {
     if (product.images) {
       Object.entries(product.images).forEach(([colorName, filename]) => {
        // initialEditImagesPreview[colorName] = `http://localhost:5000/uploads/${filename}`;
-        initialEditImagesPreview[colorName] = `/uploads/${filename}`;
+       initialEditImagesPreview[colorName] = `/uploads/${filename}`;
       });
     }
     
@@ -484,7 +484,7 @@ const Dashboard = () => {
           <p className="text-[13px] font-mono text-neutral-500 uppercase tracking-widest pl-9">Production ERP Engine</p>
         </div>
 
-        <nav className="space-y-1.5">
+        <nav className="">
           <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-[0.3em] block mb-3 pl-3">Data Matrix Viewports</span>
 
           <button
@@ -506,7 +506,7 @@ const Dashboard = () => {
           </button>
 
           <button
-            onClick={() => navigate('/bulk-upload')}
+            onClick={() => navigate('/admin/bulk-upload')}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group text-neutral-400 hover:text-neutral-100"
           >
             <FileSpreadsheet size={14} className="text-neutral-500 group-hover:text-neutral-400" />
@@ -519,6 +519,24 @@ const Dashboard = () => {
           >
             <Package size={14} className={activeTab === 'popup' ? 'text-red-500' : 'text-neutral-500 group-hover:text-neutral-400'} />
             New Product Popup
+            <ArrowRight size={12} className="ml-auto text-neutral-600" />
+          </button>
+
+          <button
+            onClick={() => navigate('/admin/blogs')}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group text-neutral-400 hover:text-neutral-100"
+          >
+            <BookOpen size={14} className="text-neutral-500 group-hover:text-neutral-400" />
+            Blog Management
+            <ArrowRight size={12} className="ml-auto text-neutral-600" />
+          </button>
+
+          <button
+            onClick={() => navigate('/admin/careers')}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group text-neutral-400 hover:text-neutral-100"
+          >
+            <Briefcase size={14} className="text-neutral-500 group-hover:text-neutral-400" />
+            Career Management
             <ArrowRight size={12} className="ml-auto text-neutral-600" />
           </button>
         </nav>
@@ -875,7 +893,7 @@ const Dashboard = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent pointer-events-none" />
             <img
              // src={`http://localhost:5000/uploads/${selectedProduct.image}`}
-               src={`/uploads/${selectedProduct.image}`}
+             src={`/uploads/${selectedProduct.image}`}
              alt={selectedProduct.name}
               className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
             />

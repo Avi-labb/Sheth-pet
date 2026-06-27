@@ -1,9 +1,14 @@
 
 //const ADMIN_API_BASE_URL = "http://localhost:5000/api/admin";
 //const PRODUCT_API_BASE_URL = "http://localhost:5000/api/products";
+//const BLOG_API_BASE_URL = "http://localhost:5000/api/blogs";
+//const CAREER_API_BASE_URL = "http://localhost:5000/api/careers";
 
 const ADMIN_API_BASE_URL = "/api/admin";
 const PRODUCT_API_BASE_URL = "/api/products";
+const BLOG_API_BASE_URL = "/api/blogs";
+const CAREER_API_BASE_URL = "/api/careers";
+
 // Helper function for API calls
 const apiRequest = async (baseUrl, endpoint, options = {}) => {
   try {
@@ -143,6 +148,116 @@ export const productAPI = {
   deleteProduct: async (id) => {
     try {
       const response = await fetch(`${PRODUCT_API_BASE_URL}/delete-product/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = await response.json();
+      return { ok: response.ok, data };
+    } catch (error) {
+      return { ok: false, data: { message: "Network error. Please try again." } };
+    }
+  }
+};
+
+// Blog API functions
+export const blogAPI = {
+  getBlogs: async () => {
+    return apiRequest(BLOG_API_BASE_URL, "/", { method: "GET" });
+  },
+
+  getBlog: async (id) => {
+    return apiRequest(BLOG_API_BASE_URL, `/${id}`, { method: "GET" });
+  },
+
+  createBlog: async (formData) => {
+    try {
+      const response = await fetch(`${BLOG_API_BASE_URL}/create`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      const data = await response.json();
+      return { ok: response.ok, data };
+    } catch (error) {
+      return { ok: false, data: { message: "Network error. Please try again." } };
+    }
+  },
+
+  updateBlog: async (id, formData) => {
+    try {
+      const response = await fetch(`${BLOG_API_BASE_URL}/update/${id}`, {
+        method: "PUT",
+        body: formData,
+        credentials: "include",
+      });
+      const data = await response.json();
+      return { ok: response.ok, data };
+    } catch (error) {
+      return { ok: false, data: { message: "Network error. Please try again." } };
+    }
+  },
+
+  deleteBlog: async (id) => {
+    try {
+      const response = await fetch(`${BLOG_API_BASE_URL}/delete/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = await response.json();
+      return { ok: response.ok, data };
+    } catch (error) {
+      return { ok: false, data: { message: "Network error. Please try again." } };
+    }
+  }
+};
+
+// Career API functions
+export const careerAPI = {
+  getCareers: async () => {
+    return apiRequest(CAREER_API_BASE_URL, "/", { method: "GET" });
+  },
+
+  getCareer: async (id) => {
+    return apiRequest(CAREER_API_BASE_URL, `/${id}`, { method: "GET" });
+  },
+
+  createCareer: async (careerData) => {
+    try {
+      const response = await fetch(`${CAREER_API_BASE_URL}/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(careerData),
+      });
+      const data = await response.json();
+      return { ok: response.ok, data };
+    } catch (error) {
+      return { ok: false, data: { message: "Network error. Please try again." } };
+    }
+  },
+
+  updateCareer: async (id, careerData) => {
+    try {
+      const response = await fetch(`${CAREER_API_BASE_URL}/update/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(careerData),
+      });
+      const data = await response.json();
+      return { ok: response.ok, data };
+    } catch (error) {
+      return { ok: false, data: { message: "Network error. Please try again." } };
+    }
+  },
+
+  deleteCareer: async (id) => {
+    try {
+      const response = await fetch(`${CAREER_API_BASE_URL}/delete/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
