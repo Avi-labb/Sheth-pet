@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Box, MapPin, ShieldCheck, Award,Layers, Package, Settings,Beaker, Target, Eye, ArrowUpRight, PhoneCall, X, Pill, Sparkles, Utensils, Factory } from 'lucide-react'
+import { Box, MapPin, ShieldCheck, Award,Layers, Package, Settings,Beaker, Target, Eye, ArrowUpRight, PhoneCall, X, Pill, Sparkles, Utensils, Factory, HomeIcon } from 'lucide-react'
 
 import { useState, useEffect } from 'react'
 
@@ -37,10 +37,10 @@ import IndustrialImage from '../../assets/images/Industrial.png'
 import MapImage from '../../assets/Map.jpeg'
 
 // Import product images
-import BottleImage from '../../assets/bottle.png'
-import ContainerImage from '../../assets/container.jpeg'
-import CapsImage from '../../assets/caps.png'
-import PreformsImage from '../../assets/preforms.png'
+import BOTTLE from '../../assets/images/BOTTLE.png'
+import CAP from '../../assets/images/CAP.png'
+import PREFORMS from '../../assets/images/PREFORMS.png'
+import JAR from '../../assets/images/JAR.png'
 
 const CAROUSEL_DATA = [
   {
@@ -49,7 +49,7 @@ const CAROUSEL_DATA = [
     description: "High-grade, chemically inert bottles and specialized sealing tapes engineered for safe, contamination-free medical packaging.",
     tag: "Certified",
     image: PharmaImage,
-    icon: <Pill className="w-10 h-8" />,
+    icon: <Pill className="w-6 sm:w-10 h-5 sm:h-8" />,
     link: "/pharmaceutical"
   },
   {
@@ -58,7 +58,7 @@ const CAROUSEL_DATA = [
     description: "Premium, aesthetically sleek PET bottles and dispensing solutions designed for cosmetics, lotions, and luxury hygiene products.",
     tag: "Premium",
     image: PersonalCareImage,
-    icon: <Sparkles className="w-10 h-8" />,
+    icon: <Sparkles className="w-6 sm:w-10 h-5 sm:h-8" />,
     link: "/personal-care"
   },
   {
@@ -67,7 +67,7 @@ const CAROUSEL_DATA = [
     description: "FDA-approved, food-safe containers and non-slip safety elements built to handle varying storage temperatures seamlessly.",
     tag: "FDA Approved",
     image: FoodBeveragesImage,
-    icon: <Utensils className="w-10 h-8" />,
+    icon: <Utensils className="w-6 sm:w-10 h-5 sm:h-8" />,
     link: "/food-beverages"
   },
   {
@@ -76,6 +76,7 @@ const CAROUSEL_DATA = [
     description: "Durable, ergonomic packaging designed for household cleaners, detergents, and heavy-duty protective thermal insulation.",
     tag: "Eco-Friendly",
     image: HomeCareImage,
+    icon :<HomeIcon className="w-6 sm:w-10 h-5 sm:h-8" />,
       link: "/home-care"
   },
   {
@@ -84,33 +85,12 @@ const CAROUSEL_DATA = [
     description: "High-tensile structural containers and industrial strength bonding adhesives built to withstand extreme mechanical stress.",
     tag: "Heavy Duty",
     image: IndustrialImage,
-    icon: <Factory className="w-10 h-8" />,
+    icon: <Factory className="w-6 sm:w-10 h-5 sm:h-8" />,
     link: "/industrial"
   }
 ];
 
-const PRODUCT_CAROUSEL_DATA = [
-  {
-    id: 1,
-    image: BottleImage,
-    link: "/products/bottles"
-  },
-  {
-    id: 2,
-    image: ContainerImage,
-    link: "/products/jars"
-  },
-  {
-    id: 3,
-    image: CapsImage,
-    link: "/products/caps"
-  },
-  {
-    id: 4,
-    image: PreformsImage,
-    link: "/products/preforms"
-  }
-];
+
 
 const Home = () => {
   const { theme } = useTheme()
@@ -183,46 +163,28 @@ useEffect(() => {
   };
 
 
-  const categoryData = {
-
-    'Bottles': {
-      icon: Package,
-      description: 'Premium PET bottles in various sizes and shapes',
-      color: 'from-blue-500 to-cyan-500'
-    },
-
-    'Jars': {
-
-      icon: Layers,
-
-      description: 'High-quality jars for food and cosmetic products',
-
-      color: 'from-purple-500 to-pink-500'
-
-    },
-
-    'Caps': {
-
-      icon: Settings,
-
-      description: 'Durable caps and closures for all your packaging needs',
-
-      color: 'from-green-500 to-emerald-500'
-
-    },
-
-    'Preforms': {
-
-      icon: Box,
-
-      description: 'High-density, structurally consistent preforms optimized for seamless blow molding',
-
-      color: 'from-orange-500 to-red-500'
-
-    }
-
+const categoryData = {
+  'Bottles': {
+    img: BOTTLE, // Replace with your actual image path
+    description: 'Premium PET bottles in various sizes and shapes',
+    color: 'from-blue-500 to-cyan-500'
+  },
+  'Jars': {
+    img: JAR, // Replace with your actual image path
+    description: 'High-quality jars for food and cosmetic products',
+    color: 'from-purple-500 to-pink-500'
+  },
+  'Caps': {
+    img: CAP, // Replace with your actual image path
+    description: 'Durable caps and closures for all your packaging needs',
+    color: 'from-green-500 to-emerald-500'
+  },
+  'Preforms': {
+    img: PREFORMS, // Replace with your actual image path
+    description: 'High-density, structurally consistent preforms optimized for seamless blow molding',
+    color: 'from-orange-500 to-red-500'
   }
-
+};
   // Client logos data
   const clientLogos = [
     { src: Abhay, name: 'Abhay' },
@@ -424,7 +386,7 @@ useEffect(() => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 w-full sm:w-auto">
-              <motion.button
+              <motion.a href='/products'
                 whileHover={{ y: -2, scale: 1.01 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
@@ -432,16 +394,16 @@ useEffect(() => {
               >
                 Explore Products
                 <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
-              </motion.button>
+              </motion.a>
 
-              <motion.button
+              <motion.a href='/contact' 
                 whileHover={{ y: -2, scale: 1.01 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 className="bg-white rounded-xl font-semibold text-xs uppercase tracking-widest w-full sm:w-auto px-8 py-4 text-slate-900 border border-slate-200 hover:bg-slate-50 transition-all duration-200 shadow-sm"
               >
                 Contact Us
-              </motion.button>
+              </motion.a>
             </div>
           </motion.div>
         </div>
@@ -525,9 +487,9 @@ useEffect(() => {
                 />
 
                 {/* Floating Map Label Badge */}
-                <div className="absolute bottom-6 left-6 z-20 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md px-3.5 py-2 rounded-lg shadow-md border border-neutral-200/50 dark:border-slate-800 flex items-center gap-2">
+                <div className="absolute bottom-3 sm:bottom-6 left-6 z-20 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md px-3.5 py-2 rounded-lg shadow-md border border-neutral-200/50 dark:border-slate-800 flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-[#A8312A] animate-ping" />
-                  <span className="text-[11px] font-bold tracking-wider text-neutral-800 dark:text-slate-200 uppercase">
+                  <span className="text-[8px] sm:text-[11px] font-bold tracking-wider text-neutral-800 dark:text-slate-200 uppercase">
                     Our Manufacturing Hubs
                   </span>
                 </div>
@@ -585,14 +547,10 @@ useEffect(() => {
                 {/* Header Row: Icon, Title & Badge */}
                 <div className="flex flex-col gap-1 md:gap-1.5">
                   <div className="flex items-center justify-between">
-                    <div className="p-1.5 md:p-2 bg-slate-50 rounded-lg text-slate-600 border border-slate-300 group-hover:border-red-300 group-hover:text-red-500 transition-colors duration-300">
+                    <div className="p-1 md:p-2 bg-slate-50 rounded-lg text-slate-600 border border-slate-300 group-hover:border-red-300 group-hover:text-red-500 transition-colors duration-300">
                       {item.icon}
                     </div>
-                    {item.tag && (
-                      <span className="text-[9px] md:text-[10px] font-bold tracking-wider uppercase px-1.5 md:px-2.5 py-0.5 md:py-1 bg-amber-100 text-amber-800 rounded-full shadow-sm">
-                        {item.tag}
-                      </span>
-                    )}
+
                   </div>
                   
                   <h3 className="text-sm md:text-lg font-bold text-neutral-800 tracking-wide mt-1">
@@ -617,8 +575,8 @@ useEffect(() => {
                 {/* Decorative Action Hint */}
                 <div className="h-3 md:h-4 flex items-center justify-center mt-2">
                   {isCenter ? (
-                    <div className="text-[10px] md:text-xs font-semibold text-red-500 tracking-wider uppercase animate-pulse">
-                      Click to Open Page
+                    <div className="text-[10px] sm:text-[12px] md:text-xs font-bold text-red-500 tracking-wider uppercase animate-pulse">
+                      View Details
                     </div>
                   ) : (
                     <div className="text-[10px] md:text-xs font-medium text-neutral-400 tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -633,106 +591,81 @@ useEffect(() => {
       </div>
       </section>
     
-      <section className="py-20 md:py-22 bg-white/95 relative border-t-1 border-slate-200">
+<section className="py-20 md:py-22 bg-white/95 relative border-t-1 border-slate-200">
+  <div className="max-w-7xl mx-auto px-5 md:px-12">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="flex flex-col gap-4 mb-12 md:mb-16"
+    >
+      <div>
+        <span className="text-xs font-bold tracking-[0.2em] text-red-500 uppercase block mb-2">Our Products</span>
+        <h2 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+          Explore Categories
+        </h2>
+      </div>
+      <p className="text-slate-700 font-semibold text-sm md:text-base max-w-md font-light leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+        Discover our complete range of packaging solutions designed for every industry need.
+      </p>
+    </motion.div>
 
-        <div className="max-w-7xl mx-auto px-5 md:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col gap-4 mb-12 md:mb-16"
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+      {categories.map((category, index) => {
+        const data = categoryData[category] || {
+          img: '/images/placeholder.jpg',
+          description: 'High-quality packaging products',
+          color: 'from-gray-500 to-gray-600'
+        };
+
+        return (
+          <Link
+            key={category}
+            to={`/products/${encodeURIComponent(category.toLowerCase())}`}
           >
+            <motion.div
+              className="p-4 sm:p-6 md:p-8 bg-gradient-to-b from-slate-100 to-white/80 border border-slate-300 rounded-2xl relative group overflow-hidden cursor-pointer h-full shadow-sm hover:shadow-lg"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.4, delay: index * 0.08, ease: "easeOut" }}
+              whileHover={{ scale: 1.02, y: -6, borderColor: 'rgba(239, 68, 68, 0.3)' }}
+            >
+              {/* Gradient background overlay on hover */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${data.color}/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`} />
+              
+              {/* Image replaces the Icon */}
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mb-4 sm:mb-5 md:mb-6 overflow-hidden border border-slate-200 rounded-2xl group-hover:border-red-500/30 transition-all duration-300">
+                <img 
+                  src={data.img} 
+                  alt={category} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
 
-            <div>
-              <span className="text-xs font-bold tracking-[0.2em] text-red-500 uppercase block mb-2">Our Products</span>
-              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                Explore Categories
-              </h2>
-            </div>
-            <p className="text-slate-700 font-semibold text-sm md:text-base max-w-md font-light leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Discover our complete range of packaging solutions designed for every industry need.
-            </p>
-          </motion.div>
+              {/* Title */}
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 mb-2 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                {category}
+              </h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
-            {categories.map((category, index) => {
-              const data = categoryData[category] || {
-                icon: Package,
-                description: 'High-quality packaging products',
-                color: 'from-gray-500 to-gray-600'
-              };
-              const Icon = data.icon;
-              return (
-                <Link
-                  key={category}
-                  to={`/products/${encodeURIComponent(category.toLowerCase())}`}
-                >
-                  <motion.div
-                    className="p-6 md:p-8 bg-gradient-to-b from-slate-100 to-white/80 border border-slate-300 rounded-2xl relative group overflow-hidden cursor-pointer h-full shadow-sm hover:shadow-lg"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.4, delay: index * 0.08, ease: "easeOut" }}
-                    whileHover={{ scale: 1.02, y: -6, borderColor: 'rgba(239, 68, 68, 0.3)' }}
+              {/* Description */}
+              <p className="text-xs sm:text-sm md:text-base text-slate-600 font-semibold light leading-relaxed mb-4 sm:mb-5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                {data.description}
+              </p>
 
-                  >
-                    {/* Gradient background overlay on hover */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${data.color}/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`} />
-                    {/* Icon */}
-
-                    <div className={`w-14 h-14 md:w-16 md:h-16 mb-5 md:mb-6 flex items-center justify-center bg-gradient-to-br ${data.color}/10 border border-slate-200 rounded-2xl group-hover:border-red-500/30 transition-all duration-300`}>
-
-                      <Icon size={28} className="text-slate-700 group-hover:text-red-600" />
-
-                    </div>
-
-
-
-                    {/* Title */}
-
-                    <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-2 tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-
-                      {category}
-
-                    </h3>
-
-
-
-                    {/* Description */}
-
-                    <p className="text-sm md:text-base text-slate-600 font-semibold light leading-relaxed mb-5" style={{ fontFamily: "'Inter', sans-serif" }}>
-
-                      {data.description}
-
-                    </p>
-
-
-
-                    {/* CTA Button */}
-
-                    <div className="flex items-center text-red-600 text-xs font-bold uppercase tracking-wider group-hover:text-red-700 transition-colors">
-
-                      <span>View Products</span>
-
-                      <ArrowUpRight size={14} className="ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-
-                    </div>
-
-                  </motion.div>
-
-                </Link>
-
-              );
-
-            })}
-
-          </div>
-
-        </div>
-
-      </section>
-
+              {/* CTA Button */}
+              <div className="flex items-center text-red-600 text-[10px] sm:text-xs font-bold uppercase tracking-wider group-hover:text-red-700 transition-colors">
+                <span>View Products</span>
+                <ArrowUpRight size={12} sm:size={14} className="ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </div>
+            </motion.div>
+          </Link>
+        );
+      })}
+    </div>
+  </div>
+</section>
 <section className="py-20 md:py-20 bg-gradient-to-br from-slate-50 to-white overflow-hidden">
   <div className="w-full mx-auto px-5 md:px-12">
     <motion.div
@@ -752,7 +685,7 @@ useEffect(() => {
     </motion.div>
 
     {/* Continuous scrolling container */}
-    <div className="relative w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
+    <div className="relative w-full overflow-hidden ">
       <div 
         className="flex gap-6 w-max animate-scroll"
         style={{

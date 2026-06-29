@@ -11,9 +11,9 @@ const About = () => {
   ]
 
   const leadership = [
-    { initials: 'GS', name: 'Ghanshyam Sheth', role: 'Director · Operations', email: 'ghanshyam.s@shethpet.com' },
-    { initials: 'VS', name: 'Virendra Sheth', role: 'Director · Manufacturing', email: 'virendra.s@shethpet.com' },
-    { initials: 'JS', name: 'Jignesh Sheth', role: 'Director · Sales & Strategy', email: 'jignesh.s@shethpet.com' }
+    { initials: 'GS', name: 'Ghanshyam Sheth', email: 'ghanshyam.s@shethpet.com' },
+    { initials: 'VS', name: 'Virendra Sheth', email: 'virendra.s@shethpet.com' },
+    { initials: 'JS', name: 'Jignesh Sheth', email: 'jignesh.s@shethpet.com' }
   ]
 
   const coreValues = [
@@ -306,7 +306,6 @@ const About = () => {
                     {member.initials}
                   </div>
                   <h3 className="text-xl font-bold text-slate-950 mb-1 tracking-tight">{member.name}</h3>
-                  <p className="text-sm text-slate-500 font-semibold mb-8">{member.role}</p>
                 </div>
                 <a 
                   href={`mailto:${member.email}`} 

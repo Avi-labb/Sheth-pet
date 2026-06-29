@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion'
 import { Mail, Phone, MapPin, ExternalLink, Globe, MessageCircle, Share2 } from 'lucide-react'
+import { FaYoutube,FaWhatsapp,FaInstagram  } from "react-icons/fa";
+import { CiLinkedin } from "react-icons/ci";
 
 const Footer = () => {
   const containerVariants = {
@@ -20,10 +22,10 @@ const Footer = () => {
   }
 
   const socialLinks = [
-    { icon: Globe, href: '#', label: 'Website' },
-    { icon: MessageCircle, href: '#', label: 'WhatsApp' },
-    { icon: Share2, href: '#', label: 'Share' },
-    { icon: ExternalLink, href: '#', label: 'Portal' },
+    { icon: FaWhatsapp , href: '#', label: 'Share' },
+    { icon: FaYoutube, href: '#', label: 'YouTube' },
+    { icon: FaInstagram, href: '#', label: 'Instagram' },
+    { icon: CiLinkedin, href: '#', label: 'LinkedIn' },
   ]
 
   const quickLinks = [

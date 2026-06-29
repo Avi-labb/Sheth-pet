@@ -8,7 +8,6 @@ import ProductDetail from './pages/ProductDetail'
 import Manufacturing from './pages/Manufacturing'
 import Innovate from './pages/Innovate'
 import Sustainability from './pages/Sustainability'
-import Clients from './pages/Clients'
 import About from './pages/About/About'
 import Blog from './pages/Blog'
 import Careers from './pages/Careers'
@@ -127,11 +126,6 @@ function App() {
           <Route path="/sustainability" element={
             <PublicLayout>
               <Sustainability />
-            </PublicLayout>
-          } />
-          <Route path="/clients" element={
-            <PublicLayout>
-              <Clients />
             </PublicLayout>
           } />
           <Route path="/about" element={
