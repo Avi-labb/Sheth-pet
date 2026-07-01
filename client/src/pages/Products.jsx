@@ -23,17 +23,17 @@ const Products = () => {
       const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
       if (matchingKey) {
        //return `http://localhost:5000/uploads/${product.images[matchingKey]}`
-        return `/uploads/${product.images[matchingKey]}`
+         return `/uploads/${product.images[matchingKey]}`
       }
     }
     if (product.images && Object.keys(product.images).length > 0) {
       const firstKey = Object.keys(product.images)[0]
        //return `http://localhost:5000/uploads/${product.images[firstKey]}`
-        return `/uploads/${product.images[firstKey]}`
+       return `/uploads/${product.images[firstKey]}`
     }
     if (product.image) {
        //return `http://localhost:5000/uploads/${product.image}`
-        return `/uploads/${product.image}`
+       return `/uploads/${product.image}`
     }
     return null
   }

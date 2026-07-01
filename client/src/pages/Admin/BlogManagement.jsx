@@ -120,8 +120,8 @@ const BlogManagement = () => {
       isPublished: blog.isPublished,
       image: null
     });
-    //setImagePreview(blog.image ? `http://localhost:5000/uploads/${blog.image}` : null);
-    setImagePreview(blog.image ? `/uploads/${blog.image}` : null);
+    setImagePreview(blog.image ? `http://localhost:5000/uploads/${blog.image}` : null);
+    //setImagePreview(blog.image ? `/uploads/${blog.image}` : null);
     setActiveForm('edit');
   };
 
@@ -232,8 +232,8 @@ const BlogManagement = () => {
                         <div className="relative h-48 bg-neutral-900/50 overflow-hidden border-b border-neutral-900">
                           {blog.image ? (
                             <img
-                             //src={`http://localhost:5000/uploads/${blog.image}`}
-                              src={`/uploads/${blog.image}`}
+                             src={`http://localhost:5000/uploads/${blog.image}`}
+                             // src={`/uploads/${blog.image}`}
                               alt={blog.title}
                               className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
                             />

@@ -289,7 +289,7 @@ const Dashboard = () => {
     });
     if (product.image) {
       //setEditImagePreview(`http://localhost:5000/uploads/${product.image}`);
-      setEditImagePreview(`/uploads/${product.image}`);
+       setEditImagePreview(`/uploads/${product.image}`);
     } else {
       setEditImagePreview(null);
     }
@@ -948,7 +948,7 @@ const Dashboard = () => {
                 <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded text-xs font-mono text-white uppercase">{color}</div>
                 <img
                  //src={`http://localhost:5000/uploads/${filename}`}
-                  src={`/uploads/${filename}`}
+                 src={`/uploads/${filename}`}
                   alt={`${selectedProduct.name} - ${color}`}
                   className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
                 />
@@ -960,7 +960,7 @@ const Dashboard = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent pointer-events-none" />
             <img
              //src={`http://localhost:5000/uploads/${selectedProduct.image}`}
-             src={`/uploads/${selectedProduct.image}`}
+              src={`/uploads/${selectedProduct.image}`}
              alt={selectedProduct.name}
               className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
             />

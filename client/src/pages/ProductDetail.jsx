@@ -25,13 +25,13 @@ const ProductDetail = () => {
     if (product.images && Object.keys(product.images).length > 0) {
       return Object.entries(product.images).map(([color, file]) => ({
         color,
-       //src: `http://localhost:5000/uploads/${file}`
-         src: `/uploads/${file}`
+       src: `http://localhost:5000/uploads/${file}`
+       //  src: `/uploads/${file}`
      }))
     }
     if (product.image) {
-       // return `http://localhost:5000/uploads/${product.image}`
-       return [{ src: `/uploads/${product.image}` }]
+        return `http://localhost:5000/uploads/${product.image}`
+       // return [{ src: `/uploads/${product.image}` }]
     }
     return []
   }
@@ -39,24 +39,24 @@ const ProductDetail = () => {
   const getProductImage = (product, color = null) => {
     if (color && product.images) {
       if (product.images[color]) {
-       // return `http://localhost:5000/uploads/${product.images[color]}`
-        return `/uploads/${product.images[color]}`
+       return `http://localhost:5000/uploads/${product.images[color]}`
+      //  return `/uploads/${product.images[color]}`
       }
       const colorLower = color.toLowerCase()
       const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
       if (matchingKey) {
-      // return `http://localhost:5000/uploads/${product.images[matchingKey]}`
-        return `/uploads/${product.images[matchingKey]}`
+       return `http://localhost:5000/uploads/${product.images[matchingKey]}`
+      //  return `/uploads/${product.images[matchingKey]}`
       }
     }
     if (product.images && Object.keys(product.images).length > 0) {
       const firstKey = Object.keys(product.images)[0]
-      // return `http://localhost:5000/uploads/${product.images[firstKey]}`
-        return `/uploads/${product.images[firstKey]}`
+       return `http://localhost:5000/uploads/${product.images[firstKey]}`
+      //  return `/uploads/${product.images[firstKey]}`
     }
     if (product.image) {
-      // return `http://localhost:5000/uploads/${product.image}`
-        return `/uploads/${product.image}`
+       return `http://localhost:5000/uploads/${product.image}`
+      //  return `/uploads/${product.image}`
     }
     return null
   }
