@@ -2,6 +2,7 @@ import transporter from "../utils/Mail.js";
 
 export const sendContactEmail = async (req, res) => {
   try {
+    console.log("📧 Received contact form submission:", req.body);
     const { name, email, phone, subject, message } = req.body;
 
     if (!name || !email || !subject || !message) {
@@ -46,14 +47,16 @@ export const sendContactEmail = async (req, res) => {
       `,
     };
 
-    await transporter.sendMail(mailOptions);
+    console.log("📤 Sending email to avidevelop60@gmail.com...");
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent successfully! Message ID:", info.messageId);
 
     res.status(200).json({
       success: true,
       message: "Enquiry sent successfully!",
     });
   } catch (error) {
-    console.error("Error sending contact email:", error);
+    console.error("❌ Error sending contact email:", error);
     res.status(500).json({
       success: false,
       message: "Failed to send enquiry. Please try again later.",

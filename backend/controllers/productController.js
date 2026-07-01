@@ -111,8 +111,6 @@ export const bulkUploadProducts = async (req, res) => {
           if (category.toLowerCase() === 'jars') category = 'Jars';
           if (category.toLowerCase() === 'cap') category = 'Caps';
           if (category.toLowerCase() === 'caps') category = 'Caps';
-          if (category.toLowerCase() === 'container') category = 'Containers';
-          if (category.toLowerCase() === 'containers') category = 'Containers';
         }
 
         // Parse colors: comma-separated string → array
@@ -436,13 +434,18 @@ export const getProducts = async (req, res) => {
   try {
     const { category, marketSegment } = req.query;
     console.log('getProducts called with:', { category, marketSegment });
-    let products = await Product.find().sort({ createdAt: -1 });
     
+    // Build query to exclude Containers category by default
+    let query = { 
+      category: { $not: { $regex: /^Containers$/i } } 
+    };
+    
+    // If specific category requested, use that instead
     if (category) {
-      products = products.filter(p => 
-        p.category && p.category.toLowerCase() === category.toLowerCase()
-      );
+      query = { category: { $regex: new RegExp(`^${category}$`, 'i') } };
     }
+    
+    let products = await Product.find(query).sort({ createdAt: -1 });
     
     if (marketSegment) {
       products = products.filter(p => 
@@ -470,9 +473,11 @@ export const getProducts = async (req, res) => {
 export const getCategories = async (req, res) => {
   try {
     console.log("getCategories called!");
-    // First try to get from Category model
-    let categories = await Category.find().sort({ name: 1 });
-    console.log("Current categories in DB:", categories);
+    // First try to get from Category model, filter out Containers
+    let categories = await Category.find({ 
+      name: { $not: { $regex: /^Containers$/i } } 
+    }).sort({ name: 1 });
+    console.log("Current categories in DB (without Containers):", categories);
     const existingCategoryNames = categories.map(cat => cat.name.toLowerCase());
     console.log("Existing category names (lowercase):", existingCategoryNames);
 
@@ -485,8 +490,10 @@ export const getCategories = async (req, res) => {
       }
     }
 
-    // Get updated categories
-    categories = await Category.find().sort({ name: 1 });
+    // Get updated categories, still filtering out Containers
+    categories = await Category.find({ 
+      name: { $not: { $regex: /^Containers$/i } } 
+    }).sort({ name: 1 });
     const categoryNames = categories.map(cat => cat.name);
     console.log("Final categories found:", categoryNames);
 
