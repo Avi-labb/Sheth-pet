@@ -14,7 +14,7 @@ export const sendContactEmail = async (req, res) => {
 
     const mailOptions = {
       from: process.env.SMTP_USER,
-      to: "avikushwaha479@gmail.com",
+      to: "avidevelop60@gmail.com",
       replyTo: email,
       subject: `New Contact Form Enquiry: ${subject}`,
       html: `
