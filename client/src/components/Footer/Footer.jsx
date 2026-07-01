@@ -22,8 +22,8 @@ const Footer = () => {
   }
 
   const socialLinks = [
-    { icon: FaWhatsapp , href: '#', label: 'Share' },
-    { icon: FaYoutube, href: '#', label: 'YouTube' },
+    { icon: FaWhatsapp , href: 'https://wa.me/919867000311', label: 'WhatsApp' },
+    { icon: FaYoutube, href: 'https://www.youtube.com/@shethpet', label: 'YouTube' },
     { icon: FaInstagram, href: '#', label: 'Instagram' },
     { icon: CiLinkedin, href: '#', label: 'LinkedIn' },
   ]
@@ -153,6 +153,14 @@ const Footer = () => {
                 >
                   <Phone size={14} className="text-slate-500 group-hover:text-red-500 transition-colors" />
                   <span className="font-sans">+91 80478 33997</span>
+                </a>
+                
+                <a 
+                  href="https://wa.me/919867000311" 
+                  className="flex gap-3.5 items-center text-[13.5px] text-slate-400 hover:text-white transition-colors group"
+                >
+                  <FaWhatsapp size={14} className="text-slate-500 group-hover:text-green-500 transition-colors" />
+                  <span className="font-sans">+91 98670 00311</span>
                 </a>
                 
                 <a 

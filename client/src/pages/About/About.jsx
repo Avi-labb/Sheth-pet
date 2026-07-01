@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Target, Eye, Leaf, CheckCircle, Zap, TrendingUp, Users, MapPin, Award, Scale, Mail, ArrowUpRight } from 'lucide-react'
+import StockImage from '../../assets/images/Stock.jpg'
 
 const About = () => {
   const timeline = [
@@ -36,20 +37,20 @@ const About = () => {
 
   return (
     <div className="bg-[#f8fafc] text-slate-900 font-sans antialiased selection:bg-red-500 selection:text-white overflow-x-hidden">
-      
+
       {/* Hero Section - Premium Editorial Split */}
       <section className="relative min-h-[85vh] flex items-center border-b border-slate-200/80 bg-white overflow-hidden">
         {/* Abstract Background Design Accents */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-red-500/5 to-orange-500/0 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -left-12 bottom-0 w-96 h-96 bg-slate-100 rounded-full blur-3xl pointer-events-none" />
-        
+
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-16 px-6 lg:px-12 py-23 items-center relative z-10">
           <div className="lg:col-span-7 space-y-4">
             <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-red-50/80 border border-red-100/70 rounded-full text-[11px] font-bold text-red-600 tracking-wider uppercase">
               <Scale size={13} className="text-red-500" /> Est. 1996 · Industrial Leadership
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-950 leading-[1.08]">
-              High-performance packaging <br className="hidden sm:inline"/>
+              High-performance packaging <br className="hidden sm:inline" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-red-500 to-orange-500">
                 engineered for global brands.
               </span>
@@ -59,7 +60,7 @@ const About = () => {
             </p>
             <div className="flex flex-wrap gap-4">
               <a href="#heritage" className="px-7 py-4 bg-slate-950 text-white rounded-2xl font-semibold text-sm hover:bg-slate-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2 group">
-                Explore Our Story 
+                Explore Our Story
                 <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
               </a>
             </div>
@@ -68,13 +69,13 @@ const About = () => {
           {/* Right Hero Visual Block */}
           <div className="lg:col-span-5 relative w-full">
             <div className="relative h-[480px] w-full bg-slate-100 rounded-[2.5rem] overflow-hidden border border-slate-200/60 shadow-xl shadow-slate-100/50">
-              <img 
-                src="/api/placeholder/600/600" 
-                alt="Precision Engineering Architecture" 
-                className="w-full h-full object-cover grayscale contrast-[1.15] mix-blend-multiply opacity-90 transition-transform duration-700 hover:scale-105" 
+              <img
+                src={StockImage}
+                alt="Precision Engineering Architecture"
+                className="w-full h-full object-cover grayscale contrast-[1.15] mix-blend-multiply opacity-90 transition-transform duration-700 hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
-              
+
               {/* Dynamic Overlay Metric Floating Card */}
               <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-white/40 shadow-xl">
                 <div className="grid grid-cols-3 gap-2 text-center divide-x divide-slate-200/80">
@@ -98,79 +99,127 @@ const About = () => {
       </section>
 
 
-<section id="heritage" className="py-20  bg-slate-50 border-t border-b border-slate-300 relative overflow-hidden">
-  {/* Soft background design accent */}
-  <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-slate-50 rounded-full blur-3xl pointer-events-none -z-10" />
+      <section id="heritage" className="py-20  bg-slate-50 border-t border-b border-slate-300 relative overflow-hidden">
+        {/* Soft background design accent */}
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-slate-50 rounded-full blur-3xl pointer-events-none -z-10" />
 
-  <div className="max-w-7xl mx-auto px-6 lg:px-12">
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-      
-      {/* Left Column: Bold Summary & Visual Anchor */}
-      <div className="lg:col-span-5 space-y-6 lg:sticky">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-400 text-slate-800 rounded-full text-[14px] font-bold tracking-wider uppercase">
-          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /> 1996 · The Origin
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+
+            {/* Left Column: Bold Summary & Visual Anchor */}
+            <div className="lg:col-span-5 space-y-6 lg:sticky">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-400 text-slate-800 rounded-full text-[14px] font-bold tracking-wider uppercase">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /> 1996 · The Origin
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="relative pl-6 border-l-4 border-red-500"
+              >
+                <h3 className="text-2xl md:text-3xl font-black text-slate-950 leading-[1.25] tracking-tight">
+                  A first-generation family business built on uncompromising manufacturing integrity.
+                </h3>
+              </motion.div>
+
+              <p className="text-slate-600 font-medium text-sm md:text-base leading-relaxed max-w-sm">
+                Today operating three facilities, serving over 300 global brands across 27 Indian states and 4 countries.
+              </p>
+            </div>
+
+            {/* Right Column: Detailed Narrative with Inline Micro-Highlights */}
+            <div className="lg:col-span-7">
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                variants={containerVariants}
+                className="space-y-8 text-base md:text-lg text-slate-600 font-medium leading-relaxed"
+              >
+                <motion.p variants={itemVariants}>
+                  Sheth PET & Polymers was founded in 1996 by three first-generation entrepreneurs —{' '}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Ghanshyam Sheth</span>,{' '}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Virendra Sheth</span>, and{' '}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Jignesh Sheth</span> — with a single defining belief: Indian industrial packaging could match global standards without structural or raw material compromises.
+                </motion.p>
+
+                <motion.p variants={itemVariants}>
+                  Today, under our specialized brand names{' '}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Radhe Containers</span> and{' '}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Calyx Containers</span>, we operate three multi-ton plants covering over{' '}
+                  <span className="font-semibold text-slate-950">100,000 sqft</span> of production space. Our floor houses more than 50 heavy high-output systems built by global engineering standard-bearers like ASB Japan, Boge Germany, HMT, and Husky, carefully processing over{' '}
+                  <span className="font-semibold text-slate-950">3,000 corporate consignments</span> every year.
+                </motion.p>
+
+                <motion.p variants={itemVariants} className="pt-2">
+                  Our{' '}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-xs font-bold rounded-full border border-red-100">
+                    150+ Specialist Team
+                  </span>{' '}
+                  — consisting of automation engineers, multi-station plant supervisors, logistics coordinators, and strict QA inspectors — operates directly out of a single shared playbook:{' '}
+                  <span className="font-bold text-slate-950 underline decoration-red-500 decoration-2 underline-offset-4">
+                    absolute zero compromise on base resin raw materials
+                  </span>, vigilant sensory checks at every manufacturing matrix, and deep, multi-decade partnerships with our clients.
+                </motion.p>
+              </motion.div>
+            </div>
+
+          </div>
         </div>
-        
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="relative pl-6 border-l-4 border-red-500"
-        >
-          <h3 className="text-2xl md:text-3xl font-black text-slate-950 leading-[1.25] tracking-tight">
-            A first-generation family business built on uncompromising manufacturing integrity.
-          </h3>
-        </motion.div>
+      </section>
 
-        <p className="text-slate-600 font-medium text-sm md:text-base leading-relaxed max-w-sm">
-          Today operating three facilities, serving over 300 global brands across 27 Indian states and 4 countries.
-        </p>
-      </div>
+      {/* Premium Minimalist Timeline */}
+      <section id="timeline" className="py-15 lg:py-20 max-w-5xl mx-auto px-6 ">
+        <div className="mb-16 space-y-2 text-center md:text-left">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-red-600 block">
+            Our Journey
+          </span>
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-950">
+            Milestones & Expansions
+          </h2>
+        </div>
 
-      {/* Right Column: Detailed Narrative with Inline Micro-Highlights */}
-      <div className="lg:col-span-7">
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={containerVariants}
-          className="space-y-8 text-base md:text-lg text-slate-600 font-medium leading-relaxed"
-        >
-          <motion.p variants={itemVariants}>
-            Sheth PET & Polymers was founded in 1996 by three first-generation entrepreneurs —{' '}
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Ghanshyam Sheth</span>,{' '}
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Virendra Sheth</span>, and{' '}
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Jignesh Sheth</span> — with a single defining belief: Indian industrial packaging could match global standards without structural or raw material compromises.
-          </motion.p>
-          
-          <motion.p variants={itemVariants}>
-            Today, under our specialized brand names{' '}
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Radhe Containers</span> and{' '}
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-sm font-bold rounded-full border border-red-100">Calyx Containers</span>, we operate three multi-ton plants covering over{' '}
-            <span className="font-semibold text-slate-950">100,000 sqft</span> of production space. Our floor houses more than 50 heavy high-output systems built by global engineering standard-bearers like ASB Japan, Boge Germany, HMT, and Husky, carefully processing over{' '}
-            <span className="font-semibold text-slate-950">3,000 corporate consignments</span> every year.
-          </motion.p>
-          
-          <motion.p variants={itemVariants} className="pt-2">
-            Our{' '}
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-xs font-bold rounded-full border border-red-100">
-              150+ Specialist Team
-            </span>{' '}
-            — consisting of automation engineers, multi-station plant supervisors, logistics coordinators, and strict QA inspectors — operates directly out of a single shared playbook:{' '}
-            <span className="font-bold text-slate-950 underline decoration-red-500 decoration-2 underline-offset-4">
-              absolute zero compromise on base resin raw materials
-            </span>, vigilant sensory checks at every manufacturing matrix, and deep, multi-decade partnerships with our clients.
-          </motion.p>
-        </motion.div>
-      </div>
+        <div className="relative border-l border-slate-200/80 pl-8 ml-3 space-y-10">
+          {timeline.map((item, idx) => (
+            <motion.div
+              key={idx}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={itemVariants}
+              className="relative group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-6 items-start"
+            >
+              {/* Sleek Ring Indicator */}
+              <div className="absolute -left-[2.35rem] top-1.5 w-4 h-4 rounded-full bg-white border-2 border-red-600 shadow-sm group-hover:bg-red-600 transition-colors duration-300" />
 
-    </div>
-  </div>
-</section>
+              {/* Left column: Year & Location (Compact) */}
+              <div className="md:col-span-3 flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start gap-2 pt-0.5">
+                <span className="text-2xl font-black text-slate-900 tracking-tight font-mono">
+                  {item.year}
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] text-slate-500 font-medium tracking-wide">
+                  <MapPin size={11} className="text-slate-400 shrink-0" /> {item.loc}
+                </span>
+              </div>
+
+              {/* Right column: Content Card (Slimmer & Elevated) */}
+              <div className="md:col-span-9 bg-slate-50/50 backdrop-blur-sm p-4 md:p-5 rounded-xl border border-slate-100 group-hover:border-slate-200/80 group-hover:bg-white group-hover:shadow-xl group-hover:shadow-slate-100/50 transition-all duration-300 ease-out">
+                <h3 className="font-bold text-base text-slate-900 mb-1 tracking-tight group-hover:text-red-600 transition-colors duration-300">
+                  {item.title}
+                </h3>
+                <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-normal">
+                  {item.desc}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
       {/* The Bento Ecosystem Block */}
-      <section id="ecosystem" className="py-24 lg:py-32 max-w-7xl mx-auto px-6 lg:px-12">
+      <section id="ecosystem" className="py-24 lg:py-32 max-w-7xl mx-auto px-6 lg:px-12 border-0 border-t-1 border-slate-300">
         <div className="mb-16 space-y-3">
           <span className="text-xs font-extrabold uppercase tracking-widest text-red-600 block">Operations Ecosystem</span>
           <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-950">Purpose-Built Infrastructure</h2>
@@ -255,40 +304,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Sleek Left-Anchored Timeline */}
-      <section id="timeline" className="py-24 lg:py-32 max-w-5xl mx-auto px-6 lg:px-12">
-        <div className="mb-20 space-y-3">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-red-600 block">Our Timeline</span>
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-950">Milestones & Expansions</h2>
-        </div>
-
-        <div className="relative border-l-2 border-slate-200/80 pl-8 ml-4 space-y-14">
-          {timeline.map((item, idx) => (
-            <motion.div 
-              key={idx}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={itemVariants}
-              className="relative group"
-            >
-              {/* Dot indicator */}
-              <div className="absolute -left-[2.65rem] top-2 w-5 h-5 rounded-full bg-white border-4 border-red-500 shadow-sm group-hover:scale-110 transition-transform duration-300" />
-              
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                <span className="text-3xl font-black text-slate-950 tracking-tight">{item.year}</span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 rounded-full text-xs text-slate-600 font-medium border border-slate-200/40">
-                  <MapPin size={12} className="text-slate-400" /> {item.loc}
-                </span>
-              </div>
-              <div className="bg-white p-6 md:p-8 border border-slate-200/70 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-                <h3 className="font-bold text-lg text-slate-900 mb-1.5 tracking-tight">{item.title}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
 
       {/* Corporate Leadership Profiles */}
       <section id="leadership" className="py-24 lg:py-32 bg-white border-t border-slate-200/80">
@@ -307,8 +322,8 @@ const About = () => {
                   </div>
                   <h3 className="text-xl font-bold text-slate-950 mb-1 tracking-tight">{member.name}</h3>
                 </div>
-                <a 
-                  href={`mailto:${member.email}`} 
+                <a
+                  href={`mailto:${member.email}`}
                   className="inline-flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-widest bg-white border border-slate-200 px-4 py-3.5 rounded-xl hover:bg-slate-950 hover:text-white hover:border-slate-950 transition-all duration-300 w-full justify-center shadow-sm"
                 >
                   <Mail size={14} /> Connect via Email

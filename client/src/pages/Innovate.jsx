@@ -387,14 +387,14 @@ const Innovate = () => {
             <p className="text-sm sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-10 max-w-2xl mx-auto font-light">
               Let's collaborate to create packaging that stands out on the shelves and performs in your supply chain.
             </p>
-            <motion.button
+            <motion.a href='/contact'
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               className="inline-flex items-center gap-2 px-6 sm:px-10 py-3.5 sm:py-5 bg-white text-red-600 rounded-2xl font-bold text-[10px] sm:text-xs uppercase tracking-widest shadow-xl hover:bg-slate-100 transition-all duration-300"
             >
               Get in Touch
               <ArrowUpRight size={14} sm:size={16} />
-            </motion.button>
+            </motion.a>
           </motion.div>
         </div>
       </section>

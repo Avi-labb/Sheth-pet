@@ -280,7 +280,7 @@ const categoryData = {
 
       icon: Layers,
 
-      title: 'Jars & Containers',
+      title: 'Jars ',
 
       description: 'Premium quality jars engineered perfectly for food, cosmetics, and specialized items.'
 
@@ -636,7 +636,7 @@ const categoryData = {
               <div className={`absolute inset-0 bg-gradient-to-br ${data.color}/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`} />
               
               {/* Image replaces the Icon */}
-              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mb-4 sm:mb-5 md:mb-6 overflow-hidden border border-slate-200 rounded-2xl group-hover:border-red-500/30 transition-all duration-300">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 mb-4 sm:mb-5 md:mb-5 p-1 overflow-hidden border border-slate-300 rounded-2xl group-hover:border-red-500/30 transition-all duration-300">
                 <img 
                   src={data.img} 
                   alt={category} 
@@ -772,7 +772,7 @@ const categoryData = {
             Connect directly with us to verify delivery timelines, blueprint tooling designs, and scale volume parameters
             </p>
 
-            <motion.button
+            <motion.a href='/contact'
 
               whileHover={{ scale: 1.02 }}
 
@@ -788,7 +788,7 @@ const categoryData = {
 
               Contact Us Now
 
-            </motion.button>
+            </motion.a>
 
           </motion.div>
 

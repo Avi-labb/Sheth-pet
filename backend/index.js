@@ -10,6 +10,7 @@ import adminRoutes from "./routes/adminRoute.js";
 import productRouter from "./routes/productRoute.js";
 import blogRouter from "./routes/blogRoute.js";
 import careerRouter from "./routes/careerRoute.js";
+import contactRouter from "./routes/contactRoute.js";
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRouter);
 app.use("/api/blogs", blogRouter);
 app.use("/api/careers", careerRouter);
+app.use("/api/contact", contactRouter);
 
 // Global error handler - this will catch any errors from middleware or routes
 app.use((error, req, res, next) => {

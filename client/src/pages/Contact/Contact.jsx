@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, Users, Award } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, Users, Award, AlertCircle } from 'lucide-react'
+import { contactAPI } from '../../services/api'
 
 const Contact = () => {
   const [formSubmitted, setFormSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,13 +15,28 @@ const Contact = () => {
     message: ''
   })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setFormSubmitted(true)
-    setTimeout(() => {
-      setFormSubmitted(false)
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
-    }, 3000)
+    setIsLoading(true)
+    setError('')
+    
+    try {
+      const result = await contactAPI.sendEnquiry(formData)
+      
+      if (result.ok) {
+        setFormSubmitted(true)
+        setTimeout(() => {
+          setFormSubmitted(false)
+          setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
+        }, 3000)
+      } else {
+        setError(result.data.message || 'Something went wrong. Please try again.')
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection and try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleChange = (e) => {
@@ -199,6 +217,12 @@ const Contact = () => {
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit}>
+                    {error && (
+                      <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+                        <AlertCircle size={20} className="text-red-600" />
+                        <p className="text-red-700 text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>{error}</p>
+                      </div>
+                    )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       <div>
                         <label className="block mb-2 text-sm font-semibold text-slate-800" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -210,7 +234,8 @@ const Contact = () => {
                           value={formData.name}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100"
+                          disabled={isLoading}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                           placeholder="John Doe"
                         />
@@ -225,7 +250,8 @@ const Contact = () => {
                           value={formData.email}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100"
+                          disabled={isLoading}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                           placeholder="john@example.com"
                         />
@@ -241,7 +267,8 @@ const Contact = () => {
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100"
+                          disabled={isLoading}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                           placeholder="+91 98765 43210"
                         />
@@ -255,7 +282,8 @@ const Contact = () => {
                           value={formData.subject}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100"
+                          disabled={isLoading}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                         >
                           <option value="">Select a topic...</option>
@@ -276,19 +304,21 @@ const Contact = () => {
                         value={formData.message}
                         onChange={handleChange}
                         required
+                        disabled={isLoading}
                         rows={6}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 resize-none"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-800 font-medium text-sm transition-all duration-300 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                         style={{ fontFamily: "'Inter', sans-serif" }}
                         placeholder="Tell us about your packaging requirements..."
                       ></textarea>
                     </div>
                     <button
                       type="submit"
-                      className="w-full flex items-center justify-center gap-2 px-7 py-4 rounded-xl border border-red-600 bg-red-600 text-white font-bold text-xs uppercase tracking-wider cursor-pointer transition-all duration-300 hover:bg-red-700 hover:border-red-700 hover:-translate-y-0.5 hover:shadow-lg shadow-red-200"
+                      disabled={isLoading}
+                      className="w-full flex items-center justify-center gap-2 px-7 py-4 rounded-xl border border-red-600 bg-red-600 text-white font-bold text-xs uppercase tracking-wider cursor-pointer transition-all duration-300 hover:bg-red-700 hover:border-red-700 hover:-translate-y-0.5 hover:shadow-lg shadow-red-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      Send Enquiry
-                      <Send size={18} />
+                      {isLoading ? 'Sending...' : 'Send Enquiry'}
+                      {!isLoading && <Send size={18} />}
                     </button>
                   </form>
                 )}

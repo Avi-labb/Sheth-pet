@@ -202,7 +202,7 @@
             <motion.div variants={fadeIn} className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
               <Layers className="w-5 h-5 text-emerald-600 mb-3" />
               <h4 className="font-bold text-slate-900 mb-1">Comprehensive Range</h4>
-              <p className="text-xs text-slate-600 font-medium leading-relaxed">Pharma bottles, cosmetic containers, juice and edible oil bottles, jars, preforms, and caps.</p>
+              <p className="text-xs text-slate-600 font-medium leading-relaxed">Pharma bottles, cosmetic , juice and edible oil bottles, jars, preforms, and caps.</p>
             </motion.div>
 
             <motion.div variants={fadeIn} className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
@@ -227,7 +227,7 @@
               Whether you're sourcing packaging for a pharmaceutical product, an FMCG line, or a cosmetic range, Sheth PET & Polymers delivers solutions that safeguard your products while minimizing eco-footprints.
             </p>
             <a 
-              href="#contact" 
+              href="/contact" 
               className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-6 py-2.5 rounded-lg transition-colors shadow-sm shadow-emerald-800/10"
             >
               Request Sourcing Specs <ChevronRight className="w-4 h-4" />

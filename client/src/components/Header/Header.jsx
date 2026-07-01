@@ -92,7 +92,7 @@ const Header = ({ onCategorySelect }) => {
           }}
           className="flex items-center gap-2 sm:gap-3 group focus:outline-none z-50"
         >
-          <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 transition-transform duration-300 group-hover:scale-105">
+          <div className="w-10 h-10 sm:w-22 sm:h-15 shrink-0 transition-transform duration-300 group-hover:scale-105">
             <img
               src={logo}
               alt="Logo"

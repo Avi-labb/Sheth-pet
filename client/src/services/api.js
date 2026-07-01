@@ -8,6 +8,7 @@ const ADMIN_API_BASE_URL = "/api/admin";
 const PRODUCT_API_BASE_URL = "/api/products";
 const BLOG_API_BASE_URL = "/api/blogs";
 const CAREER_API_BASE_URL = "/api/careers";
+const CONTACT_API_BASE_URL = "/api/contact";
 
 // Helper function for API calls
 const apiRequest = async (baseUrl, endpoint, options = {}) => {
@@ -267,6 +268,16 @@ export const careerAPI = {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   }
+};
+
+// Contact API functions
+export const contactAPI = {
+  sendEnquiry: async (formData) => {
+    return apiRequest(CONTACT_API_BASE_URL, "/send", {
+      method: "POST",
+      body: JSON.stringify(formData),
+    });
+  },
 };
 
 export default apiRequest;
