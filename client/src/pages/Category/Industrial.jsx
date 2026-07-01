@@ -6,9 +6,16 @@ import { productAPI } from '../../services/api'
 import industrialImage from '../../assets/images/Industrial.png'
 
 const Industrial = () => {
+  const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
   const [selectedColor, setSelectedColor] = useState({})
+
+  const handleCustomize = (e, product) => {
+    e.preventDefault()
+    const color = selectedColor[product._id] || getProductColors(product)[0]
+    navigate('/contact', { state: { product, selectedColor: color } })
+  }
 
   const getProductImage = (product, color = null) => {
     if (color && product.images) {

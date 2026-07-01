@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Package, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../../services/api'
 
 const CategoryPage = () => {
+  const navigate = useNavigate()
   const { categoryName } = useParams()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
   const [selectedColor, setSelectedColor] = useState({})
   const [displayCategoryName, setDisplayCategoryName] = useState('')
+
+  const handleCustomize = (e, product) => {
+    e.preventDefault()
+    const color = selectedColor[product._id] || getProductColors(product)[0]
+    navigate('/contact', { state: { product, selectedColor: color } })
+  }
 
   // Format category name for display (find correct case)
   const getCorrectCategoryName = async (name) => {

@@ -1,9 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, Users, Award, AlertCircle } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, Users, Award, AlertCircle, Package } from 'lucide-react'
 import { contactAPI } from '../../services/api'
 
 const Contact = () => {
+  const location = useLocation()
+  const { product, selectedColor } = location.state || {}
+  
   const [formSubmitted, setFormSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -15,13 +19,41 @@ const Contact = () => {
     message: ''
   })
 
+  useEffect(() => {
+    if (product) {
+      let message = `I'm interested in: ${product.name}\n`
+      if (product.sku) message += `SKU: ${product.sku}\n`
+      if (selectedColor) message += `Color: ${selectedColor}\n`
+      if (product.category) message += `Category: ${product.category}\n`
+      message += '\nPlease provide more details about your requirements.'
+      
+      setFormData(prev => ({
+        ...prev,
+        subject: 'Product Inquiry - ' + product.name,
+        message: message
+      }))
+    }
+  }, [product, selectedColor])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
     
     try {
-      const result = await contactAPI.sendEnquiry(formData)
+      // Include product data in the form submission
+      const submitData = {
+        ...formData,
+        product: product ? {
+          id: product._id,
+          name: product.name,
+          sku: product.sku,
+          category: product.category,
+          color: selectedColor
+        } : null
+      }
+      
+      const result = await contactAPI.sendEnquiry(submitData)
       
       if (result.ok) {
         setFormSubmitted(true)
@@ -172,7 +204,12 @@ const Contact = () => {
               </div>
 
               {/* Map Section */}
-              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden h-80">
+              <a 
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden h-80 relative group"
+              >
                 <iframe
                   title="Google Maps"
                   width="100%"
@@ -180,10 +217,15 @@ const Contact = () => {
                   style={{ border: 0 }}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyA-aWrwA5Lg9h0d4u2lVh9E8WlXQZ8Y9Z0&q=${encodedAddress}`}
+                  src={`https://www.google.com/maps?q=${encodedAddress}&output=embed`}
                   allowFullScreen
                 />
-              </div>
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-all">
+                  <div className="opacity-0 group-hover:opacity-100 bg-white px-6 py-3 rounded-full shadow-lg text-slate-800 font-semibold text-sm">
+                    Open in Google Maps
+                  </div>
+                </div>
+              </a>
             </motion.div>
 
             {/* Right Column - Form */}
@@ -200,6 +242,35 @@ const Contact = () => {
                 <p className="text-slate-600 mb-8 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
                   Fill out the form and our team will get back to you within 24 business hours.
                 </p>
+
+                {/* Product Info Card */}
+                {product && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-8 p-4 bg-gradient-to-r from-red-50 to-orange-50 border border-red-100 rounded-2xl"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-16 h-16 bg-white border border-slate-200 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Package size={32} className="text-red-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-slate-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                          {product.name}
+                        </h3>
+                        {product.sku && (
+                          <p className="text-sm text-slate-600 font-mono">SKU: {product.sku}</p>
+                        )}
+                        {product.category && (
+                          <p className="text-sm text-slate-600">Category: {product.category}</p>
+                        )}
+                        {selectedColor && (
+                          <p className="text-sm text-slate-600">Selected Color: {selectedColor}</p>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
                 {formSubmitted ? (
                   <motion.div
                     className="text-center py-12"

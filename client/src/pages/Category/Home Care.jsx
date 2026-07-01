@@ -6,9 +6,16 @@ import { productAPI } from '../../services/api'
 import homeCareImage from '../../assets/images/Home care.png'
 
 const HomeCare = () => {
+  const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
   const [selectedColor, setSelectedColor] = useState({})
+
+  const handleCustomize = (e, product) => {
+    e.preventDefault()
+    const color = selectedColor[product._id] || getProductColors(product)[0]
+    navigate('/contact', { state: { product, selectedColor: color } })
+  }
 
   const getProductImage = (product, color = null) => {
     if (color && product.images) {

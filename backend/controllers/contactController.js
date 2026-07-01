@@ -3,7 +3,7 @@ import transporter from "../utils/Mail.js";
 export const sendContactEmail = async (req, res) => {
   try {
     console.log("📧 Received contact form submission:", req.body);
-    const { name, email, phone, subject, message } = req.body;
+    const { name, email, phone, subject, message, product } = req.body;
 
     if (!name || !email || !subject || !message) {
       return res.status(400).json({
@@ -12,9 +12,24 @@ export const sendContactEmail = async (req, res) => {
       });
     }
 
+    let productSection = '';
+    if (product) {
+      productSection = `
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; font-weight: bold; color: #dc2626; font-size: 14px;">Product</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; color: #111827; font-size: 15px;">
+            <strong>${product.name}</strong>
+            ${product.sku ? `<br><span style="color:#6b7280;">SKU: ${product.sku}</span>` : ''}
+            ${product.category ? `<br><span style="color:#6b7280;">Category: ${product.category}</span>` : ''}
+            ${product.color ? `<br><span style="color:#6b7280;">Color: ${product.color}</span>` : ''}
+          </td>
+        </tr>
+      `;
+    }
+
     const mailOptions = {
       from: process.env.SMTP_USER,
-      to: "avikushwaha479@gmail.com",
+      to: "avidevelop60@gmail.com",
       replyTo: email,
       subject: `New Contact Form Enquiry: ${subject}`,
       html:
@@ -39,6 +54,7 @@ export const sendContactEmail = async (req, res) => {
         <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; font-weight: bold; color: #4b5563; font-size: 14px;">Phone</td>
         <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; color: #111827; font-size: 15px;">${phone || "—"}</td>
       </tr>
+      ${productSection}
       <tr>
         <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; font-weight: bold; color: #4b5563; font-size: 14px;">Subject</td>
         <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; color: #111827; font-size: 15px; font-weight: bold;">${subject}</td>
