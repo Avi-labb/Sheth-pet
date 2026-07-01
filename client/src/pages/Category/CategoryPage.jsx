@@ -39,7 +39,7 @@ const CategoryPage = () => {
   const getProductImage = (product, color = null) => {
     if (color && product.images) {
       if (product.images[color]) {
-        // return `http://localhost:5000/uploads/${product.images[color]}`
+        //return `http://localhost:5000/uploads/${product.images[color]}`
         return `/uploads/${product.images[color]}`
       }
       const colorLower = color.toLowerCase()
@@ -51,12 +51,12 @@ const CategoryPage = () => {
     }
     if (product.images && Object.keys(product.images).length > 0) {
       const firstKey = Object.keys(product.images)[0]
-     // return `http://localhost:5000/uploads/${product.images[firstKey]}`
-       return `/uploads/${product.images[firstKey]}`
+      //return `http://localhost:5000/uploads/${product.images[firstKey]}`
+        return `/uploads/${product.images[firstKey]}`
     }
     if (product.image) {
       //return `http://localhost:5000/uploads/${product.image}`
-       return `/uploads/${product.image}`
+        return `/uploads/${product.image}`
     }
     return null
   }

@@ -888,8 +888,8 @@ const categoryData = {
 
                         <img
 
-                         // src={`http://localhost:5000/uploads/${selectedProduct.image}`}
-                          src={`/uploads/${selectedProduct.image}`}
+                         src={`http://localhost:5000/uploads/${selectedProduct.image}`}
+                         // src={`/uploads/${selectedProduct.image}`}
 
                           alt={selectedProduct.name || selectedProduct.title}
 

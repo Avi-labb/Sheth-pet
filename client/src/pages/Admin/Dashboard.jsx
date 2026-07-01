@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms']);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -256,8 +257,8 @@ const Dashboard = () => {
     const initialEditImagesPreview = {};
     if (product.images) {
       Object.entries(product.images).forEach(([colorName, filename]) => {
-       // initialEditImagesPreview[colorName] = `http://localhost:5000/uploads/${filename}`;
-       initialEditImagesPreview[colorName] = `/uploads/${filename}`;
+        //initialEditImagesPreview[colorName] = `http://localhost:5000/uploads/${filename}`;
+        initialEditImagesPreview[colorName] = `/uploads/${filename}`;
       });
     }
     
@@ -416,6 +417,37 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Update product error:', error);
       alert('Network error during product update.');
+    }
+  };
+
+  const toggleProductSelection = (productId) => {
+    setSelectedProducts(prev => 
+      prev.includes(productId) 
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  const toggleSelectAll = (filteredProducts) => {
+    if (selectedProducts.length === filteredProducts.length) {
+      setSelectedProducts([]);
+    } else {
+      setSelectedProducts(filteredProducts.map(p => p._id));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    const count = selectedProducts.length;
+    if (confirm(`Are you sure you want to delete ${count} product(s)?`)) {
+      try {
+        const deletePromises = selectedProducts.map(id => productAPI.deleteProduct(id));
+        await Promise.all(deletePromises);
+        await fetchProducts();
+        setSelectedProducts([]);
+        alert(`${count} product(s) deleted successfully!`);
+      } catch (error) {
+        alert('Network error during bulk deletion.');
+      }
     }
   };
 
@@ -659,14 +691,27 @@ const Dashboard = () => {
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
                   <div className="text-xs font-bold tracking-widest uppercase text-neutral-400">Total Product Itemized Log Details</div>
-                  <div className="w-full sm:w-80">
-                    <input
-                      type="text"
-                      placeholder="Search by SKU, Name, Category, or Color..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                    />
+                  <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-3">
+                    {selectedProducts.length > 0 && (
+                      <div className="flex gap-2 items-center">
+                        <span className="text-xs text-neutral-400 font-mono">{selectedProducts.length} selected</span>
+                        <button
+                          onClick={handleBulkDelete}
+                          className="px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-mono uppercase tracking-wider hover:bg-red-700 transition-colors cursor-pointer"
+                        >
+                          Delete Selected
+                        </button>
+                      </div>
+                    )}
+                    <div className="w-full sm:w-80">
+                      <input
+                        type="text"
+                        placeholder="Search by SKU, Name, Category, or Color..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="bg-neutral-950 border border-neutral-900 rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
@@ -701,6 +746,14 @@ const Dashboard = () => {
                         <table className="w-full text-left border-collapse min-w-[700px]">
                           <thead>
                             <tr className="border-b border-neutral-700 text-[13px] font-mono uppercase tracking-[0.2em] text-neutral-400 bg-neutral-950/60">
+                              <th className="py-4 px-6 font-semibold">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedProducts.length === filteredProducts.length && filteredProducts.length > 0}
+                                  onChange={() => toggleSelectAll(filteredProducts)}
+                                  className="w-4 h-4 rounded border-neutral-600 bg-neutral-900 text-red-600 focus:ring-red-500"
+                                />
+                              </th>
                               <th className="py-4 px-6 font-semibold">SKU</th>
                               <th className="py-4 px-6 font-semibold">Product Name</th>
                               <th className="py-4 px-6 font-semibold">Category</th>
@@ -713,8 +766,22 @@ const Dashboard = () => {
                               <tr
                                 key={product._id || product.id}
                                 onClick={() => setSelectedProduct(product)}
-                                className="hover:bg-neutral-800/20 transition-colors duration-150 "
+                                className={`hover:bg-neutral-800/20 transition-colors duration-150 ${selectedProducts.includes(product._id) ? 'bg-neutral-800/30' : ''}`}
                               >
+                                <td className="py-4 px-6">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedProducts.includes(product._id)}
+                                    onChange={(e) => {
+                                      e.stopPropagation();
+                                      toggleProductSelection(product._id);
+                                    }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                    }}
+                                    className="w-4 h-4 rounded border-neutral-600 bg-neutral-900 text-red-600 focus:ring-red-500"
+                                  />
+                                </td>
                                 <td className="py-4 px-6 font-mono text-neutral-400 tracking-wider">{product.sku}</td>
                                 <td className="py-4 px-6 font-bold text-white tracking-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{product.name}</td>
                                 <td className="py-4 px-6 text-neutral-400 font-medium">{product.category || '-'}</td>
@@ -880,7 +947,7 @@ const Dashboard = () => {
               <div key={color} className="aspect-square bg-neutral-950 border border-neutral-800/80 rounded-xl overflow-hidden flex items-center justify-center p-3 group relative">
                 <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded text-xs font-mono text-white uppercase">{color}</div>
                 <img
-                 // src={`http://localhost:5000/uploads/${filename}`}
+                 //src={`http://localhost:5000/uploads/${filename}`}
                   src={`/uploads/${filename}`}
                   alt={`${selectedProduct.name} - ${color}`}
                   className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
@@ -892,7 +959,7 @@ const Dashboard = () => {
           <div className="aspect-square w-full bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden flex items-center justify-center p-6 group relative">
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent pointer-events-none" />
             <img
-             // src={`http://localhost:5000/uploads/${selectedProduct.image}`}
+             //src={`http://localhost:5000/uploads/${selectedProduct.image}`}
              src={`/uploads/${selectedProduct.image}`}
              alt={selectedProduct.name}
               className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"

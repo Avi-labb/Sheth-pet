@@ -5,9 +5,7 @@ import generateToken from "../utils/generateToken.js";
 
 export const loginAdmin = async (req, res) => {
   try {
-    console.log("Login request received! Body:", req.body);
     const { email, password } = req.body;
-    console.log("Admin Model Collection:", Admin.collection.name);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -17,9 +15,7 @@ export const loginAdmin = async (req, res) => {
       });
     }
 
-    console.log("Looking for admin with email:", email);
     const admin = await Admin.findOne({ email });
-    console.log("Admin found in DB:", admin);
 
     if (!admin) {
       console.log("Admin NOT found!");

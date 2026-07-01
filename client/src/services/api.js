@@ -3,6 +3,7 @@
 //const PRODUCT_API_BASE_URL = "http://localhost:5000/api/products";
 //const BLOG_API_BASE_URL = "http://localhost:5000/api/blogs";
 //const CAREER_API_BASE_URL = "http://localhost:5000/api/careers";
+//const CONTACT_API_BASE_URL = "http://localhost:5000/api/contact";
 
 const ADMIN_API_BASE_URL = "/api/admin";
 const PRODUCT_API_BASE_URL = "/api/products";

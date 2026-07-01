@@ -108,7 +108,7 @@ const Contact = () => {
       </section>
 
       {/* Info Cards */}
-      <section className="py-10 bg-white">
+      <section className="py- bg-white">
         <div className="max-w-6xl mx-auto px-5 md:px-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[

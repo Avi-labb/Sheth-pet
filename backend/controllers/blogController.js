@@ -3,9 +3,6 @@ import Blog from "../models/blogModel.js";
 // Create a blog post
 export const createBlog = async (req, res) => {
   try {
-    console.log("Request received at createBlog");
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
 
     const { title, description, content, author, tags, isPublished } = req.body;
     
@@ -122,9 +119,6 @@ export const getBlog = async (req, res) => {
 // Update blog
 export const updateBlog = async (req, res) => {
   try {
-    console.log("Request received at updateBlog");
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
 
     const { id } = req.params;
     if (!id) {

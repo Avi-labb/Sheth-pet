@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, ExternalLink, Globe, MessageCircle, Share2 } from 'lucide-react'
 import { FaYoutube,FaWhatsapp,FaInstagram  } from "react-icons/fa";
 import { CiLinkedin } from "react-icons/ci";
@@ -36,11 +37,11 @@ const Footer = () => {
   ]
 
   const industries = [
-    { name: 'Food & Beverage', href: '/industries' },
-    { name: 'Personal Care', href: '/industries' },
-    { name: 'Pharmaceuticals', href: '/industries' },
-    { name: 'Home Care', href: '/industries' },
-    { name: 'Industrial', href: '/industries' },
+    { name: 'Food & Beverage', href: '/food-beverages' },
+    { name: 'Personal Care', href: '/personal-care' },
+    { name: 'Pharmaceuticals', href: '/pharmaceutical' },
+    { name: 'Home Care', href: '/home-care' },
+    { name: 'Industrial', href: '/industrial' },
 
   ]
 
@@ -188,12 +189,12 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} Sheth PET & Polymers. All rights reserved.
           </p>
           <div className="flex gap-6 text-[13px] font-sans">
-            <a href="#" className="text-slate-500 transition-colors duration-200 hover:text-slate-300">
+            <Link to="/privacy-policy" className="text-slate-500 transition-colors duration-200 hover:text-slate-300">
               Privacy Policy
-            </a>
-            <a href="#" className="text-slate-500 transition-colors duration-200 hover:text-slate-300">
+            </Link>
+            <Link to="/terms-of-service" className="text-slate-500 transition-colors duration-200 hover:text-slate-300">
               Terms of Service
-            </a>
+            </Link>
           </div>
         </motion.div>
 

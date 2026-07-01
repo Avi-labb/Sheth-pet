@@ -91,8 +91,8 @@ const Blog = () => {
                   {blog.image ? (
                     <div className="h-[200px] bg-slate-100 overflow-hidden">
                       <img
-                      //  src={`http://localhost:5000/uploads/${blog.image}`}
-                        src={`/uploads/${blog.image}`}
+                      src={`http://localhost:5000/uploads/${blog.image}`}
+                        // src={`/uploads/${blog.image}`}
                         alt={blog.title}
                         className="w-full h-full object-cover"
                       />
@@ -190,8 +190,8 @@ const Blog = () => {
                 <div className="bg-slate-100 overflow-hidden">
                   {selectedBlog.image ? (
                     <img
-                   //   src={`http://localhost:5000/uploads/${selectedBlog.image}`}
-                      src={`/uploads/${selectedBlog.image}`}
+                     src={`http://localhost:5000/uploads/${selectedBlog.image}`}
+                      // src={`/uploads/${selectedBlog.image}`}
                       alt={selectedBlog.title}
                       className="w-full h-full object-cover"
                       style={{ minHeight: '500px' }}

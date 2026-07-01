@@ -12,6 +12,8 @@ import About from './pages/About/About'
 import Blog from './pages/Blog'
 import Careers from './pages/Careers'
 import Contact from './pages/Contact/Contact'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 import AdminLogin from './pages/Admin/AdminLogin'
 import Dashboard from './pages/Admin/Dashboard'
 import BulkUpload from './pages/Admin/bulkupload'
@@ -32,7 +34,11 @@ function ScrollToTop() {
   const location = useLocation()
   
   useEffect(() => {
-    window.scrollTo(0, 0)
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant'
+    })
   }, [location.pathname])
   
   return null
@@ -52,6 +58,13 @@ function PublicLayout({ children }) {
 }
 
 function App() {
+  // Disable automatic scroll restoration
+  useEffect(() => {
+    if (window.history && 'scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+  }, [])
+
   return (
     <Router>
       <div className="min-h-screen">
@@ -146,6 +159,16 @@ function App() {
           <Route path="/contact" element={
             <PublicLayout>
               <Contact />
+            </PublicLayout>
+          } />
+          <Route path="/privacy-policy" element={
+            <PublicLayout>
+              <PrivacyPolicy />
+            </PublicLayout>
+          } />
+          <Route path="/terms-of-service" element={
+            <PublicLayout>
+              <TermsOfService />
             </PublicLayout>
           } />
         </Routes>

@@ -30,6 +30,29 @@ router.get('/uploads-check', (req, res) => {
 router.get('/categories', getCategories)
 router.post('/add-category', addCategory)
 router.get('/', getProducts)
+
+// Debug route: get all products with all fields
+router.get('/debug-all', async (req, res) => {
+  try {
+    const Product = (await import('../models/productModule.js')).default;
+    const products = await Product.find({}, 'name sku category image images');
+    res.json({ 
+      success: true, 
+      count: products.length,
+      products: products.map(p => ({
+        _id: p._id,
+        name: p.name,
+        sku: p.sku,
+        category: p.category,
+        image: p.image,
+        images: p.images
+      }))
+    });
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+});
+
 router.post('/bulk-upload', debugBulkUpload, upload.fields([{ name: 'file', maxCount: 1 }, { name: 'images', maxCount: 100 }]), bulkUploadProducts)
 // Use upload.any() to accept any image fields for flexibility
 router.post('/add-product', upload.any(), addProduct)

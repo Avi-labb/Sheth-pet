@@ -5,11 +5,9 @@ import Counter from "../models/counterModel.js";
 
 export const bulkUploadProducts = async (req, res) => {
   try {
-    console.log('[DEBUG] bulkUploadProducts function started!');
     
     // Check if spreadsheet file is present
     if (!req.files || !req.files['file'] || req.files['file'].length === 0) {
-      console.log('[DEBUG] ERROR: No spreadsheet file found in req.files');
       return res.status(400).json({
         success: false,
         message: "Please upload a CSV or Excel file",
@@ -17,31 +15,34 @@ export const bulkUploadProducts = async (req, res) => {
     }
 
     const spreadsheetFile = req.files['file'][0];
-    console.log(`[DEBUG] Spreadsheet file received: ${spreadsheetFile.originalname}, stored as: ${spreadsheetFile.filename}`);
     
     // Create a map of image filenames to their stored filenames (case-insensitive!)
     const imageMap = new Map();
     if (req.files['images'] && req.files['images'].length > 0) {
-      console.log(`[DEBUG] Received ${req.files['images'].length} image files`);
       req.files['images'].forEach((imageFile, i) => {
         // Use lowercase trimmed original filename as key, stored filename as value
         const key = imageFile.originalname.trim().toLowerCase();
         imageMap.set(key, imageFile.filename);
-        console.log(`[DEBUG] Image [${i}] - Original: "${imageFile.originalname}" → Key: "${key}" → Stored as: "${imageFile.filename}"`);
+        // Also add key without file extension
+        const keyWithoutExt = key.replace(/\.[^/.]+$/, "");
+        imageMap.set(keyWithoutExt, imageFile.filename);
+        console.log(`[DEBUG] Image map entry: "${key}" → "${imageFile.filename}" (also added: "${keyWithoutExt}")`);
       });
     } else {
-      console.log('[DEBUG] No image files received');
+      console.log("[DEBUG] No images uploaded with bulk upload");
     }
 
-    console.log('[DEBUG] Reading spreadsheet file...');
     const workbook = XLSX.readFile(spreadsheetFile.path);
     const sheetName = workbook.SheetNames[0];
-    console.log(`[DEBUG] Using first sheet: "${sheetName}"`);
     const sheet = workbook.Sheets[sheetName];
     const products = XLSX.utils.sheet_to_json(sheet);
     
-    console.log(`[DEBUG] Found ${products.length} products in spreadsheet`);
-    console.log('[DEBUG] Product data from Excel:', JSON.stringify(products, null, 2));
+    // Debug log: print first product to see all column names
+    if (products.length > 0) {
+      console.log(`[DEBUG] First product columns found in sheet:`, Object.keys(products[0]));
+      console.log(`[DEBUG] First product data:`, JSON.stringify(products[0], null, 2));
+    }
+    
 
     let imported = 0;
     let updated = 0;
@@ -50,10 +51,8 @@ export const bulkUploadProducts = async (req, res) => {
     for (let i = 0; i < products.length; i++) {
       const item = products[i];
       try {
-        console.log(`\n[DEBUG] Processing product ${i+1}/${products.length}:`, item);
         
         // Determine color-specific image filenames
-        console.log(`[DEBUG] Checking ALL keys in CSV row for image columns:`, Object.keys(item));
         
         // Process each color's image
         const images = {};
@@ -61,21 +60,27 @@ export const bulkUploadProducts = async (req, res) => {
         
         colorNames.forEach(colorName => {
           // Convert color name to column name (e.g., "Opaque White" → "Image_Opaque_White")
-          const columnName = `Image_${colorName.replace(/ /g, '_')}`;
+          const columnNameUnderscore = `Image_${colorName.replace(/ /g, '_')}`;
+          const columnNameSpace = `Image ${colorName}`;
+          const columnNameLowerUnderscore = `image_${colorName.replace(/ /g, '_').toLowerCase()}`;
+          const columnNameColorFirst = `${colorName} Image`;
           
           // Check for the column in various formats
           const colorImageFilename = 
-            item[columnName] || 
-            item[`Image ${colorName}`] || 
-            item[`image_${colorName.toLowerCase()}`];
+            item[columnNameUnderscore] || 
+            item[columnNameSpace] || 
+            item[columnNameLowerUnderscore] ||
+            item[columnNameColorFirst];
           
           if (colorImageFilename) {
             const lookupKey = colorImageFilename.trim().toLowerCase();
+            console.log(`[DEBUG] Looking for ${colorName} image: "${lookupKey}" for "${item.Name}"`);
+            console.log(`[DEBUG] Checked columns: "${columnNameUnderscore}", "${columnNameSpace}", "${columnNameLowerUnderscore}", "${columnNameColorFirst}"`);
             if (imageMap.has(lookupKey)) {
               images[colorName] = imageMap.get(lookupKey);
-              console.log(`[DEBUG] ✅ Found matching ${colorName} image for "${item.Name}": ${images[colorName]}`);
+              console.log(`[DEBUG] ✅ Found ${colorName} image for "${item.Name}": ${images[colorName]}`);
             } else {
-              console.log(`[DEBUG] ❌ ${colorName} image NOT found for "${item.Name}"`);
+              console.log(`[DEBUG] ❌ No ${colorName} image found for "${item.Name}" with key "${lookupKey}"`);
             }
           }
         });
@@ -92,11 +97,17 @@ export const bulkUploadProducts = async (req, res) => {
           
         if (imageFilename) {
           const lookupKey = imageFilename.trim().toLowerCase();
+          console.log(`[DEBUG] Looking for single image: "${lookupKey}" in image map`);
           if (imageMap.has(lookupKey)) {
             imageFilename = imageMap.get(lookupKey);
             console.log(`[DEBUG] ✅ Found single image for "${item.Name}": ${imageFilename}`);
+          } else {
+            console.log(`[DEBUG] ❌ No single image found for "${item.Name}" with key "${lookupKey}"`);
           }
         }
+        
+        // Debug log color images
+        console.log(`[DEBUG] Color images for "${item.Name}":`, images);
         
         // Normalize category to match our standard categories
         let category = item.Category || item.category;
@@ -124,7 +135,6 @@ export const bulkUploadProducts = async (req, res) => {
         } else {
           colors = [];
         }
-        console.log(`[DEBUG] Parsed colors:`, colors);
 
         // Parse MOQ per color into an object
         const moqPackaging = {};
@@ -137,7 +147,6 @@ export const bulkUploadProducts = async (req, res) => {
           const oldMoq = item.MOQ_Packaging || item.MOQPackaging || item['MOQ Packaging'];
           moqPackaging.default = oldMoq;
         }
-        console.log(`[DEBUG] Parsed moqPackaging:`, moqPackaging);
 
         // Parse market segments: comma-separated string → array
         let marketSegments = item.Market_Segments || item.marketSegments || item['Market Segments'];
@@ -150,7 +159,6 @@ export const bulkUploadProducts = async (req, res) => {
         } else {
           marketSegments = [];
         }
-        console.log(`[DEBUG] Parsed marketSegments:`, marketSegments);
 
         // Parse other fields
         const volume = item.Volume || item.volume;
@@ -171,6 +179,10 @@ export const bulkUploadProducts = async (req, res) => {
         const existing = item.SKU ? await Product.findOne({ sku: item.SKU }) : null;
 
         if (existing) {
+          console.log(`[DEBUG] Updating product "${item.Name || item.name}" with:`, {
+            image: imageFilename,
+            images: images
+          });
           await Product.findByIdAndUpdate(
             existing._id,
             {
@@ -183,6 +195,7 @@ export const bulkUploadProducts = async (req, res) => {
               usage: usage,
               keySpecs: keySpecs,
               image: imageFilename,
+              images: images, // Add this to save color-specific images!
               showInPopup: false,
               marketSegments: marketSegments,
               volume: volume,
@@ -198,7 +211,6 @@ export const bulkUploadProducts = async (req, res) => {
           );
 
           updated++;
-          console.log(`Updated product: ${item.Name}`);
         } else {
           const productData = {
             name: item.Name || item.name,
@@ -210,6 +222,7 @@ export const bulkUploadProducts = async (req, res) => {
             usage: usage,
             keySpecs: keySpecs,
             image: imageFilename,
+            images: images, // Add this to save color-specific images!
             showInPopup: false,
             marketSegments: marketSegments,
             volume: volume,
@@ -239,15 +252,17 @@ export const bulkUploadProducts = async (req, res) => {
             productData.sku = `SKU-${String(counter.sequence).padStart(4, "0")}`;
           }
           
+          console.log(`[DEBUG] Creating product "${item.Name || item.name}" with:`, {
+            sku: productData.sku,
+            image: imageFilename,
+            images: images
+          });
           const createdProduct = await Product.create(productData);
+          console.log(`[DEBUG] ✅ Created product with _id: ${createdProduct._id}`);
           imported++;
-          console.log(`Created product: ${item.Name} (Category: ${category})`);
-          console.log('Product data:', createdProduct);
         }
       } catch (err) {
         failed++;
-        console.log("Failed Product:");
-        console.log(item);
         console.log("Error:");
         console.log(err.message);
       }
@@ -272,9 +287,6 @@ export const bulkUploadProducts = async (req, res) => {
 
 export const addProduct = async (req, res) => {
   try {
-    console.log("Request received at addProduct");
-    console.log("req.body:", req.body);
-    console.log("req.files:", req.files);
 
     const body = req.body || {};
     const {
@@ -355,15 +367,12 @@ export const addProduct = async (req, res) => {
       parsedMoq = {};
     }
 
-    console.log("Parsed color:", parsedColor);
-    console.log("Parsed moqPackaging:", parsedMoq);
 
     // Process images: { color: filename }
     const images = {};
     let singleImage = undefined;
     if (req.files) {
       req.files.forEach(file => {
-        console.log("Processing file:", file.fieldname);
         if (file.fieldname === 'image') {
           singleImage = file.filename;
         } else if (file.fieldname.startsWith('image-')) {
@@ -433,7 +442,6 @@ export const addProduct = async (req, res) => {
 export const getProducts = async (req, res) => {
   try {
     const { category, marketSegment } = req.query;
-    console.log('getProducts called with:', { category, marketSegment });
     
     // Build query to exclude Containers category by default
     let query = { 
@@ -455,7 +463,6 @@ export const getProducts = async (req, res) => {
       );
     }
     
-    console.log(`Filtered to ${products.length} products`);
     products.forEach(p => console.log(`- ${p.name}: marketSegments = ${p.marketSegments}`));
     return res.status(200).json({
       success: true,
@@ -472,20 +479,16 @@ export const getProducts = async (req, res) => {
 
 export const getCategories = async (req, res) => {
   try {
-    console.log("getCategories called!");
     // First try to get from Category model, filter out Containers
     let categories = await Category.find({ 
       name: { $not: { $regex: /^Containers$/i } } 
     }).sort({ name: 1 });
-    console.log("Current categories in DB (without Containers):", categories);
     const existingCategoryNames = categories.map(cat => cat.name.toLowerCase());
-    console.log("Existing category names (lowercase):", existingCategoryNames);
 
     // Check if all default categories exist, create any missing ones
     const defaultCategories = ['Bottles', 'Jars', 'Caps', 'Preforms'];
     for (const catName of defaultCategories) {
       if (!existingCategoryNames.includes(catName.toLowerCase())) {
-        console.log("Creating missing category:", catName);
         await Category.create({ name: catName });
       }
     }
@@ -495,7 +498,6 @@ export const getCategories = async (req, res) => {
       name: { $not: { $regex: /^Containers$/i } } 
     }).sort({ name: 1 });
     const categoryNames = categories.map(cat => cat.name);
-    console.log("Final categories found:", categoryNames);
 
     return res.status(200).json({
       success: true,
@@ -559,10 +561,6 @@ export const addCategory = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
-    console.log("Request received at updateProduct");
-    console.log("req.body:", req.body);
-    console.log("req.files:", req.files);
-    console.log("req.params:", req.params);
 
     const { id } = req.params;
     if (!id) {
@@ -626,7 +624,6 @@ export const updateProduct = async (req, res) => {
         parsedColor = [];
       }
       updateData.color = parsedColor;
-      console.log("Parsed update color:", parsedColor);
     }
     
     // Handle moqPackaging - can be object, JSON string, or single value
@@ -648,7 +645,6 @@ export const updateProduct = async (req, res) => {
         parsedMoq = {};
       }
       updateData.moqPackaging = parsedMoq;
-      console.log("Parsed update moqPackaging:", parsedMoq);
     }
     
     // Handle marketSegments
@@ -676,7 +672,6 @@ export const updateProduct = async (req, res) => {
     let singleImage = existingProduct.image;
     if (req.files) {
       req.files.forEach(file => {
-        console.log("Processing update file:", file.fieldname);
         if (file.fieldname === 'image') {
           singleImage = file.filename;
         } else if (file.fieldname.startsWith('image-')) {

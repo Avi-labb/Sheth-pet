@@ -2,7 +2,6 @@ import transporter from "../utils/Mail.js";
 
 export const sendContactEmail = async (req, res) => {
   try {
-    console.log("📧 Received contact form submission:", req.body);
     const { name, email, phone, subject, message, product } = req.body;
 
     if (!name || !email || !subject || !message) {
@@ -78,9 +77,7 @@ export const sendContactEmail = async (req, res) => {
 </div>`
     };
 
-    console.log("📤 Sending email to avidevelop60@gmail.com...");
     const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent successfully! Message ID:", info.messageId);
 
     res.status(200).json({
       success: true,

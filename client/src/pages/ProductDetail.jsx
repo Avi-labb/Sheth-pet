@@ -16,16 +16,21 @@ const ProductDetail = () => {
   const [isZooming, setIsZooming] = useState(false)
   const imageWrapRef = useRef(null)
 
+  // Scroll to top immediately on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   const getAllImages = (product) => {
     if (product.images && Object.keys(product.images).length > 0) {
       return Object.entries(product.images).map(([color, file]) => ({
         color,
-      // src: `http://localhost:5000/uploads/${file}`
-        src: `/uploads/${file}`
+       //src: `http://localhost:5000/uploads/${file}`
+         src: `/uploads/${file}`
      }))
     }
     if (product.image) {
-     // `http://localhost:5000/uploads/${product.image}`
+       // return `http://localhost:5000/uploads/${product.image}`
        return [{ src: `/uploads/${product.image}` }]
     }
     return []
@@ -34,24 +39,24 @@ const ProductDetail = () => {
   const getProductImage = (product, color = null) => {
     if (color && product.images) {
       if (product.images[color]) {
-      // return `http://localhost:5000/uploads/${product.images[color]}`
-       return `/uploads/${product.images[color]}`
+       // return `http://localhost:5000/uploads/${product.images[color]}`
+        return `/uploads/${product.images[color]}`
       }
       const colorLower = color.toLowerCase()
       const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
       if (matchingKey) {
-       // return `http://localhost:5000/uploads/${product.images[matchingKey]}`
-       return `/uploads/${product.images[matchingKey]}`
+      // return `http://localhost:5000/uploads/${product.images[matchingKey]}`
+        return `/uploads/${product.images[matchingKey]}`
       }
     }
     if (product.images && Object.keys(product.images).length > 0) {
       const firstKey = Object.keys(product.images)[0]
-     // return `http://localhost:5000/uploads/${product.images[firstKey]}`
-       return `/uploads/${product.images[firstKey]}`
+      // return `http://localhost:5000/uploads/${product.images[firstKey]}`
+        return `/uploads/${product.images[firstKey]}`
     }
     if (product.image) {
-     // return `http://localhost:5000/uploads/${product.image}`
-       return `/uploads/${product.image}`
+      // return `http://localhost:5000/uploads/${product.image}`
+        return `/uploads/${product.image}`
     }
     return null
   }
@@ -105,8 +110,13 @@ const ProductDetail = () => {
   }
 
   useEffect(() => {
+    // Scroll to top immediately when page loads
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant'
+    })
     fetchProduct()
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [productId])
 
   useEffect(() => {
@@ -272,7 +282,7 @@ const ProductDetail = () => {
                       transition={{ duration: 0.2, ease: 'easeInOut' }}
                       src={currentImage}
                       alt={product.name}
-                      className="w-full h-full object-cover p-6 select-none transition-transform duration-150"
+                      className="w-full h-full object-contain p-6 select-none transition-transform duration-150"
                       style={
                         isZooming
                           ? { transform: 'scale(1.8)', transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` }
@@ -321,7 +331,7 @@ const ProductDetail = () => {
                       }`}
                       aria-label={img.color || `Image ${idx + 1}`}
                     >
-                      <img src={img.src} alt={img.color || ''} className="w-full h-full object-cover p-1.5" />
+                      <img src={img.src} alt={img.color || ''} className="w-full h-full object-contain p-1.5" />
                       {isActive && <div className="absolute inset-0 ring-1 ring-inset ring-[#D4530F]" />}
                     </button>
                   )
@@ -391,8 +401,8 @@ const ProductDetail = () => {
             )}
 
             {currentMoq && (
-              <div className="flex items-center justify-between border border-[#DEDDD6] dark:border-[#2A2D32] px-5 py-4">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[#8C8E8A]">Minimum order qty</span>
+              <div className="flex items-center justify-between border border-gray-400 dark:border-[#2A2D32] px-5 py-4">
+                <span className="text-[12px] font-mono uppercase tracking-wider text-slate-900">Minimum order qty</span>
                 <span className="font-mono text-lg font-medium">
                   {currentMoq} <span className="text-xs text-[#8C8E8A]">pcs</span>
                 </span>
@@ -457,7 +467,7 @@ const ProductDetail = () => {
               Related parts
             </h2>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#DEDDD6] dark:bg-[#2A2D32] border border-[#DEDDD6] dark:border-[#2A2D32]">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
               {relatedProducts.map((relatedProduct) => {
                 const relatedColors = getProductColors(relatedProduct)
                 const relatedImage = getProductImage(relatedProduct, relatedColors[0])
@@ -466,9 +476,9 @@ const ProductDetail = () => {
                   <Link
                     key={relatedProduct._id}
                     to={`/product/${relatedProduct._id}`}
-                    className="group flex flex-col bg-[#FAFAF8] dark:bg-[#15171A] hover:bg-white dark:hover:bg-[#1C1F23] transition-colors"
+                    className="group flex flex-col transition-colors border border-[#DEDDD6] dark:border-[#2A2D32]  gap-1"
                   >
-                    <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden">
+                    <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden border border-[#DEDDD6] dark:border-[#2A2D32] gap-1">
                       {relatedImage ? (
                         <img
                           src={relatedImage}
@@ -481,7 +491,7 @@ const ProductDetail = () => {
                       )}
                     </div>
 
-                    <div className="p-3.5 border-t border-[#DEDDD6] dark:border-[#2A2D32] flex items-start justify-between gap-2">
+                    <div className="p-3.5 flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <h3 className="text-xs font-medium text-[#15171A] dark:text-[#F2F1ED] truncate group-hover:text-[#D4530F] transition-colors">
                           {relatedProduct.name}
