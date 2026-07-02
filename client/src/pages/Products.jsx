@@ -17,7 +17,7 @@ const Products = () => {
     if (color && product.images) {
       if (product.images[color]) {
        //return `http://localhost:5000/uploads/${product.images[color]}`
-        return `/uploads/${product.images[color]}`
+       return `/uploads/${product.images[color]}`
       }
       const colorLower = color.toLowerCase()
       const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
