@@ -48,6 +48,9 @@ const HideScrollbar = () => {
 const Header = ({ onCategorySelect }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [showProductsMenu, setShowProductsMenu] = useState(false)
+  const [showByType, setShowByType] = useState(false)
+  const [showByIndustry, setShowByIndustry] = useState(false)
   const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms'])
   const location = useLocation()
   const { theme, toggleTheme } = useTheme()
@@ -73,7 +76,7 @@ const Header = ({ onCategorySelect }) => {
   return (
     <>
       <nav
-        className={`fixed py-2 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 backdrop-blur-xl h-14 sm:h-16 shadow-lg ${theme === 'light'
+        className={`fixed py-4 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 backdrop-blur-xl h-16 sm:h-18 shadow-lg ${theme === 'light'
             ? 'bg-white/80 border-slate-200 shadow-gray-200/20'
             : 'bg-slate-900/80 border-slate-800 shadow-black/20'
           }`}
@@ -280,21 +283,7 @@ const Header = ({ onCategorySelect }) => {
 
         {/* Mobile Toggle Trigger Button + Theme Toggle (mobile) */}
         <div className="flex items-center gap-2 lg:hidden">
-          {/* Mobile Theme Toggle */}
-          {!isAdminRoute && (
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-full transition-all duration-200 border ${theme === 'light'
-                  ? 'bg-slate-100 border-slate-200 text-slate-900'
-                  : 'bg-slate-800 border-slate-700 text-white'
-                }`}
-              aria-label="Toggle theme"
-            >
-              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-            </button>
-          )}
-
-          {/* Mobile Menu Toggle */}
+          
           <button
             className={`relative z-50 p-2 rounded-full transition-all duration-200 border ${theme === 'light'
                 ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200'
@@ -320,7 +309,7 @@ const Header = ({ onCategorySelect }) => {
             onClick={() => setIsOpen(false)}
           >
             <motion.div
-              className={`absolute right-0 top-0 h-full w-full max-w-xs border-l shadow-2xl flex flex-col pt-8 pb-8 px-6 gap-3 overflow-y-auto max-h-screen no-scrollbar ${theme === 'light' ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'
+              className={`absolute right-0 top-0 h-full w-full max-w-xs border-l shadow-2xl flex flex-col pt-12 pb-8 px-4 gap-2 overflow-y-auto max-h-screen no-scrollbar ${theme === 'light' ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'
                 }`}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -331,61 +320,150 @@ const Header = ({ onCategorySelect }) => {
               {/* Products Section */}
               <div className={`border-b pb-3 mb-2 ${theme === 'light' ? 'border-slate-200' : 'border-slate-800'
                 }`}>
-                <Link
-                  to="/products"
-                  onClick={() => setIsOpen(false)}
+                <button
+                  onClick={() => setShowProductsMenu(!showProductsMenu)}
                   className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide ${theme === 'light' ? 'text-slate-900' : 'text-white'
                     }`}
                 >
                   All Products
-                  <ChevronRight size={14} className={
-                    theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                  } />
-                </Link>
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform duration-300 ${showProductsMenu ? 'rotate-180' : ''} ${
+                      theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                    }`}
+                  />
+                </button>
 
-                {/* Product Types */}
-                <div className="pl-4 mb-2">
-                  <p className={`text-xs font-semibold uppercase tracking-wider mb-2 ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                    }`}>By Type</p>
-                  {typeCategories.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.path}
-                      onClick={() => setIsOpen(false)}
-                      className={`flex items-center justify-between w-full px-4 py-2 pl-4 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
-                          ? 'text-slate-600 hover:text-slate-900'
-                          : 'text-slate-400 hover:text-white'
-                        }`}
+                <AnimatePresence>
+                  {showProductsMenu && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden pl-4"
                     >
-                      {item.name}
-                      <ChevronRight size={14} className={
-                        theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                      } />
-                    </Link>
-                  ))}
-                </div>
+                      {/* By Type Toggle */}
+                      <div className="mb-2">
+                        <button
+                          onClick={() => setShowByType(!showByType)}
+                          className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide ${theme === 'light'
+                              ? 'text-slate-900'
+                              : 'text-slate-600'
+                            }`}
+                        >
+                          <span className={`text-xs font-semibold uppercase tracking-wider ${theme === 'light' ? 'text-slate-600' : 'text-red-800'
+                            }`}>By Type</span>
+                          <ChevronDown
+                            size={14}
+                            className={`transition-transform duration-300 ${showByType ? 'rotate-180' : ''} ${
+                              theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                            }`}
+                          />
+                        </button>
+                        <AnimatePresence>
+                          {showByType && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              {typeCategories.map((item) => (
+                                <Link
+                                  key={item.name}
+                                  to={item.path}
+                                  onClick={() => {
+                                    setIsOpen(false)
+                                    setShowProductsMenu(false)
+                                    setShowByType(false)
+                                  }}
+                                  className={`flex items-center justify-between w-full px-4 py-2 pl-2 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
+                                      ? 'text-slate-600 hover:text-slate-900'
+                                      : 'text-slate-400 hover:text-white'
+                                    }`}
+                                >
+                                  {item.name}
+                                  <ChevronRight size={14} className={
+                                    theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                                  } />
+                                </Link>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
 
-                {/* Industries */}
-                <div className="pl-4">
-                  <p className={`text-xs font-semibold uppercase tracking-wider mb-2 ${theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                    }`}>By Industry</p>
-                  {functionCategories.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.path}
-                      onClick={() => setIsOpen(false)}
-                      className={`flex items-center justify-between w-full px-4 py-2 pl-4 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
-                          ? 'text-slate-600 hover:text-slate-900'
-                          : 'text-slate-400 hover:text-white'
-                        }`}
-                    >
-                      {item.name}
-                      <ChevronRight size={14} className={
-                        theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                      } />
-                    </Link>
-                  ))}
-                </div>
+                      {/* By Industry Toggle */}
+                      <div className="mb-2">
+                        <button
+                          onClick={() => setShowByIndustry(!showByIndustry)}
+                          className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide ${theme === 'light'
+                              ? 'text-slate-900'
+                              : 'text-slate-600'
+                            }`}
+                        >
+                          <span className={`text-xs font-semibold uppercase tracking-wider ${theme === 'light' ? 'text-slate-600' : 'text-red-800'
+                            }`}>By Industry</span>
+                          <ChevronDown
+                            size={14}
+                            className={`transition-transform duration-300 ${showByIndustry ? 'rotate-180' : ''} ${
+                              theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                            }`}
+                          />
+                        </button>
+                        <AnimatePresence>
+                          {showByIndustry && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              {functionCategories.map((item) => (
+                                <Link
+                                  key={item.name}
+                                  to={item.path}
+                                  onClick={() => {
+                                    setIsOpen(false)
+                                    setShowProductsMenu(false)
+                                    setShowByIndustry(false)
+                                  }}
+                                  className={`flex items-center justify-between w-full px-4 py-2 pl-2 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
+                                      ? 'text-slate-600 hover:text-slate-900'
+                                      : 'text-slate-400 hover:text-white'
+                                    }`}
+                                >
+                                  {item.name}
+                                  <ChevronRight size={14} className={
+                                    theme === 'light' ? 'text-slate-400' : 'text-slate-500'
+                                  } />
+                                </Link>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+
+                      {/* View All Products Link */}
+                      <Link
+                        to="/products"
+                        onClick={() => {
+                          setIsOpen(false)
+                          setShowProductsMenu(false)
+                        }}
+                        className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
+                            ? 'text-teal-600 hover:text-teal-700'
+                            : 'text-teal-400 hover:text-teal-300'
+                          }`}
+                      >
+                        View All Products →
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {navItems.map((item) => {

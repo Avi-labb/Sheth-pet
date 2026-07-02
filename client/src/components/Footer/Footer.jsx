@@ -131,7 +131,7 @@ const Footer = () => {
 
           {/* High-Contrast Corporate Office Card */}
           <motion.div variants={itemVariants}>
-            <div className="bg-slate-900/30 border border-slate-900 p-6 rounded-xl space-y-5 backdrop-blur-sm transition-all duration-500 hover:border-slate-800/80 hover:shadow-[0_0_30px_rgba(239,68,68,0.03)]">
+            <div className="bg-slate-900/30 border border-slate-900 py-3 px-5 rounded-xl space-y-3 backdrop-blur-sm transition-all duration-500 hover:border-slate-800/80 hover:shadow-[0_0_30px_rgba(239,68,68,0.03)]">
               <h3 className="text-[11px] font-bold text-white tracking-[0.2em] uppercase font-display">
                 Corporate Office
               </h3>
@@ -147,7 +147,7 @@ const Footer = () => {
 
               <div className="h-px bg-slate-900 w-full" />
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <a 
                   href="tel:+918047833997" 
                   className="flex gap-3.5 items-center text-[13.5px] text-slate-400 hover:text-white transition-colors group"
@@ -170,6 +170,12 @@ const Footer = () => {
                 >
                   <Mail size={14} className="text-slate-500 group-hover:text-red-500 transition-colors" />
                   <span className="font-sans">info@sethpet.com</span>
+                </a>
+                <a 
+                  href="mailto:sales@sethpet.com" 
+                  className="flex gap-3.5 items-center text-[13.5px] text-slate-400 hover:text-white transition-colors group"
+                >
+                  <Mail size={14} className="text-slate-500 group-hover:text-red-500 transition-colors" />
                   <span className="font-sans">sales@sethpet.com</span>
                 </a>
               </div>
@@ -179,7 +185,7 @@ const Footer = () => {
 
         {/* Bottom Tier Copyright Meta */}
         <motion.div 
-          className="pt-8 border-t border-slate-900/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left"
+          className="pt-4 border-t border-slate-900/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
