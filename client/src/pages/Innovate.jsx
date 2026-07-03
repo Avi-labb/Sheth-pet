@@ -103,9 +103,9 @@ const Innovate = () => {
       <Header />
 
       {/* Hero Section with Video */}
-      <section className="relative min-h-[60vh] sm:min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Video Background */}
-        <div className="absolute w-full ">
+        <div className="absolute inset-0 w-full h-full">
           <video
             className="hidden md:block w-full h-full object-contain"
             autoPlay
@@ -121,8 +121,9 @@ const Innovate = () => {
             loop
             playsInline
             className="block md:hidden w-full h-full object-cover"
-          ></video>
-              <source src={mobileFile} type="video/mp4" />
+          >
+            <source src={mobileFile} type="video/mp4" />
+          </video>
 
         </div>
 
@@ -133,7 +134,7 @@ const Innovate = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <span className="inline-flex gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-red-700/20 border border-red-700/30 rounded-full text-[10px] sm:text-xs font-bold text-red-800 tracking-wider uppercase mb-4 sm:mb-6">
+            <span className="inline-flex gap-2  px-3 sm:px-4 py-1.5 sm:py-2 bg-red-700/20 border border-red-700/30 rounded-full text-[10px] sm:text-xs font-bold text-red-800 tracking-wider uppercase  mb-4 sm:mb-6">
               <Sparkles size={12} sm:size={14} /> Innovation Lab
             </span>
 

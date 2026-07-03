@@ -81,7 +81,7 @@ const Contact = () => {
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`
 
   return (
-    <div className="bg-white text-slate-900">
+    <div className="bg-white text-slate-900 overflow-x-hidden min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-[50vh] flex flex-col justify-center bg-gradient-to-br from-slate-50 to-white overflow-hidden">
         <div className="absolute inset-0 z-0">
