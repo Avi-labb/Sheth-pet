@@ -103,11 +103,11 @@ const Innovate = () => {
       <Header />
 
       {/* Hero Section with Video */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative  sm:min-h-screen flex items-center justify-center overflow-hidden">
         {/* Video Background */}
-        <div className="absolute inset-0 w-full h-full">
+        <div className="absolute w-full h-full">
           <video
-            className="hidden md:block w-full h-full object-contain"
+            className="hidden md:block w-full h-full object-cover"
             autoPlay
             muted
             loop
