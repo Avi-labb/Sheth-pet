@@ -2,7 +2,9 @@
 import { motion } from 'framer-motion'
 import { ArrowUpRight, Sparkles, ArrowDown, Eye, PenTool, Cpu, Factory, Download } from 'lucide-react'
 import Header from '../components/Header/Header'
-import videoFile from '../assets/manufacturing-video.mp4'
+import videoFile from '../assets/desktopversion.mp4'
+import mobileFile from '../assets/mobileversion.mp4'
+
 
 // Import customization images
 import ShapeImage from '../assets/images/botte.jpeg'
@@ -120,7 +122,7 @@ const Innovate = () => {
             playsInline
             className="block md:hidden w-full h-full object-cover"
           ></video>
-              <source src={videoFile} type="video/mp4" />
+              <source src={mobileFile} type="video/mp4" />
 
         </div>
 
