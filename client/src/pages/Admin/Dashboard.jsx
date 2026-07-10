@@ -272,6 +272,8 @@ const Dashboard = () => {
       });
     }
     
+    // Initialize images with existing filenames (we'll keep these unless replaced with new files)
+    const initialImages = { ...(product.images || {}) };
     setEditProductData({
       name: product.name || '',
       sku: product.sku || '',
@@ -283,7 +285,7 @@ const Dashboard = () => {
       usage: product.usage || '',
       keySpecs: product.keySpecs || '',
       image: null, // No image initially unless user uploads new one
-      images: {},
+      images: initialImages,
       showInPopup: product.showInPopup || false,
       marketSegments: product.marketSegments || [],
       volume: product.volume || '',
@@ -298,7 +300,6 @@ const Dashboard = () => {
       length: product.length || '',
     });
     if (product.image) {
-     // setEditImagePreview(`/uploads/${product.image}`);
       setEditImagePreview(`/uploads/${product.image}`);
     } else {
       setEditImagePreview(null);
@@ -380,14 +381,14 @@ const Dashboard = () => {
         formData.append('image', editProductData.image);
       }
       
-      // Add color-specific images
-      if (editProductData.images) {
-        Object.entries(editProductData.images).forEach(([colorName, file]) => {
-          if (file instanceof File) {
-            formData.append(`image-${colorName}`, file);
-          }
-        });
-      }
+      // Add color-specific images (only if they are File objects, skip existing filenames)
+    if (editProductData.images) {
+      Object.entries(editProductData.images).forEach(([colorName, file]) => {
+        if (file instanceof File) {
+          formData.append(`image-${colorName}`, file);
+        }
+      });
+    }
 
       const result = await productAPI.updateProduct(editingProduct._id, formData);
       if (result.ok) {

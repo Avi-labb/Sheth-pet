@@ -665,8 +665,9 @@ export const updateProduct = async (req, res) => {
     if (body.length !== undefined) updateData.length = body.length;
     
     // Handle color - can be array, JSON string, or single value from FormData
+    let parsedColor;
     if (body.color !== undefined) {
-      let parsedColor = body.color;
+      parsedColor = body.color;
       if (parsedColor) {
         if (typeof parsedColor === 'string') {
           try {
@@ -687,6 +688,8 @@ export const updateProduct = async (req, res) => {
         parsedColor = [];
       }
       updateData.color = parsedColor;
+    } else {
+      parsedColor = existingProduct.color;
     }
     
     // Handle moqPackaging - can be object, JSON string, or single value
@@ -707,7 +710,14 @@ export const updateProduct = async (req, res) => {
       } else {
         parsedMoq = {};
       }
-      updateData.moqPackaging = parsedMoq;
+      // Remove moq entries for colors that are no longer present
+      const filteredMoq = {};
+      Object.entries(parsedMoq).forEach(([color, value]) => {
+        if (parsedColor.includes(color)) {
+          filteredMoq[color] = value;
+        }
+      });
+      updateData.moqPackaging = filteredMoq;
     }
     
     // Handle marketSegments
@@ -730,7 +740,8 @@ export const updateProduct = async (req, res) => {
       updateData.marketSegments = marketSegments;
     }
     
-    // Process images: update only the images that are uploaded, keep existing ones
+    // Process images: update only the images that are uploaded, keep existing ones,
+    // and remove images for colors that are no longer present
     let updatedImages = { ...(existingProduct.images || {}) };
     let singleImage = existingProduct.image;
     if (req.files) {
@@ -743,9 +754,14 @@ export const updateProduct = async (req, res) => {
         }
       });
     }
-    if (Object.keys(updatedImages).length > 0) {
-      updateData.images = updatedImages;
-    }
+    // Now filter updatedImages to only include colors that are still present
+    const filteredImages = {};
+    Object.entries(updatedImages).forEach(([color, filename]) => {
+      if (parsedColor.includes(color)) {
+        filteredImages[color] = filename;
+      }
+    });
+    updateData.images = filteredImages;
     if (singleImage) {
       updateData.image = singleImage;
     }
