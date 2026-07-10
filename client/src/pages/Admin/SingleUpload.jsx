@@ -19,6 +19,7 @@ export default function SingleUpload({
   setImagePreviews
 }) {
   const imageInputRef = useRef(null);
+  const [newColorInput, setNewColorInput] = React.useState('');
   const neckSizes = ['19mm', '22mm', '24mm', '25mm', '28mm', '30mm', '38mm', '46mm', '53mm', '60mm', '63mm', '73mm', '83mm', '96mm', '120mm'];
 
   // Handle color-specific image changes
@@ -128,7 +129,7 @@ export default function SingleUpload({
                       }
                     }
                   }}
-                  className="px-4 py-3 bg-red-600 text-white rounded-xl text-xs font-mono uppercase tracking-wider hover:bg-red-700 transition-colors"
+                  className="px-4 py-3 bg-yellow-600 text-white rounded-xl text-xs font-mono uppercase tracking-wider hover:bg-red-700 transition-colors"
                 >
                   Add
                 </button>
@@ -190,38 +191,87 @@ export default function SingleUpload({
         </div>
 
         {/* Color Selection */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">
             Color Designation
           </label>
 
-          <div className="grid grid-cols-4 bg-neutral-950 p-1 rounded-xl border border-neutral-800 gap-1">
-            {['Amber', 'Clear', 'Opaque White', 'Opaque Black'].map((color) => {
-              const fullColorName = color;
-              const isSelected = newProduct.color.includes(fullColorName);
-
-              return (
-                <button
-                  key={color}
-                  type="button"
-                  onClick={() => {
+          {/* Add custom color */}
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newColorInput}
+              onChange={(e) => setNewColorInput(e.target.value)}
+              placeholder="Enter color name (e.g., Sky Blue)"
+              className="flex-1 bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  const trimmedColor = newColorInput.trim();
+                  if (trimmedColor && !newProduct.color.includes(trimmedColor)) {
                     setNewProduct({
                       ...newProduct,
-                      color: isSelected
-                        ? newProduct.color.filter((c) => c !== fullColorName)
-                        : [...newProduct.color, fullColorName]
+                      color: [...newProduct.color, trimmedColor]
                     });
-                  }}
-                  className={`py-1.5 text-sm font-semibold rounded-lg transition-all ${isSelected
-                    ? 'bg-red-800 text-white shadow-sm border border-red-700'
-                    : 'text-white hover:text-red-300 border border-transparent'
-                    }`}
-                >
-                  {color}
-                </button>
-              );
-            })}
+                    setNewColorInput('');
+                  }
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                const trimmedColor = newColorInput.trim();
+                if (trimmedColor && !newProduct.color.includes(trimmedColor)) {
+                  setNewProduct({
+                    ...newProduct,
+                    color: [...newProduct.color, trimmedColor]
+                  });
+                  setNewColorInput('');
+                }
+              }}
+              className="px-4 py-3 bg-red-600 text-white rounded-xl text-xs font-mono uppercase tracking-wider hover:bg-red-700 transition-colors"
+            >
+              Add
+            </button>
           </div>
+
+          {/* Selected colors list */}
+          {newProduct.color.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {newProduct.color.map((color) => (
+                <div
+                  key={color}
+                  className="flex items-center justify-between gap-2 bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2"
+                >
+                  <span className="text-sm text-neutral-200 truncate">{color}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updatedColors = newProduct.color.filter(c => c !== color);
+                      const updatedMoq = { ...newProduct.moqPackaging };
+                      delete updatedMoq[color];
+                      const updatedImages = { ...newProduct.images };
+                      delete updatedImages[color];
+                      const updatedPreviews = { ...imagePreviews };
+                      delete updatedPreviews[color];
+                      
+                      setNewProduct({
+                        ...newProduct,
+                        color: updatedColors,
+                        moqPackaging: updatedMoq,
+                        images: updatedImages
+                      });
+                      setImagePreviews(updatedPreviews);
+                    }}
+                    className="text-neutral-500 hover:text-red-500 transition-colors"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Per-Color MOQ Fields */}
@@ -309,15 +359,40 @@ export default function SingleUpload({
                   ))}
                 </select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 sm:col-span-2">
                 <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Profile</label>
-                <input
-                  type="text"
-                  value={newProduct.neckProfile}
-                  onChange={(e) => setNewProduct({ ...newProduct, neckProfile: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="Neck Profile"
-                />
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
+                    <label key={profile} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={Array.isArray(newProduct.neckProfile) ? newProduct.neckProfile.includes(profile) : newProduct.neckProfile === profile}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          let currentProfiles = [];
+                          if (Array.isArray(newProduct.neckProfile)) {
+                            currentProfiles = [...newProduct.neckProfile];
+                          } else if (newProduct.neckProfile) {
+                            currentProfiles = [newProduct.neckProfile];
+                          }
+
+                          if (isChecked && !currentProfiles.includes(profile)) {
+                            currentProfiles.push(profile);
+                          } else if (!isChecked) {
+                            currentProfiles = currentProfiles.filter((p) => p !== profile);
+                          }
+
+                          setNewProduct({
+                            ...newProduct,
+                            neckProfile: currentProfiles
+                          });
+                        }}
+                        className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
+                      />
+                      <span className="text-sm text-neutral-400">{profile}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Volume</label>
@@ -390,15 +465,40 @@ export default function SingleUpload({
                   ))}
                 </select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 sm:col-span-2">
                 <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Profile</label>
-                <input
-                  type="text"
-                  value={newProduct.neckProfile}
-                  onChange={(e) => setNewProduct({ ...newProduct, neckProfile: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="Neck Profile"
-                />
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
+                    <label key={profile} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={Array.isArray(newProduct.neckProfile) ? newProduct.neckProfile.includes(profile) : newProduct.neckProfile === profile}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          let currentProfiles = [];
+                          if (Array.isArray(newProduct.neckProfile)) {
+                            currentProfiles = [...newProduct.neckProfile];
+                          } else if (newProduct.neckProfile) {
+                            currentProfiles = [newProduct.neckProfile];
+                          }
+
+                          if (isChecked && !currentProfiles.includes(profile)) {
+                            currentProfiles.push(profile);
+                          } else if (!isChecked) {
+                            currentProfiles = currentProfiles.filter((p) => p !== profile);
+                          }
+
+                          setNewProduct({
+                            ...newProduct,
+                            neckProfile: currentProfiles
+                          });
+                        }}
+                        className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
+                      />
+                      <span className="text-sm text-neutral-400">{profile}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Pilfer</label>
@@ -415,7 +515,7 @@ export default function SingleUpload({
                 <input
                   type="text"
                   value={newProduct.height}
-                  onChange={(e) => set`NewProduct`({ ...newProduct, height: e.target.value })}
+                  onChange={(e) => setNewProduct({ ...newProduct, height: e.target.value })}
                   className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
                   placeholder="Height"
                 />
@@ -451,15 +551,40 @@ export default function SingleUpload({
                   ))}
                 </select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 sm:col-span-2">
                 <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Profile</label>
-                <input
-                  type="text"
-                  value={newProduct.neckProfile}
-                  onChange={(e) => setNewProduct({ ...newProduct, neckProfile: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="Neck Profile"
-                />
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
+                    <label key={profile} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={Array.isArray(newProduct.neckProfile) ? newProduct.neckProfile.includes(profile) : newProduct.neckProfile === profile}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          let currentProfiles = [];
+                          if (Array.isArray(newProduct.neckProfile)) {
+                            currentProfiles = [...newProduct.neckProfile];
+                          } else if (newProduct.neckProfile) {
+                            currentProfiles = [newProduct.neckProfile];
+                          }
+
+                          if (isChecked && !currentProfiles.includes(profile)) {
+                            currentProfiles.push(profile);
+                          } else if (!isChecked) {
+                            currentProfiles = currentProfiles.filter((p) => p !== profile);
+                          }
+
+                          setNewProduct({
+                            ...newProduct,
+                            neckProfile: currentProfiles
+                          });
+                        }}
+                        className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
+                      />
+                      <span className="text-sm text-neutral-400">{profile}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Length</label>

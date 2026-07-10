@@ -16,24 +16,20 @@ const Products = () => {
   const getProductImage = (product, color = null) => {
     if (color && product.images) {
       if (product.images[color]) {
-       //return `http://localhost:5000/uploads/${product.images[color]}`
-       return `/uploads/${product.images[color]}`
+        return `/uploads/${product.images[color]}`
       }
       const colorLower = color.toLowerCase()
       const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
       if (matchingKey) {
-       //return `http://localhost:5000/uploads/${product.images[matchingKey]}`
-         return `/uploads/${product.images[matchingKey]}`
+        return `/uploads/${product.images[matchingKey]}`
       }
     }
     if (product.images && Object.keys(product.images).length > 0) {
       const firstKey = Object.keys(product.images)[0]
-       //return `http://localhost:5000/uploads/${product.images[firstKey]}`
-       return `/uploads/${product.images[firstKey]}`
+      return `/uploads/${product.images[firstKey]}`
     }
     if (product.image) {
-       //return `http://localhost:5000/uploads/${product.image}`
-       return `/uploads/${product.image}`
+      return `/uploads/${product.image}`
     }
     return null
   }
@@ -110,19 +106,16 @@ const Products = () => {
 
   return (
     <div
-      className="min-h-screen bg-[#FAFAF8] dark:bg-[#15171A] text-[#15171A] dark:text-[#F2F1ED] pt-12 selection:bg-[#D4530F] selection:text-white"
+      className="min-h-screen bg-[#FAFAF8] dark:bg-[#15171A] text-[#15171A] dark:text-[#F2F1ED] pt-16 selection:bg-[#D4530F] selection:text-white"
       style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
     >
       <Header />
 
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-
-
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
 
-          {/* ── LEFT SIDEBAR: Minimal Grid Navigation ── */}
-          <aside className="lg:col-span-3 lg:sticky lg:top-32 z-30 -mx-4 px-4 sm:mx-0 sm:px-0">
+          {/* ── LEFT SIDEBAR: Sticky ── */}
+          <aside className="lg:col-span-3 lg:sticky lg:top-20 z-30 -mx-4 px-4 sm:mx-0 sm:px-0 h-fit lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto no-scrollbar">
             <div className="bg-white dark:bg-[#1C1F23] lg:bg-transparent lg:dark:bg-transparent border lg:border-0 border-[#DEDDD6] dark:border-[#2A2D32] p-4 lg:p-0">
               <div className="hidden lg:flex items-center gap-2 mb-4 pb-2 border-b border-[#DEDDD6] dark:border-[#2A2D32]">
                 <Filter size={16} strokeWidth={1.5} className="text-red-600" />
@@ -154,7 +147,7 @@ const Products = () => {
             </div>
           </aside>
 
-          {/* ── RIGHT MATRIX: Technical Matrix Showcase ── */}
+          {/* ── RIGHT SIDE: Products (Scrollable) ── */}
           <main className="lg:col-span-9">
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -168,7 +161,7 @@ const Products = () => {
               </div>
             ) : products.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((product, index) => {
+                {products.map((product) => {
                   const colors = getProductColors(product)
                   const currentColor = selectedColor[product._id] || colors[0]
                   const currentImage = getProductImage(product, currentColor)
@@ -179,10 +172,7 @@ const Products = () => {
                       key={product._id}
                       className="group flex flex-col justify-between bg-[#FAFAF8] dark:bg-[#15171A] hover:bg-white dark:hover:bg-[#1C1F23] transition-colors relative border border-[#DEDDD6] dark:border-[#2A2D32]"
                     >
-                      {/* Box Frame Link Area */}
                       <Link to={`/product/${product._id}`} className="flex-1 flex flex-col">
-
-                        {/* Technical Aspect Ratio Image Frame */}
                         <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden border-b border-[#DEDDD6] dark:border-[#2A2D32]">
                           {currentImage ? (
                             <motion.img
@@ -204,7 +194,6 @@ const Products = () => {
                           )}
                         </div>
 
-                        {/* Text Grid Area */}
                         <div className="p-4 flex-1 flex flex-col justify-between gap-3">
                           <div className="space-y-1">
                             {product.sku && (
@@ -218,7 +207,6 @@ const Products = () => {
                             </h3>
                           </div>
 
-                          {/* Inline Minimalist Variations Swatches */}
                           {colors.length > 0 && (
                             <div className="space-y-2">
                               <div className="flex items-center justify-between font-medium text-[9px] uppercase tracking-wider text-slate-600">
@@ -250,7 +238,6 @@ const Products = () => {
                             </div>
                           )}
 
-                          {/* Technical MOQ Block Footer */}
                           {currentMoq && (
                             <div className="flex items-center justify-between border border-slate-300 dark:border-[#2A2D32] px-3 py-2 bg-white dark:bg-[#1C1F23]">
                               <span className="text-[9px] font-mono uppercase tracking-wider text-slate-700">Min Order</span>
@@ -262,7 +249,6 @@ const Products = () => {
                         </div>
                       </Link>
 
-                      {/* Technical Interaction Matrix Bar */}
                       <div className="px-4 pb-4 grid grid-cols-2 gap-2">
                         <Link
                           to={`/innovate`}
@@ -285,7 +271,6 @@ const Products = () => {
                 })}
               </div>
             ) : (
-              /* High-Fidelity Empty Frame State */
               <div className="text-center py-24 border border-[#DEDDD6] dark:border-[#2A2D32] bg-white dark:bg-[#1C1F23] max-w-md mx-auto">
                 <Package size={28} className="mx-auto text-[#D4530F] mb-4" strokeWidth={1.5} />
                 <h3 className="text-sm font-bold uppercase tracking-wide mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -299,26 +284,6 @@ const Products = () => {
           </main>
         </div>
       </div>
-
-      {/* ── FOOTER FRAME: Enterprise Procurement CTA ── */}
-      <section className="py-16 bg-white dark:bg-[#1C1F23] border-t border-[#DEDDD6] dark:border-[#2A2D32] mt-24">
-        <div className="max-w-xl mx-auto px-4 text-center space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold tracking-tight text-[#15171A] dark:text-[#F2F1ED]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Custom Industrial Dimensioning
-            </h2>
-            <p className="text-xs text-[#5C6066] dark:text-[#9B9D9F] max-w-sm mx-auto leading-relaxed">
-              We interface with deployment engineers and packaging procurement chains directly to configure blueprint modifications.
-            </p>
-          </div>
-          <Link
-            to="/contact"
-            className="inline-flex items-center px-6 py-3 bg-[#15171A] dark:bg-[#F2F1ED] text-white dark:text-[#15171A] text-xs font-mono uppercase tracking-widest transition-opacity hover:opacity-90"
-          >
-            Request Engineering Specs
-          </Link>
-        </div>
-      </section>
     </div>
   )
 }

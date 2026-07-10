@@ -163,7 +163,17 @@ export const bulkUploadProducts = async (req, res) => {
         // Parse other fields
         const volume = item.Volume || item.volume;
         const neckSize = item.Neck_Size || item.neckSize || item['Neck Size'];
-        const neckProfile = item.Neck_Profile || item.neckProfile || item['Neck Profile'];
+        // Parse neckProfile: comma-separated string → array
+        let neckProfile = item.Neck_Profile || item.neckProfile || item['Neck Profile'];
+        if (neckProfile) {
+          if (typeof neckProfile === 'string') {
+            neckProfile = neckProfile.split(',').map(c => c.trim()).filter(c => c);
+          } else if (!Array.isArray(neckProfile)) {
+            neckProfile = [neckProfile];
+          }
+        } else {
+          neckProfile = [];
+        }
         const ofc = item.OFC || item.ofc;
         const height = item.Height || item.height;
         const diameter = item.Diameter || item.diameter;
@@ -288,6 +298,9 @@ export const bulkUploadProducts = async (req, res) => {
 export const addProduct = async (req, res) => {
   try {
 
+    console.log("[DEBUG] Request body:", req.body);
+    console.log("[DEBUG] Request files:", req.files);
+    
     const body = req.body || {};
     const {
       name,
@@ -367,6 +380,29 @@ export const addProduct = async (req, res) => {
       parsedMoq = {};
     }
 
+    // Handle neckProfile - can be array, JSON string, or single value from FormData
+    let parsedNeckProfile = neckProfile;
+    if (parsedNeckProfile) {
+      if (typeof parsedNeckProfile === 'string') {
+        try {
+          parsedNeckProfile = JSON.parse(parsedNeckProfile);
+        } catch {
+          // If not JSON, check if comma-separated
+          if (parsedNeckProfile.includes(',')) {
+            parsedNeckProfile = parsedNeckProfile.split(',').map(c => c.trim()).filter(c => c);
+          } else {
+            parsedNeckProfile = [parsedNeckProfile];
+          }
+        }
+      }
+      if (!Array.isArray(parsedNeckProfile)) {
+        parsedNeckProfile = [parsedNeckProfile];
+      }
+    } else {
+      parsedNeckProfile = [];
+    }
+
+    console.log("[DEBUG] parsedNeckProfile:", parsedNeckProfile);
 
     // Process images: { color: filename }
     const images = {};
@@ -400,7 +436,7 @@ export const addProduct = async (req, res) => {
     );
     const sku = `SKU-${String(counter.sequence).padStart(4, "0")}`;
 
-    const product = await Product.create({
+    const productData = {
       name,
       category,
       productType,
@@ -416,14 +452,18 @@ export const addProduct = async (req, res) => {
       volume,
       neckSize,
       weight,
-      neckProfile,
+      neckProfile: parsedNeckProfile,
       ofc,
       height,
       diameter,
       pilfer,
       length,
       sku,
-    });
+    };
+    
+    console.log("[DEBUG] Creating product with data:", productData);
+
+    const product = await Product.create(productData);
 
     return res.status(201).json({
       success: true,
@@ -584,6 +624,7 @@ export const updateProduct = async (req, res) => {
 
     // Only update fields that are provided
     if (body.name !== undefined) updateData.name = body.name;
+    if (body.sku !== undefined) updateData.sku = body.sku;
     if (body.category !== undefined) updateData.category = body.category;
     if (body.productType !== undefined) updateData.productType = body.productType;
     if (body.capType !== undefined) updateData.capType = body.capType;
@@ -593,8 +634,30 @@ export const updateProduct = async (req, res) => {
     if (body.volume !== undefined) updateData.volume = body.volume;
     if (body.neckSize !== undefined) updateData.neckSize = body.neckSize;
     if (body.weight !== undefined) updateData.weight = body.weight;
-    // New fields
-    if (body.neckProfile !== undefined) updateData.neckProfile = body.neckProfile;
+    // New fields - handle neckProfile properly
+    if (body.neckProfile !== undefined) {
+      let parsedNeckProfile = body.neckProfile;
+      if (parsedNeckProfile) {
+        if (typeof parsedNeckProfile === 'string') {
+          try {
+            parsedNeckProfile = JSON.parse(parsedNeckProfile);
+          } catch {
+            // If not JSON, check if comma-separated
+            if (parsedNeckProfile.includes(',')) {
+              parsedNeckProfile = parsedNeckProfile.split(',').map(c => c.trim()).filter(c => c);
+            } else {
+              parsedNeckProfile = [parsedNeckProfile];
+            }
+          }
+        }
+        if (!Array.isArray(parsedNeckProfile)) {
+          parsedNeckProfile = [parsedNeckProfile];
+        }
+      } else {
+        parsedNeckProfile = [];
+      }
+      updateData.neckProfile = parsedNeckProfile;
+    }
     if (body.ofc !== undefined) updateData.ofc = body.ofc;
     if (body.height !== undefined) updateData.height = body.height;
     if (body.diameter !== undefined) updateData.diameter = body.diameter;

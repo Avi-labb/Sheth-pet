@@ -25,13 +25,13 @@ const ProductDetail = () => {
     if (product.images && Object.keys(product.images).length > 0) {
       return Object.entries(product.images).map(([color, file]) => ({
         color,
-       //src: `http://localhost:5000/uploads/${file}`
-        src: `/uploads/${file}`
+       src: `/uploads/${file}`
+        //src: `/uploads/${file}`
      }))
     }
     if (product.image) {
-        //return `http://localhost:5000/uploads/${product.image}`
-       return [{ src: `/uploads/${product.image}` }]
+        src: `/uploads/${product.image}`
+       //src: `/uploads/${product.image}`
     }
     return []
   }
@@ -39,24 +39,24 @@ const ProductDetail = () => {
   const getProductImage = (product, color = null) => {
     if (color && product.images) {
       if (product.images[color]) {
-       //return `http://localhost:5000/uploads/${product.images[color]}`
        return `/uploads/${product.images[color]}`
+       //return `/uploads/${product.images[color]}`
       }
       const colorLower = color.toLowerCase()
       const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
       if (matchingKey) {
-       //return `http://localhost:5000/uploads/${product.images[matchingKey]}`
        return `/uploads/${product.images[matchingKey]}`
+       //return `/uploads/${product.images[matchingKey]}`
       }
     }
     if (product.images && Object.keys(product.images).length > 0) {
       const firstKey = Object.keys(product.images)[0]
-       //return `http://localhost:5000/uploads/${product.images[firstKey]}`
        return `/uploads/${product.images[firstKey]}`
+       //return `/uploads/${product.images[firstKey]}`
     }
     if (product.image) {
-       //return `http://localhost:5000/uploads/${product.image}`
        return `/uploads/${product.image}`
+       //return `/uploads/${product.image}`
     }
     return null
   }
@@ -227,7 +227,7 @@ const ProductDetail = () => {
       className="min-h-screen bg-[#FAFAF8] dark:bg-[#15171A] text-[#15171A] dark:text-[#F2F1ED] pt-28 pb-24 selection:bg-[#D4530F] selection:text-white"
       style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-[#8C8E8A] mb-10 pb-4 border-b border-[#DEDDD6] dark:border-[#2A2D32]">
