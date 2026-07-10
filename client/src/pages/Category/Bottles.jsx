@@ -3,9 +3,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Package, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../../services/api'
-import personalCareImage from '../../assets/images/Personal Care.png'
+import bottleImage from '../../assets/Bottle Category.png'
 
-const PersonalCare = () => {
+const Bottles = () => {
   const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(false)
@@ -21,23 +21,19 @@ const PersonalCare = () => {
     if (color && product.images) {
       if (product.images[color]) {
         return  `/uploads/${product.images[color]}`
-        //return `/uploads/${product.images[color]}`
       }
       const colorLower = color.toLowerCase()
       const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
       if (matchingKey) {
         return  `/uploads/${product.images[matchingKey]}`
-        //return `/uploads/${product.images[matchingKey]}`
       }
     }
     if (product.images && Object.keys(product.images).length > 0) {
       const firstKey = Object.keys(product.images)[0]
         return  `/uploads/${product.images[firstKey]}`
-      //return  `/uploads/${product.images[firstKey]}`
     }
     if (product.image) {
       return  `/uploads/${product.image}`
-        //return `/uploads/${product.image}`  
     }
     return null
   }
@@ -52,7 +48,7 @@ const PersonalCare = () => {
   const fetchProducts = async () => {
     setLoading(true)
     try {
-      const result = await productAPI.getProducts(null, 'Personal Care')
+      const result = await productAPI.getProducts(null, 'Bottles')
       if (result.ok) {
         setProducts(result.data.products)
       }
@@ -69,11 +65,11 @@ const PersonalCare = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-[#3FB893] selection:text-white">
       {/* HERO SECTION */}
-      <section className="relative mt-16 sm:mt-20 overflow-hidden border-b border-gray-200 bg-white">
+      <section className="relative mt-20 sm:mt-20 overflow-hidden border-b border-gray-200 bg-white">
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: `url(${personalCareImage})`,
+            backgroundImage: `url(${bottleImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
@@ -81,21 +77,21 @@ const PersonalCare = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20" />
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8  pb-20 relative z-10">
-          <div className="flex items-center gap-2 text-[11px] mt-5 sm:mt-20 sm:mb-50 sm:text-[15px] font-mono uppercase tracking-[0.2em] text-white mb-6">
+          <div className="flex items-center gap-2 text-[11px] mt-5 sm:mt-20 sm:mb-56 sm:text-[15px] font-mono uppercase tracking-[0.2em] text-white mb-6">
             <Link to="/" className="hover:text-red-600 transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-white font-semibold">Personal Care</span>
+            <span className="text-white font-semibold">Bottles</span>
           </div>
 
           <div className="max-w-3xl">
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold   tracking-tight text-white mb-6"
               style={{ fontFamily: '"Space Grotesk", sans-serif' }}
             >
-              Personal Care <span className="text-red-600">Packaging.</span>
+              Bottles <span className="text-red-600">Packaging.</span>
             </h1>
             <p className="text-sm sm:text-lg text-white font-medium leading-relaxed max-w-2xl">
-              Premium packaging solutions for cosmetics, skincare, and personal care products. Designed to enhance product appeal while maintaining quality and integrity.
+              Premium quality bottles designed for various industries and applications.
             </p>
           </div>
         </div>
@@ -249,7 +245,7 @@ const PersonalCare = () => {
                 Class Vacant
               </h3>
               <p className="text-[#5C6066] dark:text-[#9B9D9F] text-xs px-8 leading-relaxed max-w-xs mx-auto">
-                No active personal care metrics matched this profile configuration query. Contact engineering.
+                No active bottle metrics matched this profile configuration query. Contact engineering.
               </p>
             </div>
           )}
@@ -259,4 +255,4 @@ const PersonalCare = () => {
   )
 }
 
-export default PersonalCare
+export default Bottles

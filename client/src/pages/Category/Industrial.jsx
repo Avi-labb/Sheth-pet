@@ -69,7 +69,7 @@ const Industrial = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-[#3FB893] selection:text-white">
       {/* HERO SECTION */}
-      <section className="relative mt-20 sm:mt-20 overflow-hidden border-b border-gray-200 bg-white">
+      <section className="relative mt-16 sm:mt-20 overflow-hidden border-b border-gray-200 bg-white">
         <div
           className="absolute inset-0"
           style={{

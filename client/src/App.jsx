@@ -25,6 +25,10 @@ import PersonalCare from './pages/Category/Personal Care'
 import FoodBeverages from './pages/Category/Food & Beverages'
 import HomeCare from './pages/Category/Home Care'
 import Industrial from './pages/Category/Industrial'
+import Bottles from './pages/Category/Bottles'
+import Caps from './pages/Category/Caps'
+import Preforms from './pages/Category/Preforms'
+import Jars from './pages/Category/Jars'
 import './App.css'
 
 // Test comment for HMR
@@ -119,6 +123,26 @@ function App() {
           <Route path="/industrial" element={
             <PublicLayout>
               <Industrial />
+            </PublicLayout>
+          } />
+          <Route path="/bottles" element={
+            <PublicLayout>
+              <Bottles />
+            </PublicLayout>
+          } />
+          <Route path="/caps" element={
+            <PublicLayout>
+              <Caps />
+            </PublicLayout>
+          } />
+          <Route path="/preforms" element={
+            <PublicLayout>
+              <Preforms />
+            </PublicLayout>
+          } />
+          <Route path="/jars" element={
+            <PublicLayout>
+              <Jars />
             </PublicLayout>
           } />
           <Route path="/product/:productId" element={

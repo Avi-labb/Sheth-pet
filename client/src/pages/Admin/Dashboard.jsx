@@ -615,8 +615,7 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="bg-[#050506] text-[#e4e4e7] min-h-screen selection:bg-white selection:text-black font-sans antialiased flex flex-col md:flex-row relative">
-
+<div className="bg-[#050506] text-[#e4e4e7] h-screen overflow-hidden selection:bg-white selection:text-black font-sans antialiased flex flex-col md:flex-row relative">
       <header className="w-full h-16 bg-neutral-950 border-b border-neutral-900 px-6 flex md:hidden items-center justify-between sticky top-0 z-40 backdrop-blur-md bg-neutral-950/80">
         <div className="flex items-center gap-2.5">
           <div className="w-6 h-6 bg-red-600/10 border border-red-500/30 rounded flex items-center justify-center text-red-500">
@@ -632,8 +631,7 @@ const Dashboard = () => {
         </button>
       </header>
 
-      <aside className="hidden md:flex w-72 bg-neutral-950 border-r border-neutral-900 flex-col justify-between p-6 shrink-0 h-screen sticky top-0 z-30">
-        <SidebarNavigationContent />
+<aside className="hidden md:flex w-72 h-screen shrink-0 bg-neutral-950 border-r border-neutral-900 flex-col justify-between p-6 fixed left-0 top-0 z-30">        <SidebarNavigationContent />
       </aside>
 
       <AnimatePresence>
@@ -654,8 +652,7 @@ const Dashboard = () => {
         <div onClick={() => setMobileMenuOpen(false)} className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 top-16" />
       )}
 
-      <main className="flex-1 min-w-0 p-6 sm:p-8 md:p-12 overflow-y-auto w-full">
-        <AnimatePresence mode="wait">
+<main className="flex-1 min-w-0 md:ml-72 h-screen overflow-y-auto p-6 sm:p-8 md:p-12">        <AnimatePresence mode="wait">
 
           {activeTab === 'inventory' && (
             <motion.div

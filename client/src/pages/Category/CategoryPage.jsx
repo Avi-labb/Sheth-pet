@@ -3,6 +3,15 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Package, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../../services/api'
+import industrialImage from '../../assets/images/Industrial.png'
+import pharmaceuticalImage from '../../assets/images/Pharna.png'
+import personalCareImage from '../../assets/images/Personal Care.png'
+import foodBeveragesImage from '../../assets/images/Food & Beverages.png'
+import homeCareImage from '../../assets/images/Home care.png'
+import bottleImage from '../../assets/Bottle Category.png'
+import capsImage from '../../assets/Caps Category.png'
+import preformsImage from '../../assets/Preforms Category.png'
+import jarsImage from '../../assets/Jars category.png'
 
 const CategoryPage = () => {
   const navigate = useNavigate()
@@ -11,6 +20,21 @@ const CategoryPage = () => {
   const [loading, setLoading] = useState(false)
   const [selectedColor, setSelectedColor] = useState({})
   const [displayCategoryName, setDisplayCategoryName] = useState('')
+
+  // Category to image mapping
+  const getCategoryImage = (catName) => {
+    const lowerCat = catName.toLowerCase()
+    if (lowerCat === 'industrial') return industrialImage
+    if (lowerCat === 'pharmaceutical') return pharmaceuticalImage
+    if (lowerCat === 'personal care') return personalCareImage
+    if (lowerCat === 'food & beverages') return foodBeveragesImage
+    if (lowerCat === 'home care') return homeCareImage
+    if (lowerCat === 'bottles') return bottleImage
+    if (lowerCat === 'caps') return capsImage
+    if (lowerCat === 'preforms') return preformsImage
+    if (lowerCat === 'jars') return jarsImage
+    return null
+  }
 
   const handleCustomize = (e, product) => {
     e.preventDefault()
@@ -107,22 +131,35 @@ const CategoryPage = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-[#3FB893] selection:text-white">
       {/* HERO SECTION */}
-      <section className="relative mt-20 sm:mt-20 overflow-hidden border-b border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 mt-5 pb-20 relative z-10">
-          <div className="flex items-center gap-2 text-[11px] sm:text-[13px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-6">
+      <section className="relative mt-16 sm:mt-20 overflow-hidden border-b border-gray-200 bg-white">
+        {getCategoryImage(categoryName) && (
+          <>
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${getCategoryImage(categoryName)})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20" />
+          </>
+        )}
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 pb-20 relative z-10" style={getCategoryImage(categoryName) ? { marginTop: '1.25rem' } : { marginTop: '1.25rem' }}>
+          <div className="flex items-center gap-2 text-[11px] sm:mt-20 sm:mb-56 sm:text-[15px] font-mono uppercase tracking-[0.2em] mb-6" style={getCategoryImage(categoryName) ? { color: 'white' } : { color: 'rgb(100 116 139)' }}>
             <Link to="/" className="hover:text-red-600 transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-slate-900 font-semibold">{displayCategoryName || 'Category'}</span>
+            <span className="font-semibold" style={getCategoryImage(categoryName) ? { color: 'white' } : { color: 'rgb(15 23 42)' }}>{displayCategoryName || 'Category'}</span>
           </div>
 
           <div className="max-w-3xl">
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-950 mb-6"
-              style={{ fontFamily: '"Space Grotesk", sans-serif' }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
+              style={{ fontFamily: '"Space Grotesk", sans-serif', color: getCategoryImage(categoryName) ? 'white' : 'rgb(2 6 23)' }}
             >
               {displayCategoryName || 'Category'} <span className="text-red-600">Packaging.</span>
             </h1>
-            <p className="text-sm sm:text-lg text-slate-950 font-medium leading-relaxed max-w-2xl">
+            <p className="text-sm sm:text-lg font-medium leading-relaxed max-w-2xl" style={{ color: getCategoryImage(categoryName) ? 'white' : 'rgb(2 6 23)' }}>
               Discover precision-engineered components designed to optimize distribution integrity and aesthetic appeal.
             </p>
           </div>
@@ -144,7 +181,7 @@ const CategoryPage = () => {
 
           {loading ? (
             /* Seamless Grid Skeleton matching layout */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 ">
               {Array.from({ length: 4 }).map((_, index) => (
                 <div key={index} className="bg-white dark:bg-[#1C1F23] aspect-[4/5] p-6 space-y-4 animate-pulse border border-slate-600 dark:border-[#2A2D32]">
                   <div className="aspect-[4/3] bg-[#FAFAF8] dark:bg-[#15171A]" />
@@ -155,7 +192,7 @@ const CategoryPage = () => {
             </div>
           ) : products.length > 0 ? (
             /* Sharp Seamless Border Grid Matrix */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {products.map((product, index) => {
                 const colors = getProductColors(product)
                 const currentColor = selectedColor[product._id] || colors[0]
@@ -174,7 +211,7 @@ const CategoryPage = () => {
                     <Link to={`/product/${product._id}`} className="flex-1 flex flex-col">
 
                       {/* Image Frame Area */}
-                      <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden border-b border-slate-400 dark:border-[#2A2D32]">
+                      <div className="relative aspect-[4/4] flex items-center justify-center overflow-hidden border-b border-slate-400 dark:border-[#2A2D32]">
                         {currentImage ? (
                           <motion.img
                             initial={{ opacity: 0 }}
