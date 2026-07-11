@@ -203,16 +203,23 @@ const ProductDetail = () => {
   const colors = getProductColors(product)
   const lightboxIndex = allImages.findIndex(img => img.src === currentImage)
 
+  const formatSpecValue = (value) => {
+    if (Array.isArray(value)) {
+      return value.join(', ')
+    }
+    return value
+  }
+
   const specRows = [
-    { label: 'Volume', value: product.volume },
-    { label: 'Neck size', value: product.neckSize },
-    { label: 'Neck profile', value: product.neckProfile },
-    { label: 'Pilfer proof', value: product.pilfer },
-    { label: 'OFC value', value: product.ofc },
-    { label: 'Height', value: product.height },
-    { label: 'Diameter', value: product.diameter },
-    { label: 'Net weight', value: product.weight },
-    { label: 'Closure type', value: product.capType }
+    { label: 'Volume', value: formatSpecValue(product.volume) },
+    { label: 'Neck size', value: formatSpecValue(product.neckSize) },
+    { label: 'Neck profile', value: formatSpecValue(product.neckProfile) },
+    { label: 'Pilfer proof', value: formatSpecValue(product.pilfer) },
+    { label: 'OFC value', value: formatSpecValue(product.ofc) },
+    { label: 'Height', value: formatSpecValue(product.height) },
+    { label: 'Diameter', value: formatSpecValue(product.diameter) },
+    { label: 'Net weight', value: formatSpecValue(product.weight) },
+    { label: 'Closure type', value: formatSpecValue(product.capType) }
   ].filter(row => row.value)
 
   const goToLightboxImage = (delta) => {
