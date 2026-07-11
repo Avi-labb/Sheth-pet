@@ -80,7 +80,7 @@ const FoodBeverages = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
 
-        <div className="max-w-7xl mx-auto px-6 sm:px-8  pb-20 relative z-10">
+        <div className="max-w-9xl mx-auto px-6 sm:px-8  pb-20 relative z-10">
           <div className="flex items-center gap-2 text-[11px] mt-5 sm:mt-20 sm:mb-52 sm:text-[15px] font-mono uppercase tracking-[0.2em] text-white mb-6">
             <Link to="/" className="hover:text-red-600 transition-colors">Home</Link>
             <span>/</span>
@@ -144,7 +144,7 @@ const FoodBeverages = () => {
                     <Link to={`/product/${product._id}`} className="flex-1 flex flex-col">
 
                       {/* Image Frame Area */}
-                      <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden border-b border-slate-400 dark:border-[#2A2D32]">
+                      <div className="relative aspect-[4/4] flex items-center justify-center overflow-hidden border-b border-slate-400 dark:border-[#2A2D32]">
                         {currentImage ? (
                           <motion.img
                             initial={{ opacity: 0 }}

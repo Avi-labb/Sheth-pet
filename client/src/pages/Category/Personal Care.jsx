@@ -101,7 +101,7 @@ const PersonalCare = () => {
         </div>
       </section>
       <section className="py-12 md:py-16">
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="flex items-center justify-between mb-8 pb-3 border-b border-slate-600 dark:border-[#2A2D32]">
             <span className="font-mono text-[11px] uppercase tracking-wider text-slate-700">
@@ -144,7 +144,7 @@ const PersonalCare = () => {
                     <Link to={`/product/${product._id}`} className="flex-1 flex flex-col">
 
                       {/* Image Frame Area */}
-                      <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden border-b border-slate-400 dark:border-[#2A2D32]">
+                      <div className="relative aspect-[4/4] flex items-center justify-center overflow-hidden border-b border-slate-400 dark:border-[#2A2D32]">
                         {currentImage ? (
                           <motion.img
                             initial={{ opacity: 0 }}

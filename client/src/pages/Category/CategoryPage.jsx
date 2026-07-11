@@ -168,7 +168,7 @@ const CategoryPage = () => {
 
       {/* ── PRODUCT MATRIX LAYOUT SECTION ── */}
       <section className="py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="flex items-center justify-between mb-8 pb-3 border-b border-slate-600 dark:border-[#2A2D32]">
             <span className="font-mono text-[11px] uppercase tracking-wider text-slate-700">
@@ -184,7 +184,7 @@ const CategoryPage = () => {
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 ">
               {Array.from({ length: 4 }).map((_, index) => (
                 <div key={index} className="bg-white dark:bg-[#1C1F23] aspect-[4/5] p-6 space-y-4 animate-pulse border border-slate-600 dark:border-[#2A2D32]">
-                  <div className="aspect-[4/3] bg-[#FAFAF8] dark:bg-[#15171A]" />
+                  <div className="aspect-[4/4] bg-[#FAFAF8] dark:bg-[#15171A]" />
                   <div className="h-4 bg-[#FAFAF8] dark:bg-[#15171A] w-3/4" />
                   <div className="h-3 bg-[#FAFAF8] dark:bg-[#15171A] w-1/2" />
                 </div>

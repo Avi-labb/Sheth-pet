@@ -823,3 +823,20 @@ export const deleteProduct = async (req, res) => {
     });
   }
 };
+
+export const getNeckSizes = async (req, res) => {
+  try {
+    const products = await Product.find({}, 'neckSize');
+    const neckSizes = [...new Set(products.map(p => p.neckSize).filter(ns => ns))];
+    return res.status(200).json({
+      success: true,
+      neckSizes: neckSizes.sort()
+    });
+  } catch (error) {
+    console.error("Error in getNeckSizes:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

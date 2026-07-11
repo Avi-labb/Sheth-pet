@@ -1,7 +1,7 @@
 import express from 'express'
 import upload from '../middleware/upload.js'
 import { debugBulkUpload } from '../debug-bulk-upload-route.js'
-import { addProduct, bulkUploadProducts, getProducts, getCategories, addCategory, updateProduct, deleteProduct } from '../controllers/productController.js'
+import { addProduct, bulkUploadProducts, getProducts, getCategories, addCategory, updateProduct, deleteProduct, getNeckSizes } from '../controllers/productController.js'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -28,6 +28,7 @@ router.get('/uploads-check', (req, res) => {
 })
 
 router.get('/categories', getCategories)
+router.get('/neck-sizes', getNeckSizes)
 router.post('/add-category', addCategory)
 router.get('/', getProducts)
 

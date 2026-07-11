@@ -84,6 +84,10 @@ export const productAPI = {
     return apiRequest(PRODUCT_API_BASE_URL, "/categories", { method: "GET" });
   },
 
+  getNeckSizes: async () => {
+    return apiRequest(PRODUCT_API_BASE_URL, "/neck-sizes", { method: "GET" });
+  },
+
   addCategory: async (category) => {
     return apiRequest(PRODUCT_API_BASE_URL, "/add-category", {
       method: "POST",

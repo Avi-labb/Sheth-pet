@@ -227,7 +227,7 @@ const ProductDetail = () => {
       className="min-h-screen bg-[#FAFAF8] dark:bg-[#15171A] text-[#15171A] dark:text-[#F2F1ED] pt-28 pb-24 selection:bg-[#D4530F] selection:text-white"
       style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-[#8C8E8A] mb-10 pb-4 border-b border-[#DEDDD6] dark:border-[#2A2D32]">
