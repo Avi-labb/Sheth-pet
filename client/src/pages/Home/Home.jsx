@@ -361,7 +361,7 @@ const categoryData = {
         <div className="h-20 lg:hidden pointer-events-none" />
 
         {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full px-5 md:px-12 pb-12 md:pb-15 pt-20 lg:pt-32">
+        <div className="relative z-10 max-w-9xl mx-auto w-full px-5 md:px-12 pb-12 md:pb-15 pt-20 lg:pt-32">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -411,7 +411,7 @@ const categoryData = {
 
      
   <section className="py-16 md:py-24 bg-gradient-to-b from-[#FAF9F6] to-white dark:from-slate-950 dark:to-slate-900 border-y border-neutral-200/60 dark:border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -502,7 +502,7 @@ const categoryData = {
       </div>
     </section>
 
-<section className="relative w-full min-h-[500px] md:min-h-[600px] flex flex-col items-center justify-center bg-white/10 overflow-hidden py-8 md:py-12 px-4">
+<section className="relative  min-h-[500px] md:min-h-[600px] flex flex-col items-center justify-center bg-white/10 overflow-hidden py-8 md:py-12 px-4">
       <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -510,7 +510,7 @@ const categoryData = {
           transition={{ duration: 0.4, ease: "easeOut" }}
           className="text-center mb-8 md:mb-16 space-y-2"
         >
-          <span className="font-mono text-[11px] md:text-[13px] font-bold uppercase tracking-[0.2em] text-red-600 block">
+          <span className="font-mono max-w-9xl text-[11px] md:text-[13px] font-bold uppercase tracking-[0.2em] text-red-600 block">
             Industries We Serve
           </span>
           <h2 
@@ -525,7 +525,7 @@ const categoryData = {
         </motion.div>
 
       {/* Main 3D Stage Viewport Container */}
-      <div className="relative w-full max-w-5xl h-[320px] md:h-[380px] flex items-center justify-center persistent-3d-context">
+      <div className="relative w-full max-w-9xl h-[320px] md:h-[380px] flex items-center justify-center persistent-3d-context">
         {CAROUSEL_DATA.map((item, index) => {
           const styles = getCardStyles(index);
           const isCenter = index === activeIndex;
@@ -533,7 +533,7 @@ const categoryData = {
           return (
             <motion.div
               key={item.id}
-              className={`absolute w-[180px] sm:w-[280px] md:w-[400px] h-[280px] md:h-[350px] bg-white rounded-2xl shadow-xl border border-neutral-200 p-4 md:p-6 flex flex-col justify-between cursor-pointer group select-none`}
+              className={`absolute w-[200px] sm:w-[280px] md:w-[500px] h-[280px] md:h-[350px] bg-white rounded-2xl shadow-xl border border-neutral-200 p-4 md:p-6 flex flex-col justify-between cursor-pointer group select-none`}
               animate={styles}
               transition={{ type: "spring", stiffness: 120, damping: 20 }}
               onClick={() => handleCardClick(index, item.link)}
@@ -592,7 +592,7 @@ const categoryData = {
       </section>
     
 <section className="py-20 md:py-22 bg-white/95 relative border-t-1 border-slate-200">
-  <div className="max-w-7xl mx-auto px-5 md:px-12">
+  <div className="max-w-9xl mx-auto px-5 md:px-12">
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}

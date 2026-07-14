@@ -50,7 +50,7 @@ const Careers = () => {
       </section>
 
       <section className="py-25">
-        <div className="max-w-[900px] mx-auto px-12">
+        <div className="max-w-8xl mx-auto px-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -172,7 +172,7 @@ const Careers = () => {
       </section>
 
       <section className="py-25">
-        <div className="max-w-[700px] mx-auto px-12 text-center">
+        <div className="max-w-8xl mx-auto px-12 sm:px-25 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}

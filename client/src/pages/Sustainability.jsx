@@ -64,7 +64,7 @@
         </section>
 
         {/* Industry Insights / Intro Statement */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-9xl mx-auto">
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -80,7 +80,7 @@
         </section>
 
         {/* Core Sustainability Pillars */}
-        <section className="pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section className="pb-20 px-4 sm:px-6 lg:px-8 max-w-9xl mx-auto">
           <motion.div 
             variants={staggerContainer}
             initial="hidden"
@@ -146,7 +146,7 @@
         {/* 100% Virgin Resin Highlight */}
         <section className="bg-slate-900 text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
           <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none"></div>
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-8xl mx-auto px-15">
             <motion.div 
               initial="hidden"
               whileInView="visible"
@@ -178,8 +178,8 @@
         </section>
 
         {/* Why Sheth PET & Polymers */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+        <section className="py-20 px-4 sm:px-6 lg:px-15 max-w-8xl mx-auto">
+          <div className="text-center max-w-7xl mx-auto mb-16">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Why Sheth PET & Polymers</h2>
             <p className="text-slate-600">
               Since 1996, Sheth PET & Polymers has been manufacturing precision PET bottles, jars, and preforms from our facility in Wagle Industrial Estate, Thane. Our long-term commitment to material quality and dimensional consistency anchors our operations.

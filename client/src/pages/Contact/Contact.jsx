@@ -89,12 +89,12 @@ const Contact = () => {
           <div className="absolute bottom-10 left-10 w-60 h-60 bg-orange-100 rounded-full blur-3xl" />
         </div>
         
-        <div className="relative z-10 max-w-6xl mx-auto px-5 md:px-12 py-20">
+        <div className="relative z-10 max-w-9xl mx-auto px-5 md:px-12 py-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="max-w-4xl"
+            className="max-w-9xl"
           >
             <span className="text-xs font-bold tracking-[0.2em] text-red-500 uppercase block mb-4">Get In Touch</span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight leading-[1.1]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -109,7 +109,7 @@ const Contact = () => {
 
       {/* Info Cards */}
       <section className="py- bg-white">
-        <div className="max-w-6xl mx-auto px-5 md:px-12">
+        <div className="max-w-9xl mx-auto px-5 sm:px-20">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { icon: Clock, title: "Response Time", desc: "Within 24 business hours", color: "from-blue-500 to-cyan-500" },
@@ -140,7 +140,7 @@ const Contact = () => {
 
       {/* Main Contact Section */}
       <section className="py-16 md:py-24 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-5 md:px-12">
+        <div className="max-w-9xl mx-auto px-5 md:px-20">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-12">
             {/* Left Column - Contact Info */}
             <motion.div

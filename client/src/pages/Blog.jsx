@@ -141,7 +141,7 @@ const Blog = () => {
       </section>
 
       <section className="py-20 bg-slate-50">
-        <div className="max-w-[700px] mx-auto px-12 text-center">
+        <div className="max-w-8xl mx-auto px-12 sm:px-25 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -175,7 +175,7 @@ const Blog = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden"
+              className="bg-white rounded-2xl max-w-8xl w-full max-h-[90vh] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <button

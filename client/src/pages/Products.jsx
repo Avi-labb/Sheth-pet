@@ -251,64 +251,82 @@ const Products = () => {
               {showVolume && (
                 <div className="space-y-3 pt-4 border-t border-[#DEDDD6] dark:border-[#2A2D32]">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-                    Volume: {volumeRange[0]} - {volumeRange[1]}
+                    Volume
                   </h3>
-                  <div className="relative w-full h-10">
-                    {/* Track */}
-                    <div className="absolute top-1/2 left-0 w-full h-2 bg-gray-300 dark:bg-gray-600 rounded-full transform -translate-y-1/2" />
-                    {/* Range track */}
+
+                  <div className="flex justify-between text-xs font-medium">
+                    <span>{volumeRange[0]} ml</span>
+                    <span>{volumeRange[1]} ml</span>
+                  </div>
+
+                  <div className="relative mt-5 h-8">
+
+                    {/* Background Track */}
+                    <div className="absolute top-1/2 w-full h-2 bg-gray-300 rounded-full -translate-y-1/2" />
+
+                    {/* Active Track */}
                     <div
-                      className="absolute top-1/2 left-0 h-2 bg-red-600 rounded-full transform -translate-y-1/2"
+                      className="absolute top-1/2 h-2 bg-red-600 rounded-full -translate-y-1/2"
                       style={{
                         left: `${(volumeRange[0] / 5000) * 100}%`,
-                        width: `${((volumeRange[1] - volumeRange[0]) / 5000) * 100}%`
+                        width: `${((volumeRange[1] - volumeRange[0]) / 5000) * 100}%`,
                       }}
                     />
-                    {/* Min Input */}
+
+                    {/* Left Thumb */}
                     <input
                       type="range"
                       min="0"
                       max="5000"
                       value={volumeRange[0]}
                       onChange={(e) => {
-                        const newVal = parseInt(e.target.value)
-                        if (newVal < volumeRange[1]) {
-                          setVolumeRange([newVal, volumeRange[1]])
-                        } else {
-                          setVolumeRange([volumeRange[1], newVal])
-                        }
+                        const value = Math.min(Number(e.target.value), volumeRange[1] - 1);
+                        setVolumeRange([value, volumeRange[1]]);
                       }}
-                      className="absolute top-0 left-0 w-full h-full opacity-0 z-20 cursor-pointer"
+                      className="absolute w-full appearance-none bg-transparent pointer-events-none"
+                      style={{ zIndex: 3 }}
                     />
-                    {/* Max Input */}
+
+                    {/* Right Thumb */}
                     <input
                       type="range"
                       min="0"
                       max="5000"
                       value={volumeRange[1]}
                       onChange={(e) => {
-                        const newVal = parseInt(e.target.value)
-                        if (newVal > volumeRange[0]) {
-                          setVolumeRange([volumeRange[0], newVal])
-                        } else {
-                          setVolumeRange([newVal, volumeRange[0]])
-                        }
+                        const value = Math.max(Number(e.target.value), volumeRange[0] + 1);
+                        setVolumeRange([volumeRange[0], value]);
                       }}
-                      className="absolute top-0 left-0 w-full h-full opacity-0 z-10 cursor-pointer"
+                      className="absolute w-full appearance-none bg-transparent pointer-events-none"
+                      style={{ zIndex: 4 }}
                     />
-                    {/* Visible Thumbs */}
+
+                    {/* Left Thumb UI */}
                     <div
-                      className="absolute top-1/2 w-5 h-5 bg-red-600 rounded-full border-2 border-white shadow-md transform -translate-x-1/2 -translate-y-1/2 z-30"
+                      className="absolute w-5 h-5 rounded-full bg-red-600 border-2 border-white shadow-md -translate-x-1/2 -translate-y-1/2 top-1/2"
                       style={{
-                        left: `${(volumeRange[0] / 5000) * 100}%`
+                        left: `${(volumeRange[0] / 5000) * 100}%`,
                       }}
                     />
+
+                    {/* Right Thumb UI */}
                     <div
-                      className="absolute top-1/2 w-5 h-5 bg-red-600 rounded-full border-2 border-white shadow-md transform -translate-x-1/2 -translate-y-1/2 z-30"
+                      className="absolute w-5 h-5 rounded-full bg-red-600 border-2 border-white shadow-md -translate-x-1/2 -translate-y-1/2 top-1/2"
                       style={{
-                        left: `${(volumeRange[1] / 5000) * 100}%`
+                        left: `${(volumeRange[1] / 5000) * 100}%`,
                       }}
                     />
+
+                    {/* Selected Range Label */}
+                    <div
+                      className="absolute -top-7 text-[11px] px-2 py-1 rounded bg-red-600 text-white whitespace-nowrap -translate-x-1/2"
+                      style={{
+                        left: `${((volumeRange[0] + volumeRange[1]) / 2 / 5000) * 100}%`,
+                      }}
+                    >
+                      {volumeRange[0]} ml - {volumeRange[1]} ml
+                    </div>
+
                   </div>
                 </div>
               )}
@@ -479,6 +497,33 @@ const Products = () => {
           </main>
         </div>
       </div>
+
+      <style>{`
+        input[type="range"] {
+          -webkit-appearance: none;
+          appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: transparent;
+          cursor: pointer;
+          pointer-events: auto;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: transparent;
+          cursor: pointer;
+          pointer-events: auto;
+        }
+      `}</style>
     </div>
   )
 }

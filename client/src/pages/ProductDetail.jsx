@@ -97,9 +97,45 @@ const ProductDetail = () => {
           const colors = getProductColors(foundProduct)
           setSelectedColor(colors[0] || null)
 
-          const related = result.data.products.filter(p =>
-            p.category === foundProduct.category && p._id !== productId
-          ).slice(0, 4)
+          let related = []
+          if (['Bottles', 'Jars', 'Preforms'].includes(foundProduct.category)) {
+            // Show matching Caps
+            related = result.data.products.filter(p => {
+              if (p.category !== 'Caps' || p._id === productId) return false
+              
+              // Check neck size match
+              let neckSizeMatch = false
+              if (Array.isArray(foundProduct.neckSize) && Array.isArray(p.neckSize)) {
+                neckSizeMatch = foundProduct.neckSize.some(ns => p.neckSize.includes(ns))
+              } else if (Array.isArray(foundProduct.neckSize)) {
+                neckSizeMatch = foundProduct.neckSize.includes(p.neckSize)
+              } else if (Array.isArray(p.neckSize)) {
+                neckSizeMatch = p.neckSize.includes(foundProduct.neckSize)
+              } else {
+                neckSizeMatch = foundProduct.neckSize === p.neckSize
+              }
+              
+              // Check neck profile match
+              let neckProfileMatch = false
+              if (Array.isArray(foundProduct.neckProfile) && Array.isArray(p.neckProfile)) {
+                neckProfileMatch = foundProduct.neckProfile.some(np => p.neckProfile.includes(np))
+              } else if (Array.isArray(foundProduct.neckProfile)) {
+                neckProfileMatch = foundProduct.neckProfile.includes(p.neckProfile)
+              } else if (Array.isArray(p.neckProfile)) {
+                neckProfileMatch = p.neckProfile.includes(foundProduct.neckProfile)
+              } else {
+                neckProfileMatch = foundProduct.neckProfile === p.neckProfile
+              }
+              
+              return neckSizeMatch && neckProfileMatch
+            }).slice(0, 4)
+          } else if (foundProduct.category !== 'Caps') {
+            // For other categories (not Caps), keep original behavior
+            related = result.data.products.filter(p =>
+              p.category === foundProduct.category && p._id !== productId
+            ).slice(0, 4)
+          }
+          // If category is Caps, related stays empty
           setRelatedProducts(related)
         }
       }
@@ -485,7 +521,7 @@ const ProductDetail = () => {
                     to={`/product/${relatedProduct._id}`}
                     className="group flex flex-col transition-colors border border-[#DEDDD6] dark:border-[#2A2D32]  gap-1"
                   >
-                    <div className="relative aspect-[4/3] flex items-center justify-center overflow-hidden border border-[#DEDDD6] dark:border-[#2A2D32] gap-1">
+                    <div className="relative aspect-[4/4] flex items-center justify-center overflow-hidden border border-[#DEDDD6] dark:border-[#2A2D32] gap-1">
                       {relatedImage ? (
                         <img
                           src={relatedImage}

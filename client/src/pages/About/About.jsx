@@ -43,8 +43,8 @@ const About = () => {
         {/* Abstract Background Design Accents */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-red-500/5 to-orange-500/0 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -left-12 bottom-0 w-96 h-96 bg-slate-100 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-16 px-6 lg:px-12 py-23 items-center relative z-10">
+        
+        <div className="max-w-9xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-16 px-6 lg:px-12 py-23 items-center relative z-10">
           <div className="lg:col-span-7 space-y-4">
             <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-red-50/80 border border-red-100/70 rounded-full text-[11px] font-bold text-red-600 tracking-wider uppercase">
               <Scale size={13} className="text-red-500" /> Est. 1996 · Industrial Leadership
@@ -102,8 +102,8 @@ const About = () => {
       <section id="heritage" className="py-20  bg-slate-50 border-t border-b border-slate-300 relative overflow-hidden">
         {/* Soft background design accent */}
         <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-slate-50 rounded-full blur-3xl pointer-events-none -z-10" />
-
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        
+        <div className="max-w-9xl mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
 
             {/* Left Column: Bold Summary & Visual Anchor */}
@@ -171,7 +171,7 @@ const About = () => {
       </section>
 
       {/* Premium Minimalist Timeline */}
-      <section id="timeline" className="py-15 lg:py-20 max-w-5xl mx-auto px-6 ">
+      <section id="timeline" className="py-15 lg:py-20 max-w-9xl mx-auto px-10 sm:px-25 ">
         <div className="mb-16 space-y-2 text-center md:text-left">
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-red-600 block">
             Our Journey
@@ -219,7 +219,7 @@ const About = () => {
       </section>
 
       {/* The Bento Ecosystem Block */}
-      <section id="ecosystem" className="py-24 lg:py-32 max-w-7xl mx-auto px-6 lg:px-12 border-0 border-t-1 border-slate-300">
+      <section id="ecosystem" className="py-24 lg:py-32 max-w-9xl mx-auto px-6 lg:px-12 border-0 border-t-1 border-slate-300">
         <div className="mb-16 space-y-3">
           <span className="text-xs font-extrabold uppercase tracking-widest text-red-600 block">Operations Ecosystem</span>
           <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-950">Purpose-Built Infrastructure</h2>
@@ -277,7 +277,7 @@ const About = () => {
       {/* Clean Cleaned-Up Core Values */}
       <section className="bg-slate-950 text-white py-24 lg:py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.05),transparent_45%)]" />
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+        <div className="max-w-9xl mx-auto px-6 lg:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
             <div className="lg:col-span-4 space-y-4 lg:sticky lg:top-28">
               <span className="text-xs font-extrabold uppercase tracking-widest text-red-400 block">Operational DNA</span>
@@ -307,7 +307,7 @@ const About = () => {
 
       {/* Corporate Leadership Profiles */}
       <section id="leadership" className="py-24 lg:py-32 bg-white border-t border-slate-200/80">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="max-w-9xl mx-auto px-6 lg:px-12">
           <div className="mb-20 text-center space-y-3">
             <span className="text-xs font-extrabold uppercase tracking-widest text-red-600 block">Executive Council</span>
             <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-950">Board of Directors</h2>

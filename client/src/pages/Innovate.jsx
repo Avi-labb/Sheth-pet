@@ -118,7 +118,7 @@ const Innovate = () => {
           <video
             autoPlay
             muted
-            loop
+            loop  
             playsInline
             className="block md:hidden w-full h-full object-cover"
           >
@@ -128,7 +128,7 @@ const Innovate = () => {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-12 py-16 sm:py-24 md:py-32">
+        <div className="relative z-10 max-w-9xl mx-auto w-full px-4 sm:px-6 lg:px-12 py-16 sm:py-24 md:py-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -162,7 +162,7 @@ const Innovate = () => {
       </section>
 
       <section className="py-12 sm:py-16 bg-slate-50 dark:bg-slate-950 transition-colors duration-300 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="max-w-9xl mx-auto px-4 sm:px-20">
 
           {/* Section Header */}
           <div className="text-center mb-8 sm:mb-12">
@@ -254,7 +254,7 @@ const Innovate = () => {
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/10 dark:bg-red-500/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div className="max-w-9xl mx-auto px-4 sm:px-20 relative z-10">
 
           {/* Header Section */}
           <div className="text-center mb-16 sm:mb-24 max-w-3xl mx-auto">
