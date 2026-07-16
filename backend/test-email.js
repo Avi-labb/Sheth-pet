@@ -9,7 +9,7 @@ const testEmail = async () => {
     
     const mailOptions = {
       from: process.env.SMTP_USER,
-      to: 'avidevelop60@gmail.com',
+      to: 'officeshethpet@gmail.com',
       subject: 'Test Email from Sheth PET Website',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

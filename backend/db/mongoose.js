@@ -12,7 +12,7 @@ const connectDB = async () => {
     console.log("Database Name:", mongoose.connection.db.databaseName);
 
     // Check if admin exists, if not, create default (same as checkAdmin.js)
-    const defaultEmail = "avidevelop60@gmail.com";
+    const defaultEmail = "officeshethpet@gmail.com";
     const defaultPassword = "Admin@098";
     
     const adminExists = await Admin.findOne({ email: defaultEmail });

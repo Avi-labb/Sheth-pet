@@ -10,7 +10,7 @@ const createAdmin = async () => {
     await mongoose.connect(process.env.MONGO_URI);
 
     const existingAdmin = await Admin.findOne({
-      email: "avidevelop60@gmail.com",
+      email: "officeshethpet@gmail.com",
     });
 
     if (existingAdmin) {
@@ -24,7 +24,7 @@ const createAdmin = async () => {
     );
 
     await Admin.create({
-      email: "avidevelop60@gmail.com",
+      email: "officeshethpet@gmail.com",
       password: hashedPassword,
     });
 
