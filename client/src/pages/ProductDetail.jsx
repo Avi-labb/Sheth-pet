@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Package, ChevronRight, ArrowLeft, ShieldCheck, ZoomIn, Compass, ArrowUpRight, X, ChevronLeft } from 'lucide-react'
 import { productAPI } from '../services/api'
+import { getAllProductImages, getProductImage, getProductColors } from '../utils/productImages'
 
 const ProductDetail = () => {
   const { productId } = useParams()
@@ -20,53 +21,6 @@ const ProductDetail = () => {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-
-  const getAllImages = (product) => {
-    if (product.images && Object.keys(product.images).length > 0) {
-      return Object.entries(product.images).map(([color, file]) => ({
-        color,
-       src: `/uploads/${file}`
-        //src: `/uploads/${file}`
-     }))
-    }
-    if (product.image) {
-        src: `/uploads/${product.image}`
-       //src: `/uploads/${product.image}`
-    }
-    return []
-  }
-
-  const getProductImage = (product, color = null) => {
-    if (color && product.images) {
-      if (product.images[color]) {
-       return `/uploads/${product.images[color]}`
-       //return `/uploads/${product.images[color]}`
-      }
-      const colorLower = color.toLowerCase()
-      const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
-      if (matchingKey) {
-       return `/uploads/${product.images[matchingKey]}`
-       //return `/uploads/${product.images[matchingKey]}`
-      }
-    }
-    if (product.images && Object.keys(product.images).length > 0) {
-      const firstKey = Object.keys(product.images)[0]
-       return `/uploads/${product.images[firstKey]}`
-       //return `/uploads/${product.images[firstKey]}`
-    }
-    if (product.image) {
-       return `/uploads/${product.image}`
-       //return `/uploads/${product.image}`
-    }
-    return null
-  }
-
-  const getProductColors = (product) => {
-    if (product.images && Object.keys(product.images).length > 0) {
-      return Object.keys(product.images)
-    }
-    return Array.isArray(product.color) ? product.color : (product.color ? [product.color] : [])
-  }
 
   const getMoqForColor = (product, color) => {
     if (!product.moqPackaging) return ''
@@ -233,7 +187,7 @@ const ProductDetail = () => {
     )
   }
 
-  const allImages = getAllImages(product)
+  const allImages = getAllProductImages(product)
   const currentImage = getProductImage(product, selectedColor)
   const currentMoq = getMoqForColor(product, selectedColor)
   const colors = getProductColors(product)

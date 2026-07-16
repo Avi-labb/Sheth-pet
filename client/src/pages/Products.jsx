@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Package, ChevronRight, Filter, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../services/api'
+import { getProductImage, getProductColors } from '../utils/productImages'
 import Header from '../components/Header/Header'
 
 const Products = () => {
@@ -16,37 +17,10 @@ const Products = () => {
   // Filter state
   const [neckSizes, setNeckSizes] = useState([])
   const [selectedNeckSizes, setSelectedNeckSizes] = useState([])
-  const [volumeRange, setVolumeRange] = useState([0, 5000])
+  const [volumeMin, setVolumeMin] = useState('')
+  const [volumeMax, setVolumeMax] = useState('')
   const [weightMin, setWeightMin] = useState('')
   const [weightMax, setWeightMax] = useState('')
-
-  const getProductImage = (product, color = null) => {
-    if (color && product.images) {
-      if (product.images[color]) {
-        return `/uploads/${product.images[color]}`
-      }
-      const colorLower = color.toLowerCase()
-      const matchingKey = Object.keys(product.images).find(key => key.toLowerCase() === colorLower)
-      if (matchingKey) {
-        return `/uploads/${product.images[matchingKey]}`
-      }
-    }
-    if (product.images && Object.keys(product.images).length > 0) {
-      const firstKey = Object.keys(product.images)[0]
-      return `/uploads/${product.images[firstKey]}`
-    }
-    if (product.image) {
-      return `/uploads/${product.image}`
-    }
-    return null
-  }
-
-  const getProductColors = (product) => {
-    if (product.images && Object.keys(product.images).length > 0) {
-      return Object.keys(product.images)
-    }
-    return Array.isArray(product.color) ? product.color : (product.color ? [product.color] : [])
-  }
 
   const getMoqForColor = (product, color) => {
     if (!product.moqPackaging) return ''
@@ -75,7 +49,8 @@ const Products = () => {
         setFilteredProducts(result.data.products)
         // Reset filters when category changes
         setSelectedNeckSizes([])
-        setVolumeRange([0, 5000])
+        setVolumeMin('')
+        setVolumeMax('')
         setWeightMin('')
         setWeightMax('')
       }
@@ -118,11 +93,14 @@ const Products = () => {
     }
 
     // Volume filter
-    if (volumeRange[0] > 0 || volumeRange[1] < 5000) {
+    if (volumeMin || volumeMax) {
       filtered = filtered.filter(p => {
         if (!p.volume) return false
         const vol = parseFloat(p.volume)
-        return !isNaN(vol) && vol >= volumeRange[0] && vol <= volumeRange[1]
+        if (isNaN(vol)) return false
+        const min = volumeMin ? parseFloat(volumeMin) : -Infinity
+        const max = volumeMax ? parseFloat(volumeMax) : Infinity
+        return vol >= min && vol <= max
       })
     }
 
@@ -168,7 +146,7 @@ const Products = () => {
 
   useEffect(() => {
     applyFilters()
-  }, [products, selectedNeckSizes, volumeRange, weightMin, weightMax])
+  }, [products, selectedNeckSizes, volumeMin, volumeMax, weightMin, weightMax])
 
   const handleCustomize = (e, product) => {
     e.stopPropagation()
@@ -253,80 +231,25 @@ const Products = () => {
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
                     Volume
                   </h3>
-
-                  <div className="flex justify-between text-xs font-medium">
-                    <span>{volumeRange[0]} ml</span>
-                    <span>{volumeRange[1]} ml</span>
-                  </div>
-
-                  <div className="relative mt-5 h-8">
-
-                    {/* Background Track */}
-                    <div className="absolute top-1/2 w-full h-2 bg-gray-300 rounded-full -translate-y-1/2" />
-
-                    {/* Active Track */}
-                    <div
-                      className="absolute top-1/2 h-2 bg-red-600 rounded-full -translate-y-1/2"
-                      style={{
-                        left: `${(volumeRange[0] / 5000) * 100}%`,
-                        width: `${((volumeRange[1] - volumeRange[0]) / 5000) * 100}%`,
-                      }}
-                    />
-
-                    {/* Left Thumb */}
-                    <input
-                      type="range"
-                      min="0"
-                      max="5000"
-                      value={volumeRange[0]}
-                      onChange={(e) => {
-                        const value = Math.min(Number(e.target.value), volumeRange[1] - 1);
-                        setVolumeRange([value, volumeRange[1]]);
-                      }}
-                      className="absolute w-full appearance-none bg-transparent pointer-events-none"
-                      style={{ zIndex: 3 }}
-                    />
-
-                    {/* Right Thumb */}
-                    <input
-                      type="range"
-                      min="0"
-                      max="5000"
-                      value={volumeRange[1]}
-                      onChange={(e) => {
-                        const value = Math.max(Number(e.target.value), volumeRange[0] + 1);
-                        setVolumeRange([volumeRange[0], value]);
-                      }}
-                      className="absolute w-full appearance-none bg-transparent pointer-events-none"
-                      style={{ zIndex: 4 }}
-                    />
-
-                    {/* Left Thumb UI */}
-                    <div
-                      className="absolute w-5 h-5 rounded-full bg-red-600 border-2 border-white shadow-md -translate-x-1/2 -translate-y-1/2 top-1/2"
-                      style={{
-                        left: `${(volumeRange[0] / 5000) * 100}%`,
-                      }}
-                    />
-
-                    {/* Right Thumb UI */}
-                    <div
-                      className="absolute w-5 h-5 rounded-full bg-red-600 border-2 border-white shadow-md -translate-x-1/2 -translate-y-1/2 top-1/2"
-                      style={{
-                        left: `${(volumeRange[1] / 5000) * 100}%`,
-                      }}
-                    />
-
-                    {/* Selected Range Label */}
-                    <div
-                      className="absolute -top-7 text-[11px] px-2 py-1 rounded bg-red-600 text-white whitespace-nowrap -translate-x-1/2"
-                      style={{
-                        left: `${((volumeRange[0] + volumeRange[1]) / 2 / 5000) * 100}%`,
-                      }}
-                    >
-                      {volumeRange[0]} ml - {volumeRange[1]} ml
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-slate-600">Min (ml)</label>
+                      <input
+                        type="number"
+                        value={volumeMin}
+                        onChange={(e) => setVolumeMin(e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 dark:border-[#2A2D32] bg-white dark:bg-[#1C1F23] text-xs rounded-sm focus:outline-none focus:ring-2 focus:ring-red-600"
+                      />
                     </div>
-
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-slate-600">Max (ml)</label>
+                      <input
+                        type="number"
+                        value={volumeMax}
+                        onChange={(e) => setVolumeMax(e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 dark:border-[#2A2D32] bg-white dark:bg-[#1C1F23] text-xs rounded-sm focus:outline-none focus:ring-2 focus:ring-red-600"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
