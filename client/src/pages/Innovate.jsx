@@ -134,9 +134,9 @@ const Innovate = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <span className="inline-flex gap-2  px-3 sm:px-4 py-1.5 sm:py-2 bg-red-700/20 border border-red-700/30 rounded-full text-[10px] sm:text-xs font-bold text-red-800 tracking-wider uppercase  mb-4 sm:mb-6">
+            <a className="inline-flex gap-2  px-3 sm:px-4 py-1.5 sm:py-2 bg-red-700/20 border border-red-700/30 rounded-full text-[10px] sm:text-xs font-bold text-red-800 tracking-wider uppercase  mb-4 sm:mb-6">
               <Sparkles size={12} sm:size={14} /> Innovation Lab
-            </span>
+            </a>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-slate-900 mb-3 tracking-tight leading-[1.1]">
               From Sketches<br />
@@ -149,14 +149,14 @@ const Innovate = () => {
               We develop custom PET packaging that is engineered for your brand.
             </p>
 
-            <motion.button
+            <motion.a href="/contact"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               className="inline-flex items-center gap-2 px-5 sm:px-8 py-3 sm:py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest shadow-lg shadow-red-600/20 transition-all"
             >
               Start Your Project
               <ArrowUpRight size={14} sm:size={16} />
-            </motion.button>
+            </motion.a>
           </motion.div>
         </div>
       </section>
