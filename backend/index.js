@@ -131,24 +131,51 @@ const FALLBACK_HTML = `<!doctype html>
   </body>
 </html>`;
 
+let cachedIndexHtml = null;
+let cachedIndexHtmlMtime = 0;
+
+function loadIndexHtml() {
+  try {
+    if (!fs.existsSync(indexHtmlPath)) {
+      return null;
+    }
+    const stat = fs.statSync(indexHtmlPath);
+    if (cachedIndexHtml !== null && stat.mtimeMs === cachedIndexHtmlMtime) {
+      return cachedIndexHtml;
+    }
+    cachedIndexHtml = fs.readFileSync(indexHtmlPath, "utf8");
+    cachedIndexHtmlMtime = stat.mtimeMs;
+    return cachedIndexHtml;
+  } catch (_err) {
+    return null;
+  }
+}
+
+const ASSET_EXT_RE = /\.(?:css|js|json|png|jpe?g|gif|svg|ico|webp|bmp|woff2?|ttf|eot|otf|mp4|webm|mp3|wav|ogg|pdf|zip|rar|7z|tar|gz|map|wasm|mjs|cjs)$/i;
+
 app.use((req, res, next) => {
   if (req.method !== "GET" && req.method !== "HEAD") {
     return next();
   }
-  const accept = req.headers.accept || "";
-  const wantsHtml = accept.includes("text/html") || accept.includes("*/*") || !accept;
-  if (!wantsHtml || req.path.startsWith("/api/") || req.path.startsWith("/uploads/")) {
+
+  if (req.path.startsWith("/api/") || req.path.startsWith("/uploads/")) {
     return res.status(404).json({ success: false, message: "Not Found", path: req.path });
   }
 
-  if (fs.existsSync(indexHtmlPath)) {
+  if (ASSET_EXT_RE.test(req.path)) {
+    return res.status(404).type("text/plain").send("Not Found");
+  }
+
+  const accept = req.headers.accept || "";
+  const wantsHtml = accept.includes("text/html") || !accept;
+  if (!wantsHtml) {
+    return res.status(404).json({ success: false, message: "Not Found", path: req.path });
+  }
+
+  const html = loadIndexHtml();
+  if (html !== null) {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    return res.sendFile(indexHtmlPath, (err) => {
-      if (err) {
-        console.warn("⚠️  sendFile failed for SPA index.html, serving inline fallback:", err.message);
-        res.status(200).type("html").send(FALLBACK_HTML);
-      }
-    });
+    return res.status(200).type("html").send(html);
   }
 
   res.status(200).type("html").send(FALLBACK_HTML);
