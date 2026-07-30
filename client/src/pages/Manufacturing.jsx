@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   MdOutlineGrain, 
@@ -7,7 +6,6 @@ import {
   GiWaterBottle,
   GiThermometerHot,
 } from 'react-icons/gi';
-import ManufacturingImage from '../assets/images/manufacturing process.png';
 
 // Highly accurate custom icons using SVG or matched react-icons
 const IconGranules = () => <MdOutlineGrain className="w-7 h-7 text-blue-800" />;

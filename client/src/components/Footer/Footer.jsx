@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Mail, Phone, MapPin, ExternalLink, Globe, MessageCircle, Share2 } from 'lucide-react'
+import { Mail, Phone, MapPin } from 'lucide-react'
 import { FaYoutube,FaWhatsapp,FaInstagram  } from "react-icons/fa";
 import { CiLinkedin } from "react-icons/ci";
 

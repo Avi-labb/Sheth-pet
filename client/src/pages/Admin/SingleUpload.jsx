@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useState } from 'react';
 import { UploadCloud } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { productAPI } from '../../services/api';
@@ -7,8 +7,6 @@ export default function SingleUpload({
   newProduct,
   setNewProduct,
   handleAddProduct,
-  imagePreview,
-  handleImageChange,
   newCategory,
   setNewCategory,
   addingCategory,
@@ -18,8 +16,7 @@ export default function SingleUpload({
   imagePreviews,
   setImagePreviews
 }) {
-  const imageInputRef = useRef(null);
-  const [newColorInput, setNewColorInput] = React.useState('');
+  const [newColorInput, setNewColorInput] = useState('');
   const neckSizes = ['19mm', '22mm', '24mm', '25mm', '28mm', '30mm', '38mm', '46mm', '53mm', '60mm', '63mm', '73mm', '83mm', '96mm', '120mm'];
 
   // Handle color-specific image changes
@@ -74,13 +71,14 @@ export default function SingleUpload({
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">SKU</label>
+            <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">SKU <span className="text-red-400">*</span></label>
             <input
               type="text"
               value={newProduct.sku}
               onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value })}
+              required
               className="w-full bg-[#050506] border border-neutral-600 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-500 transition-colors"
-              placeholder="SKU..."
+              placeholder="Enter SKU manually (e.g. PET-JAR-001)"
             />
           </div>
         </div>

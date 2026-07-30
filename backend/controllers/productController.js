@@ -304,6 +304,7 @@ export const addProduct = async (req, res) => {
     const body = req.body || {};
     const {
       name,
+      sku,
       category,
       productType,
       color,
@@ -425,16 +426,21 @@ export const addProduct = async (req, res) => {
       });
     }
 
-    // Generate SKU
-    const counter = await Counter.findOneAndUpdate(
-      { name: "productSku" },
-      { $inc: { sequence: 1 } },
-      {
-        returnDocument: "after",
-        upsert: true,
-      }
-    );
-    const sku = `SKU-${String(counter.sequence).padStart(4, "0")}`;
+    if (!sku || typeof sku !== 'string' || !sku.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "SKU is required (enter it manually)",
+      });
+    }
+
+    const trimmedSku = sku.trim();
+    const skuExists = await Product.findOne({ sku: trimmedSku });
+    if (skuExists) {
+      return res.status(400).json({
+        success: false,
+        message: `SKU "${trimmedSku}" already exists. Use a unique SKU.`,
+      });
+    }
 
     const productData = {
       name,
@@ -458,7 +464,7 @@ export const addProduct = async (req, res) => {
       diameter,
       pilfer,
       length,
-      sku,
+      sku: trimmedSku,
     };
     
     console.log("[DEBUG] Creating product with data:", productData);

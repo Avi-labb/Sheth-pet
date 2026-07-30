@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Box, MapPin, ShieldCheck, Award,Layers, Package, Settings,Beaker, Target, Eye, ArrowUpRight, PhoneCall, X, Pill, Sparkles, Utensils, Factory, HomeIcon } from 'lucide-react'
+import { Box, MapPin, Layers, Package, Settings, ArrowUpRight, PhoneCall, X, Pill, Sparkles, Utensils, Factory, HomeIcon } from 'lucide-react'
 
 import { useState, useEffect } from 'react'
 
@@ -93,11 +93,11 @@ const CAROUSEL_DATA = [
 
 
 const Home = () => {
-  const { theme } = useTheme()
-  const [products, setProducts] = useState([])
-  const [loadingProducts, setLoadingProducts] = useState(false)
+  useTheme()
+  const [_products, setProducts] = useState([])
+  const [_loadingProducts, setLoadingProducts] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState(null)
-  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [selectedCategory] = useState(null)
   const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms'])
   const [activeIndex, setActiveIndex] = useState(0);
   const totalItems = CAROUSEL_DATA.length;
@@ -126,7 +126,7 @@ useEffect(() => {
 
   const handleCardClick = (index, link) => {
     if (index === activeIndex) {
-      window.location.href = link;
+      window.location.assign(link);
     } else {
       setActiveIndex(index);
     }
@@ -262,52 +262,6 @@ const categoryData = {
 
 
 
-  // Fallback products if no products exist in DB
-
-  const fallbackProducts = [
-
-    {
-
-      icon: Box,
-
-      title: 'PET Bottles',
-
-      description: 'Wide range of PET bottles in various sizes and shapes optimized for pristine clarity.'
-
-    },
-
-    {
-
-      icon: Layers,
-
-      title: 'Jars ',
-
-      description: 'Premium quality jars engineered perfectly for food, cosmetics, and specialized items.'
-
-    },
-
-    {
-
-      icon: Package,
-
-      title: 'Preforms',
-
-      description: 'High-density, structurally consistent preforms optimized for seamless blow molding.'
-
-    },
-
-    {
-
-      icon: Settings,
-
-      title: 'Caps & Closures',
-
-      description: 'Complete structurally sound range of custom color caps for airtight product seals.'
-
-    }
-
-  ];
-  const displayProducts = products.length > 0 ? products : fallbackProducts;
   return (
     <div className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden min-h-screen">
       <NewProductPopup />

@@ -64,7 +64,7 @@ const Contact = () => {
       } else {
         setError(result.data.message || 'Something went wrong. Please try again.')
       }
-    } catch (err) {
+    } catch (_err) {
       setError('Network error. Please check your connection and try again.')
     } finally {
       setIsLoading(false)
@@ -172,7 +172,7 @@ const Contact = () => {
                     </div>
                   </a>
 
-                  <a href="tel:+918047833997" className="flex items-start gap-4 group hover:bg-slate-50 p-3 -mx-3 rounded-xl transition-colors">
+                  <a href="tel:+917021690192 " className="flex items-start gap-4 group hover:bg-slate-50 p-3 -mx-3 rounded-xl transition-colors">
                     <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-200 transition-colors">
                       <Phone size={24} className="text-red-600" />
                     </div>
@@ -181,7 +181,10 @@ const Contact = () => {
                         Phone
                       </h3>
                       <p className="text-slate-600 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        +91 80478 33997
+                        +91 7021690192 
+                      </p>
+                      <p className="text-slate-600 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        +91 9867000311
                       </p>
                     </div>
                   </a>

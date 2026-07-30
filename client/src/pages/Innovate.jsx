@@ -1,6 +1,6 @@
 
 import { motion } from 'framer-motion'
-import { ArrowUpRight, Sparkles, ArrowDown, Eye, PenTool, Cpu, Factory, Download } from 'lucide-react'
+import { ArrowUpRight, Sparkles, Eye, PenTool, Cpu, Factory, Download } from 'lucide-react'
 import Header from '../components/Header/Header'
 import videoFile from '../assets/desktopversion.mp4'
 import mobileFile from '../assets/mobileversion.mp4'

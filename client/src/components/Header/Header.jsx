@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, ChevronRight, ChevronDown, Sun, Moon } from 'lucide-react'
+import { Menu, X, ChevronRight, ChevronDown } from 'lucide-react'
 import { productAPI } from '../../services/api'
 import logo from '../../assets/images/radhe-logo.png'
 import { useTheme } from '../../contexts/ThemeContext'
@@ -30,7 +30,6 @@ const typeCategories = [
   { name: "Caps", path: "/products/Caps" },
 ]
 
-// Hide scrollbar on mobile menu
 const HideScrollbar = () => {
   return (
     <style>{`
@@ -51,21 +50,14 @@ const Header = ({ onCategorySelect }) => {
   const [showProductsMenu, setShowProductsMenu] = useState(false)
   const [showByType, setShowByType] = useState(false)
   const [showByIndustry, setShowByIndustry] = useState(false)
-  const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms'])
   const location = useLocation()
-  const { theme, toggleTheme } = useTheme()
-
-  // Don't show toggle on admin routes
-  const isAdminRoute = location.pathname.startsWith('/admin')
+  const { theme } = useTheme()
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const result = await productAPI.getCategories()
         console.log("Categories API result:", result)
-        if (result.ok && result.data.categories) {
-          setCategories(result.data.categories)
-        }
       } catch (error) {
         console.error("Error fetching categories", error)
       }

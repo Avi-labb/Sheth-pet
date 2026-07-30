@@ -25,7 +25,7 @@ const apiRequest = async (baseUrl, endpoint, options = {}) => {
 
     const data = await response.json();
     return { ok: response.ok, data };
-  } catch (error) {
+  } catch (_error) {
     return { ok: false, data: { message: "Network error. Please try again." } };
   }
 };
@@ -104,7 +104,7 @@ export const productAPI = {
       });
       const data = await response.json();
       return { ok: response.ok, data };
-    } catch (error) {
+    } catch (_error) {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   },
@@ -125,7 +125,7 @@ export const productAPI = {
       });
       const data = await response.json();
       return { ok: response.ok, data };
-    } catch (error) {
+    } catch (_error) {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   },
@@ -159,7 +159,7 @@ export const productAPI = {
       });
       const data = await response.json();
       return { ok: response.ok, data };
-    } catch (error) {
+    } catch (_error) {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   }
@@ -184,7 +184,7 @@ export const blogAPI = {
       });
       const data = await response.json();
       return { ok: response.ok, data };
-    } catch (error) {
+    } catch (_error) {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   },
@@ -198,7 +198,7 @@ export const blogAPI = {
       });
       const data = await response.json();
       return { ok: response.ok, data };
-    } catch (error) {
+    } catch (_error) {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   },
@@ -211,7 +211,7 @@ export const blogAPI = {
       });
       const data = await response.json();
       return { ok: response.ok, data };
-    } catch (error) {
+    } catch (_error) {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   }
@@ -239,7 +239,7 @@ export const careerAPI = {
       });
       const data = await response.json();
       return { ok: response.ok, data };
-    } catch (error) {
+    } catch (_error) {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   },
@@ -256,7 +256,7 @@ export const careerAPI = {
       });
       const data = await response.json();
       return { ok: response.ok, data };
-    } catch (error) {
+    } catch (_error) {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   },
@@ -269,7 +269,7 @@ export const careerAPI = {
       });
       const data = await response.json();
       return { ok: response.ok, data };
-    } catch (error) {
+    } catch (_error) {
       return { ok: false, data: { message: "Network error. Please try again." } };
     }
   }

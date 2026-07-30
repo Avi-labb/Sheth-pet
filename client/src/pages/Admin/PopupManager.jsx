@@ -1,9 +1,8 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Package, X } from 'lucide-react';
+import { Package } from 'lucide-react';
 import { productAPI } from '../../services/api';
 
-const PopupManager = ({ products, setActiveTab, fetchProducts }) => {
+const PopupManager = ({ products, fetchProducts }) => {
   // Get latest popup product
   const popupProducts = products.filter(product => product.showInPopup);
   const sorted = [...popupProducts].sort(

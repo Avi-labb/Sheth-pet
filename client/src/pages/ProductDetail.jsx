@@ -58,7 +58,7 @@ const ProductDetail = () => {
               if (p.category !== 'Caps' || p._id === productId) return false
               
               // Check neck size match
-              let neckSizeMatch = false
+              let neckSizeMatch;
               if (Array.isArray(foundProduct.neckSize) && Array.isArray(p.neckSize)) {
                 neckSizeMatch = foundProduct.neckSize.some(ns => p.neckSize.includes(ns))
               } else if (Array.isArray(foundProduct.neckSize)) {
@@ -70,7 +70,7 @@ const ProductDetail = () => {
               }
               
               // Check neck profile match
-              let neckProfileMatch = false
+              let neckProfileMatch;
               if (Array.isArray(foundProduct.neckProfile) && Array.isArray(p.neckProfile)) {
                 neckProfileMatch = foundProduct.neckProfile.some(np => p.neckProfile.includes(np))
               } else if (Array.isArray(foundProduct.neckProfile)) {

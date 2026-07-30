@@ -11,11 +11,11 @@ console.log('Uploads directory path:', uploadsDir);
 
 if (fs.existsSync(uploadsDir)) {
     const files = fs.readdirSync(uploadsDir);
-    console.log(`\nFiles in uploads directory:');
+    console.log(`\nFiles in uploads directory:`);
     files.forEach((file, i) => {
         const filePath = path.join(uploadsDir, file);
         const stats = fs.statSync(filePath);
-        console.log(`  [${i}] ${file} (${(stats.size / 1024} KB) - ${stats.isDirectory() ? 'directory' : 'file'})`);
+        console.log(`  [${i}] ${file} (${(stats.size / 1024)} KB) - ${stats.isDirectory() ? 'directory' : 'file'})`);
     });
     console.log(`\nTotal files count: ${files.length}`);
 } else {

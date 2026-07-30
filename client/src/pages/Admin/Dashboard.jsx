@@ -1,18 +1,120 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Box, Layers, Package, Settings,
+  Package,
   UploadCloud, PlusCircle, FileSpreadsheet,
   ExternalLink, BarChart3, Database,
-  CheckCircle2, AlertCircle, ArrowRight,
-  LogOut, RefreshCw, Menu, X, Image,
-  XCircle, ArrowLeft, BookOpen, Briefcase
+  CheckCircle2, ArrowRight,
+  LogOut, RefreshCw, Menu, X,
+  ArrowLeft, BookOpen, Briefcase
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { productAPI } from '../../services/api';
 import SingleUpload from './SingleUpload';
 import PopupManager from './PopupManager';
+
+const SidebarNavigationContent = ({ activeTab, setActiveTab, setMobileMenuOpen, navigate, handleLogout }) => (
+  <>
+    <div className="space-y-8">
+      <div className="space-y-1.5">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 bg-red-600/10 border border-red-500/30 rounded-lg flex items-center justify-center text-red-500">
+            <Database size={14} className="stroke-[2]" />
+          </div>
+          <span className="text-sm font-bold tracking-[0.25em] text-white uppercase" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+            Sheth Control
+          </span>
+        </div>
+        <p className="text-[13px] font-mono text-neutral-500 uppercase tracking-widest pl-9">Production ERP Engine</p>
+      </div>
+
+      <nav className="">
+        <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-[0.3em] block mb-3 pl-3">Data Matrix Viewports</span>
+
+        <button
+          onClick={() => { setActiveTab('inventory'); setMobileMenuOpen(false); }}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group ${activeTab === 'inventory' ? 'bg-neutral-900 text-white border border-neutral-800' : 'text-neutral-400 hover:text-neutral-100'}`}
+        >
+          <BarChart3 size={14} className={activeTab === 'inventory' ? 'text-red-500' : 'text-neutral-500 group-hover:text-neutral-400'} />
+          Inventory Overview
+        </button>
+
+        <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-[0.3em] block pt-6 mb-3 pl-3">Ingestion Protocols</span>
+
+        <button
+          onClick={() => { setActiveTab('new-product'); setMobileMenuOpen(false); }}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group ${activeTab === 'new-product' ? 'bg-neutral-900 text-white border border-neutral-800' : 'text-neutral-400 hover:text-neutral-100'}`}
+        >
+          <PlusCircle size={14} className={activeTab === 'new-product' ? 'text-red-500' : 'text-neutral-500 group-hover:text-neutral-400'} />
+          Single Upload
+        </button>
+
+        <button
+          onClick={() => navigate('/admin/bulk-upload')}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group text-neutral-400 hover:text-neutral-100"
+        >
+          <FileSpreadsheet size={14} className="text-neutral-500 group-hover:text-neutral-400" />
+          Bulk CSV Ingest
+          <ArrowRight size={12} className="ml-auto text-neutral-600" />
+        </button>
+        <button
+          onClick={() => { setActiveTab('popup'); setMobileMenuOpen(false); }}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group ${activeTab === 'popup' ? 'bg-neutral-900 text-white border border-neutral-800' : 'text-neutral-400 hover:text-neutral-100'}`}
+        >
+          <Package size={14} className={activeTab === 'popup' ? 'text-red-500' : 'text-neutral-500 group-hover:text-neutral-400'} />
+          New Product Popup
+          <ArrowRight size={12} className="ml-auto text-neutral-600" />
+        </button>
+
+        <button
+          onClick={() => navigate('/admin/blogs')}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group text-neutral-400 hover:text-neutral-100"
+        >
+          <BookOpen size={14} className="text-neutral-500 group-hover:text-neutral-400" />
+          Blog Management
+          <ArrowRight size={12} className="ml-auto text-neutral-600" />
+        </button>
+
+        <button
+          onClick={() => navigate('/admin/careers')}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group text-neutral-400 hover:text-neutral-100"
+        >
+          <Briefcase size={14} className="text-neutral-500 group-hover:text-neutral-400" />
+          Career Management
+          <ArrowRight size={12} className="ml-auto text-neutral-600" />
+        </button>
+      </nav>
+    </div>
+
+    <div className="space-y-4">
+      <div>
+        <a
+          href="/"
+          target="_blank"
+          rel="noreferrer"
+          className="w-full flex items-center justify-between px-4 py-3.5 bg-neutral-950 hover:bg-neutral-900 border border-neutral-900 hover:border-neutral-800 rounded-xl transition-all duration-300 group text-xs text-neutral-300 font-medium tracking-wider uppercase"
+        >
+          <span className="flex items-center gap-2.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Visit Live Site
+          </span>
+          <ExternalLink size={12} className="text-neutral-500 group-hover:text-white transition-colors" />
+        </a>
+      </div>
+
+      <div className="border-t border-neutral-900 pt-4">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3.5 bg-neutral-950 hover:bg-neutral-900 border border-neutral-900 hover:border-neutral-800 rounded-xl transition-all duration-300 group text-xs text-neutral-300 font-medium tracking-wider uppercase"
+        >
+          <LogOut size={14} className="text-neutral-500 group-hover:text-red-500 transition-colors" />
+          Log Out
+        </button>
+      </div>
+    </div>
+  </>
+);
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -28,15 +130,6 @@ const Dashboard = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms']);
   const [searchTerm, setSearchTerm] = useState('');
-
-  const [dataGridFile, setDataGridFile] = useState(null);
-  const [assetImages, setAssetImages] = useState([]);
-  const [bulkProcessing, setBulkProcessing] = useState(false);
-  const [bulkResponse, setBulkResponse] = useState(null);
-  const [bulkError, setBulkError] = useState(null);
-
-  const fileInputRef = useRef(null);
-  const imageInputRef = useRef(null);
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -89,7 +182,7 @@ const Dashboard = () => {
     pilfer: '',
     length: '',
   });
-  const [editImagePreview, setEditImagePreview] = useState(null);
+  const [_editImagePreview, setEditImagePreview] = useState(null);
   const [editImagesPreview, setEditImagesPreview] = useState({}); // Object: { [colorName]: base64 string }
   const [imagePreviews, setImagePreviews] = useState({}); // Object: { [colorName]: base64 string }
 
@@ -307,18 +400,6 @@ const Dashboard = () => {
     setEditImagesPreview(initialEditImagesPreview);
     setSelectedProduct(null); // Close detail view if open
   };
-
-  const handleEditImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setEditProductData(prev => ({ ...prev, image: file }));
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setEditImagePreview(event.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
   
   // Handle color-specific image changes for edit
   const handleEditColorImageChange = (colorName, e) => {
@@ -456,7 +537,7 @@ const Dashboard = () => {
         await fetchProducts();
         setSelectedProducts([]);
         alert(`${count} product(s) deleted successfully!`);
-      } catch (error) {
+      } catch (_error) {
         alert('Network error during bulk deletion.');
       }
     }
@@ -473,146 +554,11 @@ const Dashboard = () => {
         } else {
           alert(result.data.message || 'Error deleting product.');
         }
-      } catch (error) {
+      } catch (_error) {
         alert('Network error during product deletion.');
       }
     }
   };
-
-  const handleBulkUploadDispatch = async (e) => {
-    e.preventDefault();
-    if (!dataGridFile) {
-      setBulkError("System demands a valid CSV/Excel file target before ingestion initialization.");
-      return;
-    }
-
-    setBulkProcessing(true);
-    setBulkError(null);
-    setBulkResponse(null);
-
-    try {
-      const result = await productAPI.bulkUploadProducts(dataGridFile);
-      if (result.ok) {
-        setBulkResponse(result.data);
-        fetchProducts();
-      } else {
-        setBulkError(result.data.message || "An runtime exception occurred during array parsing workflows.");
-      }
-    } catch (err) {
-      setBulkError("Infrastructural transport loss or API routing exception.");
-    } finally {
-      setBulkProcessing(false);
-    }
-  };
-
-  const clearBulkFormAllocation = () => {
-    setDataGridFile(null);
-    setAssetImages([]);
-    setBulkResponse(null);
-    setBulkError(null);
-  };
-
-  const SidebarNavigationContent = () => (
-    <>
-      <div className="space-y-8">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-red-600/10 border border-red-500/30 rounded-lg flex items-center justify-center text-red-500">
-              <Database size={14} className="stroke-[2]" />
-            </div>
-            <span className="text-sm font-bold tracking-[0.25em] text-white uppercase" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Sheth Control
-            </span>
-          </div>
-          <p className="text-[13px] font-mono text-neutral-500 uppercase tracking-widest pl-9">Production ERP Engine</p>
-        </div>
-
-        <nav className="">
-          <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-[0.3em] block mb-3 pl-3">Data Matrix Viewports</span>
-
-          <button
-            onClick={() => { setActiveTab('inventory'); setMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group ${activeTab === 'inventory' ? 'bg-neutral-900 text-white border border-neutral-800' : 'text-neutral-400 hover:text-neutral-100'}`}
-          >
-            <BarChart3 size={14} className={activeTab === 'inventory' ? 'text-red-500' : 'text-neutral-500 group-hover:text-neutral-400'} />
-            Inventory Overview
-          </button>
-
-          <span className="text-[9px] font-bold text-neutral-600 uppercase tracking-[0.3em] block pt-6 mb-3 pl-3">Ingestion Protocols</span>
-
-          <button
-            onClick={() => { setActiveTab('new-product'); setMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group ${activeTab === 'new-product' ? 'bg-neutral-900 text-white border border-neutral-800' : 'text-neutral-400 hover:text-neutral-100'}`}
-          >
-            <PlusCircle size={14} className={activeTab === 'new-product' ? 'text-red-500' : 'text-neutral-500 group-hover:text-neutral-400'} />
-            Single Upload
-          </button>
-
-          <button
-            onClick={() => navigate('/admin/bulk-upload')}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group text-neutral-400 hover:text-neutral-100"
-          >
-            <FileSpreadsheet size={14} className="text-neutral-500 group-hover:text-neutral-400" />
-            Bulk CSV Ingest
-            <ArrowRight size={12} className="ml-auto text-neutral-600" />
-          </button>
-          <button
-            onClick={() => { setActiveTab('popup'); setMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group ${activeTab === 'popup' ? 'bg-neutral-900 text-white border border-neutral-800' : 'text-neutral-400 hover:text-neutral-100'}`}
-          >
-            <Package size={14} className={activeTab === 'popup' ? 'text-red-500' : 'text-neutral-500 group-hover:text-neutral-400'} />
-            New Product Popup
-            <ArrowRight size={12} className="ml-auto text-neutral-600" />
-          </button>
-
-          <button
-            onClick={() => navigate('/admin/blogs')}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group text-neutral-400 hover:text-neutral-100"
-          >
-            <BookOpen size={14} className="text-neutral-500 group-hover:text-neutral-400" />
-            Blog Management
-            <ArrowRight size={12} className="ml-auto text-neutral-600" />
-          </button>
-
-          <button
-            onClick={() => navigate('/admin/careers')}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium tracking-wider uppercase transition-all duration-200 group text-neutral-400 hover:text-neutral-100"
-          >
-            <Briefcase size={14} className="text-neutral-500 group-hover:text-neutral-400" />
-            Career Management
-            <ArrowRight size={12} className="ml-auto text-neutral-600" />
-          </button>
-        </nav>
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <a
-            href="/"
-            target="_blank"
-            rel="noreferrer"
-            className="w-full flex items-center justify-between px-4 py-3.5 bg-neutral-950 hover:bg-neutral-900 border border-neutral-900 hover:border-neutral-800 rounded-xl transition-all duration-300 group text-xs text-neutral-300 font-medium tracking-wider uppercase"
-          >
-            <span className="flex items-center gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Visit Live Site
-            </span>
-            <ExternalLink size={12} className="text-neutral-500 group-hover:text-white transition-colors" />
-          </a>
-        </div>
-
-        <div className="border-t border-neutral-900 pt-4">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3.5 bg-neutral-950 hover:bg-neutral-900 border border-neutral-900 hover:border-neutral-800 rounded-xl transition-all duration-300 group text-xs text-neutral-300 font-medium tracking-wider uppercase"
-          >
-            <LogOut size={14} className="text-neutral-500 group-hover:text-red-500 transition-colors" />
-            Log Out
-          </button>
-        </div>
-      </div>
-    </>
-  );
 
   return (
 <div className="bg-[#050506] text-[#e4e4e7] h-screen overflow-hidden selection:bg-white selection:text-black font-sans antialiased flex flex-col md:flex-row relative">
@@ -631,7 +577,7 @@ const Dashboard = () => {
         </button>
       </header>
 
-<aside className="hidden md:flex w-72 h-screen shrink-0 bg-neutral-950 border-r border-neutral-900 flex-col justify-between p-6 fixed left-0 top-0 z-30">        <SidebarNavigationContent />
+<aside className="hidden md:flex w-72 h-screen shrink-0 bg-neutral-950 border-r border-neutral-900 flex-col justify-between p-6 fixed left-0 top-0 z-30">        <SidebarNavigationContent activeTab={activeTab} setActiveTab={setActiveTab} setMobileMenuOpen={setMobileMenuOpen} navigate={navigate} handleLogout={handleLogout} />
       </aside>
 
       <AnimatePresence>
@@ -643,7 +589,7 @@ const Dashboard = () => {
             transition={{ type: "tween", duration: 0.25 }}
             className="md:hidden fixed inset-y-0 left-0 w-80 bg-neutral-950 border-r border-neutral-900 z-50 p-6 flex flex-col justify-between shadow-2xl top-16 h-[calc(100vh-4rem)]"
           >
-            <SidebarNavigationContent />
+            <SidebarNavigationContent activeTab={activeTab} setActiveTab={setActiveTab} setMobileMenuOpen={setMobileMenuOpen} navigate={navigate} handleLogout={handleLogout} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -1011,8 +957,7 @@ const Dashboard = () => {
             if (item.value === undefined || item.value === null || item.value === '' || item.value === 'None') return false;
             if (Array.isArray(item.value) && item.value.length === 0) return false;
             if (typeof item.value === 'object' && item.value !== null) {
-              if (typeof item.value === 'string') {} 
-              else if (Object.keys(item.value).length === 0) return false;
+              if (Object.keys(item.value).length === 0) return false;
             }
             return true;
           }).map((item, idx) => {
