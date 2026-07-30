@@ -175,7 +175,7 @@ const Products = () => {
             <div
               className="sticky top-24 h-fit bg-white dark:bg-[#1C1F23] lg:bg-transparent lg:dark:bg-transparent border lg:border-0 border-[#DEDDD6] dark:border-[#2A2D32] p-4 lg:p-0 space-y-6"
             >
-              <div className="space-y-3">
+              <div className="space-y-3 ">
                 <div className="flex items-center gap-2 pb-2 border-b border-[#DEDDD6] dark:border-[#2A2D32]">
                   <Filter size={16} strokeWidth={1.5} className="text-red-600" />
                   <span className="text-[12px] font-mono uppercase tracking-wider text-slate-800">Categories</span>
