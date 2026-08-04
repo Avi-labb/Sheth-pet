@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Calendar, Clock, ArrowRight, X } from 'lucide-react'
 import { blogAPI } from '../services/api'
+import { resolveImageUrl } from '../utils/productImages'
 
 const Blog = () => {
   const [blogs, setBlogs] = useState([])
@@ -91,8 +92,7 @@ const Blog = () => {
                   {blog.image ? (
                     <div className="h-[200px] bg-slate-100 overflow-hidden">
                       <img
-                      src={`/uploads/${blog.image}`}
-                      //src={`/uploads/${blog.image}`}
+                      src={resolveImageUrl(blog.image)}
                         alt={blog.title}
                         className="w-full h-full object-cover"
                       />
@@ -190,8 +190,7 @@ const Blog = () => {
                 <div className="bg-slate-100 overflow-hidden">
                   {selectedBlog.image ? (
                     <img
-                     src={`/uploads/${selectedBlog.image}`}
-                     // src={`/uploads/${selectedBlog.image}`}
+                     src={resolveImageUrl(selectedBlog.image)}
                       alt={selectedBlog.title}
                       className="w-full h-full object-cover"
                       style={{ minHeight: '500px' }}

@@ -13,6 +13,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { productAPI } from '../../services/api';
 import SingleUpload from './SingleUpload';
 import PopupManager from './PopupManager';
+import { resolveImageUrl } from '../../utils/productImages';
 
 const SidebarNavigationContent = ({ activeTab, setActiveTab, setMobileMenuOpen, navigate, handleLogout }) => (
   <>
@@ -360,8 +361,7 @@ const Dashboard = () => {
     const initialEditImagesPreview = {};
     if (product.images) {
       Object.entries(product.images).forEach(([colorName, filename]) => {
-        //initialEditImagesPreview[colorName] = `/uploads/${filename}`;
-        initialEditImagesPreview[colorName] = `/uploads/${filename}`;
+        initialEditImagesPreview[colorName] = resolveImageUrl(filename);
       });
     }
     
@@ -393,7 +393,7 @@ const Dashboard = () => {
       length: product.length || '',
     });
     if (product.image) {
-      setEditImagePreview(`/uploads/${product.image}`);
+      setEditImagePreview(resolveImageUrl(product.image));
     } else {
       setEditImagePreview(null);
     }
@@ -901,8 +901,7 @@ const Dashboard = () => {
               <div key={color} className="aspect-square bg-neutral-950 border border-neutral-800/80 rounded-xl overflow-hidden flex items-center justify-center p-3 group relative">
                 <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded text-xs font-mono text-white uppercase">{color}</div>
                 <img
-                 // src={`/uploads/${filename}`}
-                 src={`/uploads/${filename}`}
+                 src={resolveImageUrl(filename)}
                   alt={`${selectedProduct.name} - ${color}`}
                   className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
                 />
@@ -913,8 +912,7 @@ const Dashboard = () => {
           <div className="aspect-square w-full bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden flex items-center justify-center p-6 group relative">
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent pointer-events-none" />
             <img
-             src={`/uploads/${selectedProduct.image}`}
-             // src={`/uploads/${selectedProduct.image}`}
+             src={resolveImageUrl(selectedProduct.image)}
              alt={selectedProduct.name}
               className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
             />

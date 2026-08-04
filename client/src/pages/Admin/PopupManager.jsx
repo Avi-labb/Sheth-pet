@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Package } from 'lucide-react';
 import { productAPI } from '../../services/api';
+import { resolveImageUrl } from '../../utils/productImages';
 
 const PopupManager = ({ products, fetchProducts }) => {
   // Get latest popup product
@@ -64,13 +65,10 @@ const PopupManager = ({ products, fetchProducts }) => {
   const getProductImage = (product) => {
     if (product.images && Object.keys(product.images).length > 0) {
       const firstColor = Object.keys(product.images)[0];
-      return  `/uploads/${product.images[firstColor]}`;
-      //return `/uploads/${product.images[firstColor]}`;
+      return resolveImageUrl(product.images[firstColor]);
     }
     if (product.image) {
-      return  `/uploads/${product.image}`;
-      //return `/uploads/${product.image}`;
-      
+      return resolveImageUrl(product.image);
     }
     return null;
   };

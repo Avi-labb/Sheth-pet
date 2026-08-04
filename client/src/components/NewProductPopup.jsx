@@ -3,7 +3,8 @@ import { X, Sparkles, Tag, ArrowRight, Clock } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { productAPI } from '../services/api'
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext'
+import { resolveImageUrl } from '../utils/productImages';
 
 const NewProductPopup = () => {
   const [latestProduct, setLatestProduct] = useState(null);
@@ -176,12 +177,10 @@ const NewProductPopup = () => {
   const getProductImage = (product) => {
     if (product.images && Object.keys(product.images).length > 0) {
       const firstColor = Object.keys(product.images)[0];
-      //return `/uploads/${product.images[firstColor]}`;
-      return `/uploads/${product.images[firstColor]}`;
+      return resolveImageUrl(product.images[firstColor]);
     }
     if (product.image) {
-      //return `/uploads/${product.image}`;
-      return `/uploads/${product.image}`;
+      return resolveImageUrl(product.image);
     }
     return null;
   };

@@ -1,11 +1,25 @@
 import Blog from "../models/blogModel.js";
+import { uploadToCloudinary, isCloudinaryUrl } from "../utils/cloudinary.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// Create a blog post
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const uploadBlogImage = async (file) => {
+  if (!file) return null;
+  if (isCloudinaryUrl(file.filename || file)) return file.filename || file;
+
+  const filePath = file.path || path.join(__dirname, "../uploads", file.filename);
+  const result = await uploadToCloudinary(filePath, "sheth-pet/blogs");
+  return result ? result.url : (file.filename || null);
+};
+
 export const createBlog = async (req, res) => {
   try {
 
     const { title, description, content, author, tags, isPublished } = req.body;
-    
+
     if (!title || !description || !content) {
       return res.status(400).json({
         success: false,
@@ -13,7 +27,6 @@ export const createBlog = async (req, res) => {
       });
     }
 
-    // Generate slug from title
     const slug = title
       .toLowerCase()
       .replace(/[^\w\s-]/g, "")
@@ -30,7 +43,15 @@ export const createBlog = async (req, res) => {
     };
 
     if (req.file) {
-      blogData.image = req.file.filename;
+      const cloudinaryUrl = await uploadBlogImage(req.file);
+      if (cloudinaryUrl) {
+        blogData.image = cloudinaryUrl;
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to upload image",
+        });
+      }
     } else {
       return res.status(400).json({
         success: false,
@@ -38,7 +59,6 @@ export const createBlog = async (req, res) => {
       });
     }
 
-    // Handle tags
     if (tags) {
       if (typeof tags === 'string') {
         try {
@@ -67,7 +87,6 @@ export const createBlog = async (req, res) => {
   }
 };
 
-// Get all blogs
 export const getBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find().sort({ createdAt: -1 });
@@ -84,11 +103,10 @@ export const getBlogs = async (req, res) => {
   }
 };
 
-// Get single blog by id or slug
 export const getBlog = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     let blog;
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
       blog = await Blog.findById(id);
@@ -116,7 +134,6 @@ export const getBlog = async (req, res) => {
   }
 };
 
-// Update blog
 export const updateBlog = async (req, res) => {
   try {
 
@@ -141,7 +158,6 @@ export const updateBlog = async (req, res) => {
 
     if (body.title !== undefined) {
       updateData.title = body.title;
-      // Update slug if title changed
       updateData.slug = body.title
         .toLowerCase()
         .replace(/[^\w\s-]/g, "")
@@ -155,7 +171,6 @@ export const updateBlog = async (req, res) => {
       updateData.isPublished = body.isPublished === 'true' || body.isPublished === true;
     }
 
-    // Handle tags
     if (body.tags !== undefined) {
       let tags = body.tags;
       if (typeof tags === 'string') {
@@ -169,7 +184,10 @@ export const updateBlog = async (req, res) => {
     }
 
     if (req.file) {
-      updateData.image = req.file.filename;
+      const cloudinaryUrl = await uploadBlogImage(req.file);
+      if (cloudinaryUrl) {
+        updateData.image = cloudinaryUrl;
+      }
     }
 
     const updatedBlog = await Blog.findByIdAndUpdate(
@@ -192,7 +210,6 @@ export const updateBlog = async (req, res) => {
   }
 };
 
-// Delete blog
 export const deleteBlog = async (req, res) => {
   try {
     const { id } = req.params;

@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 
 import NewProductPopup from '../../components/NewProductPopup'
 import { useTheme } from '../../contexts/ThemeContext'
+import { resolveImageUrl } from '../../utils/productImages'
 
 // Import client logos
 import Abhay from '../../assets/images/images/ABHAY.png'
@@ -840,8 +841,7 @@ const categoryData = {
 
                         <img
 
-                         //src={`http://localhost:5000/uploads/${selectedProduct.image}`}
-                          src={`/uploads/${selectedProduct.image}`}
+                         src={resolveImageUrl(selectedProduct.image)}
 
                           alt={selectedProduct.name || selectedProduct.title}
 
