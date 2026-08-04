@@ -1,7 +1,6 @@
 
 import { motion } from 'framer-motion'
 import { ArrowUpRight, Sparkles, Eye, PenTool, Cpu, Factory, Download } from 'lucide-react'
-import Header from '../components/Header/Header'
 import videoFile from '../assets/desktopversion.mp4'
 import mobileFile from '../assets/mobileversion.mp4'
 
@@ -100,7 +99,6 @@ const Innovate = () => {
   ];
   return (
     <div className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden min-h-screen">
-      <Header />
 
       {/* Hero Section with Video */}
       <section className="relative  sm:min-h-screen flex items-center justify-center overflow-hidden">

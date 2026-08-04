@@ -7,7 +7,6 @@ import { productAPI } from '../../services/api'
 
 import { Link } from 'react-router-dom'
 
-import Header from '../../components/Header/Header'
 import NewProductPopup from '../../components/NewProductPopup'
 import { useTheme } from '../../contexts/ThemeContext'
 
@@ -265,7 +264,6 @@ const categoryData = {
   return (
     <div className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden min-h-screen">
       <NewProductPopup />
-      <Header />
       <section className="relative min-h-screen flex flex-col justify-between lg:justify-end overflow-hidden bg-white dark:bg-slate-950">
 
         {/* Floating 3D Shapes - Only on larger screens */}

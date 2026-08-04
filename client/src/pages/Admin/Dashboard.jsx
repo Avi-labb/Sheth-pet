@@ -120,7 +120,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading, logout } = useAuth();
 
-  const neckSizes = ['19mm', '22mm', '24mm', '25mm', '28mm', '30mm', '38mm', '46mm', '53mm', '60mm', '63mm', '73mm', '83mm', '96mm', '120mm'];
+  const neckSizes = ['19mm', '22mm', '24mm', '25mm', '28mm', '30mm', '38mm', '46mm', '53mm', '60mm', '63mm','69mm', '73mm', '83mm', '96mm', '120mm'];
 
   const [activeTab, setActiveTab] = useState('inventory'); // 'inventory', 'new-product', 'popup'
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

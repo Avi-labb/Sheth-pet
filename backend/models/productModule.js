@@ -94,8 +94,19 @@ productSchema.pre("save", async function () {
       this.neckProfile = [];
     }
 
-    // SKU must be provided manually by the admin — no automatic generation.
-    // The controller already validates presence + uniqueness before calling create().
+    // Generate SKU if needed
+    if (this.isNew && !this.sku) {
+      const counter = await Counter.findOneAndUpdate(
+        { name: "productSku" },
+        { $inc: { sequence: 1 } },
+        {
+          returnDocument: "after",
+          upsert: true,
+        }
+      );
+
+      this.sku = `SKU-${String(counter.sequence).padStart(4, "0")}`;
+    }
   } catch (error) {
     throw error;
   }

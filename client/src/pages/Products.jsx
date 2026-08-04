@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { Package, ChevronRight, Filter, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../services/api'
 import { getProductImage, getProductColors } from '../utils/productImages'
-import Header from '../components/Header/Header'
 
 const Products = () => {
   const navigate = useNavigate()
@@ -166,8 +165,6 @@ const Products = () => {
       className="min-h-screen bg-[#FAFAF8] dark:bg-[#15171A] text-[#15171A] dark:text-[#F2F1ED] pt-16 selection:bg-[#D4530F] selection:text-white"
       style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
     >
-      <Header />
-
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* ── LEFT SIDEBAR: Sticky ── */}
