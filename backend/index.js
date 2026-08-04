@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
 import connectDB from "./db/mongoose.js";
 import adminRoutes from "./routes/adminRoute.js";
@@ -23,39 +24,39 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const corsOrigin = process.env.CORS_ORIGIN || true;
 app.use(
   cors({
-    origin: true,
+    origin: corsOrigin,
     credentials: true,
   })
 );
 
 app.use(cookieParser());
 
-// Debug middleware to log all requests
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
 
-// Static uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+const uploadsPath = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+  console.log("✅ Created uploads directory");
+}
+app.use("/uploads", express.static(uploadsPath));
 
-// Connect Database
 connectDB();
 
-// API Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRouter);
 app.use("/api/blogs", blogRouter);
 app.use("/api/careers", careerRouter);
 app.use("/api/contact", contactRouter);
 
-// Global error handler - this will catch any errors from middleware or routes
 app.use((error, req, res, next) => {
   console.error('\n❌ UNHANDLED ERROR ❌');
   console.error('Error message:', error.message);
@@ -68,25 +69,34 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Test Route
 app.get("/test", (req, res) => {
   res.json({ message: "Test route working! " });
 });
 
-// React Build Path
 const distPath = path.join(__dirname, "dist");
-
 console.log("Dist Path:", distPath);
 
-// Serve React Build
-app.use(express.static(distPath));
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
 
-// React Router Catch-All
-app.use((req, res) => {
-  res.sendFile(path.join(distPath, "index.html"));
-});
+  app.get(/^(?!\/api\/|\/uploads\/|\/test).*/, (req, res) => {
+    const indexPath = path.join(distPath, "index.html");
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).json({ success: false, message: "Frontend not built. Run 'npm run build' in backend folder." });
+    }
+  });
+} else {
+  console.warn("⚠️  dist folder not found. Frontend will not be served. Run 'npm run build' to build the frontend.");
+  app.get(/^(?!\/api\/|\/uploads\/|\/test).*/, (req, res) => {
+    res.status(404).json({
+      success: false,
+      message: "Frontend dist folder not found. Run 'npm run build' in the backend folder to build and deploy.",
+    });
+  });
+}
 
-// Start Server
 const PORT = process.env.PORT || 5000;
 
 console.log("About to start server.");

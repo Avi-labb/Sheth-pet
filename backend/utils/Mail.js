@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: parseInt(process.env.SMTP_PORT, 10),
-  secure: false, // true for 465, false for other ports
+  secure: false,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS
@@ -13,10 +13,9 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Verify connection on startup
 transporter.verify((error, success) => {
   if (error) {
-    console.error("❌ SMTP Connection Error:", error);
+    console.warn("⚠️  SMTP Server not available on startup. Will retry when sending emails.");
   } else {
     console.log("✅ SMTP Server is ready to send emails!");
   }
