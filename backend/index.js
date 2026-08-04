@@ -70,7 +70,7 @@ app.use((error, req, res, next) => {
 
 // Test Route
 app.get("/test", (req, res) => {
-  res.json({ message: "Test route working!" });
+  res.json({ message: "Test route working! " });
 });
 
 // React Build Path
@@ -89,7 +89,7 @@ app.use((req, res) => {
 // Start Server
 const PORT = process.env.PORT || 5000;
 
-console.log("About to start server...");
+console.log("About to start server.");
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
