@@ -6,10 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "build:client": "cd ../client && npm install && npm run build",
-    "copy:dist": "node copy-dist.js",
-    "build": "npm run build:client && npm run copy:dist",
-    "deploy": "npm run build && npm start",
+  "build": "echo Build completed",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

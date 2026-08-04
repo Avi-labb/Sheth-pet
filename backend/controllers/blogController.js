@@ -1,10 +1,29 @@
 import Blog from "../models/blogModel.js";
 import { uploadToCloudinary, isCloudinaryUrl } from "../utils/cloudinary.js";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const deleteLocalFile = (filePath) => {
+  if (!filePath) return;
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log(`[Cleanup] Deleted local blog file: ${filePath}`);
+    }
+  } catch (err) {
+    console.warn(`[Cleanup] Failed to delete local blog file ${filePath}:`, err.message);
+  }
+};
+
+const deleteLocalFileSafe = (file) => {
+  if (!file) return;
+  const filePath = file.path || (file.filename ? path.join(__dirname, "../uploads", file.filename) : null);
+  deleteLocalFile(filePath);
+};
 
 const uploadBlogImage = async (file) => {
   if (!file) return null;
@@ -12,7 +31,12 @@ const uploadBlogImage = async (file) => {
 
   const filePath = file.path || path.join(__dirname, "../uploads", file.filename);
   const result = await uploadToCloudinary(filePath, "sheth-pet/blogs");
-  return result ? result.url : (file.filename || null);
+
+  if (result && result.url) {
+    deleteLocalFile(filePath);
+    return result.url;
+  }
+  return file.filename || null;
 };
 
 export const createBlog = async (req, res) => {

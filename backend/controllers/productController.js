@@ -4,10 +4,29 @@ import Category from "../models/categoryModel.js";
 import Counter from "../models/counterModel.js";
 import { uploadToCloudinary, isCloudinaryUrl } from "../utils/cloudinary.js";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const deleteLocalFile = (filePath) => {
+  if (!filePath) return;
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log(`[Cleanup] Deleted local file: ${filePath}`);
+    }
+  } catch (err) {
+    console.warn(`[Cleanup] Failed to delete local file ${filePath}:`, err.message);
+  }
+};
+
+const deleteLocalFileSafe = (file) => {
+  if (!file) return;
+  const filePath = file.path || (file.filename ? path.join(__dirname, "../uploads", file.filename) : null);
+  deleteLocalFile(filePath);
+};
 
 const uploadFileToCloudinary = async (file, folder = "sheth-pet/products") => {
   if (!file) return null;
@@ -15,10 +34,16 @@ const uploadFileToCloudinary = async (file, folder = "sheth-pet/products") => {
 
   const filePath = file.path || path.join(__dirname, "../uploads", file.filename);
   const result = await uploadToCloudinary(filePath, folder);
-  return result ? result.url : (file.filename || null);
+
+  if (result && result.url) {
+    deleteLocalFile(filePath);
+    return result.url;
+  }
+  return file.filename || null;
 };
 
 export const bulkUploadProducts = async (req, res) => {
+  const filesToCleanup = [];
   try {
     if (!req.files || !req.files['file'] || req.files['file'].length === 0) {
       return res.status(400).json({
@@ -28,6 +53,7 @@ export const bulkUploadProducts = async (req, res) => {
     }
 
     const spreadsheetFile = req.files['file'][0];
+    filesToCleanup.push(spreadsheetFile);
 
     const imageMap = new Map();
     if (req.files['images'] && req.files['images'].length > 0) {
@@ -47,7 +73,7 @@ export const bulkUploadProducts = async (req, res) => {
           const fallbackName = imageFile.filename;
           imageMap.set(key, fallbackName);
           imageMap.set(keyWithoutExt, fallbackName);
-          console.log(`[WARN] Cloudinary failed for ${key}, using local filename: ${fallbackName}`);
+          console.log(`[WARN] Cloudinary failed for ${key}, keeping local file: ${fallbackName}`);
         }
       });
 
@@ -292,6 +318,9 @@ export const bulkUploadProducts = async (req, res) => {
       success: false,
       message: error.message,
     });
+  } finally {
+    console.log(`[Cleanup] Cleaning up ${filesToCleanup.length} temp uploaded files...`);
+    filesToCleanup.forEach(file => deleteLocalFileSafe(file));
   }
 };
 
