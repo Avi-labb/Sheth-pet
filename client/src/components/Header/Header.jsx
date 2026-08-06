@@ -4,7 +4,6 @@ import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, ChevronRight, ChevronDown } from 'lucide-react'
 import { productAPI } from '../../services/api'
 import logo from '../../assets/images/radhe-logo.png'
-import { useTheme } from '../../contexts/ThemeContext'
 
 const navItems = [
   { name: 'Manufacturing', path: '/manufacturing' },
@@ -51,7 +50,6 @@ const Header = ({ onCategorySelect }) => {
   const [showByType, setShowByType] = useState(false)
   const [showByIndustry, setShowByIndustry] = useState(false)
   const location = useLocation()
-  const { theme } = useTheme()
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -68,10 +66,7 @@ const Header = ({ onCategorySelect }) => {
   return (
     <>
       <nav
-        className={`fixed py-4 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 backdrop-blur-xl h-16 sm:h-18 shadow-lg ${theme === 'light'
-            ? 'bg-white/80 border-slate-200 shadow-gray-200/20'
-            : 'bg-slate-900/80 border-slate-800 shadow-black/20'
-          }`}
+        className="fixed py-4 top-0 left-0 right-0 z-50 font-sans border-b transition-all duration-500 backdrop-blur-xl h-16 sm:h-18 shadow-lg bg-white/80 border-slate-200 shadow-gray-200/20"
       >
       <div className="max-w-8xl mx-auto px-3 sm:px-5 md:px-10 h-full flex items-center justify-between">
 
@@ -95,12 +90,10 @@ const Header = ({ onCategorySelect }) => {
             />
           </div>
           <div className="flex flex-col items-start sm:flex-row sm:items-center gap-0.5 sm:gap-2 leading-tight">
-            <span className={`text-base sm:text-lg font-bold tracking-wider ${theme === 'light' ? 'text-slate-900' : 'text-white'
-              }`}>
+            <span className="text-base sm:text-lg font-bold tracking-wider text-slate-900">
               SHETH
             </span>
-            <span className={`text-[10px] sm:text-sm font-medium uppercase tracking-wider ${theme === 'light' ? 'text-slate-600' : 'text-slate-400'
-              }`}>
+            <span className="text-[10px] sm:text-sm font-medium uppercase tracking-wider text-slate-600">
               PET & POLYMERS
             </span>
           </div>
@@ -115,10 +108,7 @@ const Header = ({ onCategorySelect }) => {
             onMouseLeave={() => setShowDropdown(false)}
           >
             <button
-              className={`relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group flex items-center gap-1 ${theme === 'light'
-                  ? 'text-slate-700 hover:text-slate-900'
-                  : 'text-slate-300 hover:text-white'
-                }`}
+              className="relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group flex items-center gap-1 text-slate-700 hover:text-slate-900"
             >
               <span className="relative uppercase z-10">Products</span>
               <ChevronDown
@@ -134,27 +124,18 @@ const Header = ({ onCategorySelect }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 15 }}
                   transition={{ duration: 0.2 }}
-                  className={`absolute top-full left-1/2 -translate-x-1/2 mt-4
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-4
                              rounded-2xl shadow-2xl
-                             min-w-[500px] overflow-hidden ${theme === 'light'
-                      ? 'bg-white/10 border border-slate-200'
-                      : 'bg-slate-900 border border-slate-800'
-                    }`}
+                             min-w-[500px] overflow-hidden bg-white/10 border border-slate-200"
                 ><div
-                  className={`w-full max-w-lg mx-auto rounded-2xl shadow-xl border overflow-hidden transition-all duration-300 ${theme === 'light'
-                      ? 'bg-white border-slate-100 text-slate-600'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
-                    }`}
+                  className="w-full max-w-lg mx-auto rounded-2xl shadow-xl border overflow-hidden transition-all duration-300 bg-white border-slate-100 text-slate-600"
                 >
                     {/* Categories Grid Container */}
                     <div className="grid grid-cols-2 gap-x-12 gap-y-2 p-8">
 
                       {/* Column 1: By Industry */}
                       <div className="flex flex-col">
-                        <h3 className={`font-bold text-xl tracking-tight mb-5 border-b pb-3 ${theme === 'light'
-                            ? 'text-slate-900 border-slate-100'
-                            : 'text-white border-slate-800'
-                          }`}>
+                        <h3 className="font-bold text-xl tracking-tight mb-5 border-b pb-3 text-slate-900 border-slate-100">
                           By Industry
                         </h3>
 
@@ -164,10 +145,7 @@ const Header = ({ onCategorySelect }) => {
                               key={item.name}
                               to={item.path}
                               onClick={() => setShowDropdown(false)}
-                              className={`transition-colors duration-200 py-1 text-[15px] font-medium ${theme === 'light'
-                                  ? 'text-slate-700 hover:text-slate-900'
-                                  : 'text-slate-400 hover:text-white'
-                                }`}
+                              className="transition-colors duration-200 py-1 text-[15px] font-medium text-slate-700 hover:text-slate-900"
                             >
                               {item.name}
                             </Link>
@@ -177,10 +155,7 @@ const Header = ({ onCategorySelect }) => {
 
                       {/* Column 2: By Type */}
                       <div className="flex flex-col">
-                        <h3 className={`font-bold text-xl tracking-tight mb-5 border-b pb-3 ${theme === 'light'
-                            ? 'text-slate-900 border-slate-100'
-                            : 'text-white border-slate-800'
-                          }`}>
+                        <h3 className="font-bold text-xl tracking-tight mb-5 border-b pb-3 text-slate-900 border-slate-100">
                           By Type
                         </h3>
 
@@ -190,10 +165,7 @@ const Header = ({ onCategorySelect }) => {
                               key={item.name}
                               to={item.path}
                               onClick={() => setShowDropdown(false)}
-                              className={`transition-colors duration-200 py-1 text-[15px] font-medium ${theme === 'light'
-                                  ? 'text-slate-700 hover:text-slate-900'
-                                  : 'text-slate-400 hover:text-white'
-                                }`}
+                              className="transition-colors duration-200 py-1 text-[15px] font-medium text-slate-700 hover:text-slate-900"
                             >
                               {item.name}
                             </Link>
@@ -204,18 +176,12 @@ const Header = ({ onCategorySelect }) => {
 
                     {/* Dropdown Footer: View All Products */}
                     <div
-                      className={`border-t py-4 text-center transition-colors duration-200 ${theme === 'light'
-                          ? 'bg-slate-100 border-slate-100 hover:bg-slate-200/20'
-                          : 'bg-slate-950/40 border-slate-800 hover:bg-slate-950/80'
-                        }`}
+                      className="border-t py-4 text-center transition-colors duration-200 bg-slate-100 border-slate-100 hover:bg-slate-200/20"
                     >
                       <Link
                         to="/products"
                         onClick={() => setShowDropdown(false)}
-                        className={`block text-center font-medium transition-colors ${theme === 'light'
-                            ? 'text-slate-900 hover:text-slate-700'
-                            : 'text-white hover:text-slate-300'
-                          }`}
+                        className="block text-center font-medium transition-colors text-slate-900 hover:text-slate-700"
                       >
                         View All Products →
                       </Link>
@@ -232,10 +198,7 @@ const Header = ({ onCategorySelect }) => {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group ${theme === 'light'
-                    ? 'text-slate-700 hover:text-slate-900'
-                    : 'text-slate-300 hover:text-white'
-                  }`}
+                className="relative px-3 py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 rounded-lg group text-slate-700 hover:text-slate-900"
               >
                 <span className="relative uppercase z-10">{item.name}</span>
 
@@ -243,18 +206,14 @@ const Header = ({ onCategorySelect }) => {
                 {isActive && (
                   <motion.div
                     layoutId="activeTabCapsule"
-                    className={`absolute inset-0 border rounded-lg z-0 ${theme === 'light'
-                        ? 'bg-slate-900/10 border-slate-900/10'
-                        : 'bg-white/10 border-white/10'
-                      }`}
+                    className="absolute inset-0 border rounded-lg z-0 bg-slate-900/10 border-slate-900/10"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
 
                 {/* Hover Indicator Line */}
                 {!isActive && (
-                  <span className={`absolute bottom-0 left-4 right-4 h-[1px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center ${theme === 'light' ? 'bg-slate-900' : 'bg-white'
-                    }`} />
+                  <span className="absolute bottom-0 left-4 right-4 h-[1px] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center bg-slate-900" />
                 )}
               </Link>
             )
@@ -277,10 +236,7 @@ const Header = ({ onCategorySelect }) => {
         <div className="flex items-center gap-2 lg:hidden">
           
           <button
-            className={`relative z-50 p-2 rounded-full transition-all duration-200 border ${theme === 'light'
-                ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200'
-                : 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
-              }`}
+            className="relative z-50 p-2 rounded-full transition-all duration-200 border bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle Menu"
           >
@@ -293,16 +249,14 @@ const Header = ({ onCategorySelect }) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className={`fixed inset-0 top-0 left-0 w-full h-screen backdrop-blur-lg lg:hidden z-40 ${theme === 'light' ? 'bg-slate-900/40' : 'bg-black/40'
-              }`}
+            className="fixed inset-0 top-0 left-0 w-full h-screen backdrop-blur-lg lg:hidden z-40 bg-slate-900/40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
           >
             <motion.div
-              className={`absolute right-0 top-0 h-full w-full max-w-xs border-l shadow-2xl flex flex-col pt-12 pb-8 px-4 gap-2 overflow-y-auto max-h-screen no-scrollbar ${theme === 'light' ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'
-                }`}
+              className="absolute right-0 top-0 h-full w-full max-w-xs border-l shadow-2xl flex flex-col pt-12 pb-8 px-4 gap-2 overflow-y-auto max-h-screen no-scrollbar bg-white border-slate-200"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -310,19 +264,15 @@ const Header = ({ onCategorySelect }) => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Products Section */}
-              <div className={`border-b pb-3 mb-2 ${theme === 'light' ? 'border-slate-200' : 'border-slate-800'
-                }`}>
+              <div className="border-b pb-3 mb-2 border-slate-200">
                 <button
                   onClick={() => setShowProductsMenu(!showProductsMenu)}
-                  className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide ${theme === 'light' ? 'text-slate-900' : 'text-white'
-                    }`}
+                  className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide text-slate-900"
                 >
                   All Products
                   <ChevronDown
                     size={14}
-                    className={`transition-transform duration-300 ${showProductsMenu ? 'rotate-180' : ''} ${
-                      theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                    }`}
+                    className={`transition-transform duration-300 ${showProductsMenu ? 'rotate-180' : ''} text-slate-400`}
                   />
                 </button>
 
@@ -339,18 +289,12 @@ const Header = ({ onCategorySelect }) => {
                       <div className="mb-2">
                         <button
                           onClick={() => setShowByType(!showByType)}
-                          className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide ${theme === 'light'
-                              ? 'text-slate-900'
-                              : 'text-slate-600'
-                            }`}
+                          className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide text-slate-900"
                         >
-                          <span className={`text-xs font-semibold uppercase tracking-wider ${theme === 'light' ? 'text-slate-600' : 'text-red-800'
-                            }`}>By Type</span>
+                          <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">By Type</span>
                           <ChevronDown
                             size={14}
-                            className={`transition-transform duration-300 ${showByType ? 'rotate-180' : ''} ${
-                              theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                            }`}
+                            className={`transition-transform duration-300 ${showByType ? 'rotate-180' : ''} text-slate-400`}
                           />
                         </button>
                         <AnimatePresence>
@@ -371,15 +315,10 @@ const Header = ({ onCategorySelect }) => {
                                     setShowProductsMenu(false)
                                     setShowByType(false)
                                   }}
-                                  className={`flex items-center justify-between w-full px-4 py-2 pl-2 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
-                                      ? 'text-slate-600 hover:text-slate-900'
-                                      : 'text-slate-400 hover:text-white'
-                                    }`}
+                                  className="flex items-center justify-between w-full px-4 py-2 pl-2 rounded-xl text-sm font-medium tracking-wide transition-colors text-slate-600 hover:text-slate-900"
                                 >
                                   {item.name}
-                                  <ChevronRight size={14} className={
-                                    theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                                  } />
+                                  <ChevronRight size={14} className="text-slate-400" />
                                 </Link>
                               ))}
                             </motion.div>
@@ -391,18 +330,12 @@ const Header = ({ onCategorySelect }) => {
                       <div className="mb-2">
                         <button
                           onClick={() => setShowByIndustry(!showByIndustry)}
-                          className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide ${theme === 'light'
-                              ? 'text-slate-900'
-                              : 'text-slate-600'
-                            }`}
+                          className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide text-slate-900"
                         >
-                          <span className={`text-xs font-semibold uppercase tracking-wider ${theme === 'light' ? 'text-slate-600' : 'text-red-800'
-                            }`}>By Industry</span>
+                          <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">By Industry</span>
                           <ChevronDown
                             size={14}
-                            className={`transition-transform duration-300 ${showByIndustry ? 'rotate-180' : ''} ${
-                              theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                            }`}
+                            className={`transition-transform duration-300 ${showByIndustry ? 'rotate-180' : ''} text-slate-400`}
                           />
                         </button>
                         <AnimatePresence>
@@ -423,15 +356,10 @@ const Header = ({ onCategorySelect }) => {
                                     setShowProductsMenu(false)
                                     setShowByIndustry(false)
                                   }}
-                                  className={`flex items-center justify-between w-full px-4 py-2 pl-2 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
-                                      ? 'text-slate-600 hover:text-slate-900'
-                                      : 'text-slate-400 hover:text-white'
-                                    }`}
+                                  className="flex items-center justify-between w-full px-4 py-2 pl-2 rounded-xl text-sm font-medium tracking-wide transition-colors text-slate-600 hover:text-slate-900"
                                 >
                                   {item.name}
-                                  <ChevronRight size={14} className={
-                                    theme === 'light' ? 'text-slate-400' : 'text-slate-500'
-                                  } />
+                                  <ChevronRight size={14} className="text-slate-400" />
                                 </Link>
                               ))}
                             </motion.div>
@@ -446,10 +374,7 @@ const Header = ({ onCategorySelect }) => {
                           setIsOpen(false)
                           setShowProductsMenu(false)
                         }}
-                        className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-colors ${theme === 'light'
-                            ? 'text-teal-600 hover:text-teal-700'
-                            : 'text-teal-400 hover:text-teal-300'
-                          }`}
+                        className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-colors text-teal-600 hover:text-teal-700"
                       >
                         View All Products →
                       </Link>
@@ -466,28 +391,19 @@ const Header = ({ onCategorySelect }) => {
                     to={item.path}
                     className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200
                       ${isActive
-                        ? (theme === 'light'
-                          ? 'text-slate-900 bg-slate-100 border border-slate-200'
-                          : 'text-white bg-slate-800 border border-slate-700')
-                        : (theme === 'light'
-                          ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                          : 'text-slate-400 hover:text-white hover:bg-slate-800')
+                        ? 'text-slate-900 bg-slate-100 border border-slate-200'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                       }`}
                     onClick={() => setIsOpen(false)}
                   >
                     <span>{item.name}</span>
-                    <ChevronRight size={14} className={
-                      isActive
-                        ? (theme === 'light' ? 'text-slate-900' : 'text-white')
-                        : (theme === 'light' ? 'text-slate-400' : 'text-slate-500')
-                    } />
+                    <ChevronRight size={14} className={isActive ? 'text-slate-900' : 'text-slate-400'} />
                   </Link>
                 )
               })}
 
               {/* Mobile Enquire CTA placement */}
-              <div className={`mt-auto pt-6 border-t ${theme === 'light' ? 'border-slate-200' : 'border-slate-800'
-                }`}>
+              <div className="mt-auto pt-6 border-t border-slate-200">
                 <Link
                   to="/contact"
                   className="flex items-center justify-center w-full py-3 text-xs font-bold uppercase tracking-widest text-white bg-teal-600 rounded-xl hover:bg-teal-700 transition-colors"

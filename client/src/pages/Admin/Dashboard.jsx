@@ -131,6 +131,7 @@ const Dashboard = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [categories, setCategories] = useState(['Bottles', 'Jars', 'Caps', 'Preforms']);
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewSelectedColor, setViewSelectedColor] = useState(null);
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -155,6 +156,7 @@ const Dashboard = () => {
     diameter: '',
     pilfer: '',
     length: '',
+    colorSpecs: {}, // Object: { [colorName]: { volume, neckSize, weight, neckProfile, ofc, height, diameter, pilfer, length, capType, usage, keySpecs } }
   });
   // State for editing product
   const [editingProduct, setEditingProduct] = useState(null);
@@ -182,6 +184,7 @@ const Dashboard = () => {
     diameter: '',
     pilfer: '',
     length: '',
+    colorSpecs: {}, // Object: { [colorName]: { volume, neckSize, weight, neckProfile, ofc, height, diameter, pilfer, length, capType, usage, keySpecs } }
   });
   const [_editImagePreview, setEditImagePreview] = useState(null);
   const [editImagesPreview, setEditImagesPreview] = useState({}); // Object: { [colorName]: base64 string }
@@ -227,6 +230,11 @@ const Dashboard = () => {
       fetchCategories();
     }
   }, [isAuthenticated]);
+
+  // Reset view selected color when product selection changes or closes
+  useEffect(() => {
+    setViewSelectedColor(null);
+  }, [selectedProduct?._id]);
 
   if (isLoading) {
     return (
@@ -301,6 +309,7 @@ const Dashboard = () => {
           diameter: '',
           pilfer: '',
           length: '',
+          colorSpecs: {},
         });
         setImagePreview(null);
         setImagePreviews({});
@@ -367,6 +376,35 @@ const Dashboard = () => {
     
     // Initialize images with existing filenames (we'll keep these unless replaced with new files)
     const initialImages = { ...(product.images || {}) };
+
+    // Initialize colorSpecs - deep copy existing or create from existing flat specs for each color
+    let initialColorSpecs = {};
+    if (product.colorSpecs && typeof product.colorSpecs === 'object' && product.colorSpecs !== null) {
+      // Deep copy to avoid mutations
+      initialColorSpecs = JSON.parse(JSON.stringify(product.colorSpecs));
+      // Ensure each color has neckProfile as array
+      Object.keys(initialColorSpecs).forEach(colorKey => {
+        const spec = initialColorSpecs[colorKey];
+        if (spec && spec.neckProfile && !Array.isArray(spec.neckProfile)) {
+          if (typeof spec.neckProfile === 'string') {
+            try {
+              spec.neckProfile = JSON.parse(spec.neckProfile);
+            } catch {
+              if (spec.neckProfile.includes(',')) {
+                spec.neckProfile = spec.neckProfile.split(',').map(c => c.trim()).filter(c => c);
+              } else {
+                spec.neckProfile = [spec.neckProfile];
+              }
+            }
+          } else {
+            spec.neckProfile = [spec.neckProfile];
+          }
+        } else if (spec && !spec.neckProfile) {
+          spec.neckProfile = [];
+        }
+      });
+    }
+
     setEditProductData({
       name: product.name || '',
       sku: product.sku || '',
@@ -391,6 +429,7 @@ const Dashboard = () => {
       diameter: product.diameter || '',
       pilfer: product.pilfer || '',
       length: product.length || '',
+      colorSpecs: initialColorSpecs,
     });
     if (product.image) {
       setEditImagePreview(resolveImageUrl(product.image));
@@ -421,6 +460,68 @@ const Dashboard = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Helper to get edit color spec value for a field
+  const getEditColorSpecValue = (colorName, field) => {
+    if (editProductData.colorSpecs && editProductData.colorSpecs[colorName] && editProductData.colorSpecs[colorName][field] !== undefined) {
+      return editProductData.colorSpecs[colorName][field];
+    }
+    return '';
+  };
+
+  // Helper to set edit color spec value for a field
+  const setEditColorSpecValue = (colorName, field, value) => {
+    setEditProductData(prev => {
+      const currentColorSpecs = prev.colorSpecs || {};
+      const currentColorEntry = currentColorSpecs[colorName] || {};
+      return {
+        ...prev,
+        colorSpecs: {
+          ...currentColorSpecs,
+          [colorName]: {
+            ...currentColorEntry,
+            [field]: value
+          }
+        }
+      };
+    });
+  };
+
+  // Helper to get edit color neckProfile array
+  const getEditColorNeckProfile = (colorName) => {
+    if (editProductData.colorSpecs && editProductData.colorSpecs[colorName] && editProductData.colorSpecs[colorName].neckProfile) {
+      return Array.isArray(editProductData.colorSpecs[colorName].neckProfile)
+        ? editProductData.colorSpecs[colorName].neckProfile
+        : [editProductData.colorSpecs[colorName].neckProfile];
+    }
+    return [];
+  };
+
+  // Helper to toggle edit color neckProfile entry
+  const toggleEditColorNeckProfile = (colorName, profile, isChecked) => {
+    setEditProductData(prev => {
+      const currentColorSpecs = prev.colorSpecs || {};
+      const currentColorEntry = currentColorSpecs[colorName] || {};
+      let currentProfiles = getEditColorNeckProfile(colorName);
+
+      if (isChecked && !currentProfiles.includes(profile)) {
+        currentProfiles = [...currentProfiles, profile];
+      } else if (!isChecked) {
+        currentProfiles = currentProfiles.filter((p) => p !== profile);
+      }
+
+      return {
+        ...prev,
+        colorSpecs: {
+          ...currentColorSpecs,
+          [colorName]: {
+            ...currentColorEntry,
+            neckProfile: currentProfiles
+          }
+        }
+      };
+    });
   };
 
   const handleUpdateProduct = async (e) => {
@@ -456,6 +557,9 @@ const Dashboard = () => {
       
       // Handle marketSegments array - stringify it
       formData.append('marketSegments', JSON.stringify(editProductData.marketSegments));
+      
+      // Handle colorSpecs object - stringify it
+      formData.append('colorSpecs', JSON.stringify(editProductData.colorSpecs));
       
       // Add single image if present (for backward compatibility)
       if (editProductData.image) {
@@ -497,6 +601,7 @@ const Dashboard = () => {
           diameter: '',
           pilfer: '',
           length: '',
+          colorSpecs: {},
         });
         setEditImagePreview(null);
         setEditImagesPreview({});
@@ -894,83 +999,272 @@ const Dashboard = () => {
 
       {/* Left Column: Product Showcase (3/7 Width) */}
       <div className="md:col-span-3 flex flex-col gap-4 sticky top-0">
-        {/* Show per-color images if available */}
-        {selectedProduct.images && Object.keys(selectedProduct.images).length > 0 ? (
-          <div className="grid grid-cols-2 gap-3">
-            {Object.entries(selectedProduct.images).map(([color, filename]) => (
-              <div key={color} className="aspect-square bg-neutral-950 border border-neutral-800/80 rounded-xl overflow-hidden flex items-center justify-center p-3 group relative">
-                <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded text-xs font-mono text-white uppercase">{color}</div>
-                <img
-                 src={resolveImageUrl(filename)}
-                  alt={`${selectedProduct.name} - ${color}`}
-                  className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                />
+        {/* Color Variant Selector for View */}
+        {(() => {
+          const viewColors = (() => {
+            if (selectedProduct.images && Object.keys(selectedProduct.images).length > 0) {
+              return Object.keys(selectedProduct.images);
+            }
+            return Array.isArray(selectedProduct.color) ? selectedProduct.color : (selectedProduct.color ? [selectedProduct.color] : []);
+          })();
+
+          // Helper to get effective view spec
+          const getViewEffectiveSpec = (fieldName) => {
+            if (viewSelectedColor && selectedProduct.colorSpecs && selectedProduct.colorSpecs[viewSelectedColor]) {
+              const colorSpec = selectedProduct.colorSpecs[viewSelectedColor];
+              if (colorSpec[fieldName] !== undefined && colorSpec[fieldName] !== null && colorSpec[fieldName] !== '') {
+                return colorSpec[fieldName];
+              }
+            }
+            return selectedProduct[fieldName];
+          };
+
+          const formatViewSpecValue = (value) => {
+            if (Array.isArray(value)) return value.join(', ');
+            return value;
+          };
+
+          const getViewMoq = () => {
+            if (viewSelectedColor && selectedProduct.moqPackaging) {
+              if (typeof selectedProduct.moqPackaging === 'object') {
+                if (selectedProduct.moqPackaging[viewSelectedColor]) {
+                  return selectedProduct.moqPackaging[viewSelectedColor];
+                }
+                const colorLower = viewSelectedColor.toLowerCase();
+                const matchingKey = Object.keys(selectedProduct.moqPackaging).find(key => key.toLowerCase() === colorLower);
+                if (matchingKey) return selectedProduct.moqPackaging[matchingKey];
+              }
+            }
+            return typeof selectedProduct.moqPackaging === 'object' && selectedProduct.moqPackaging !== null
+              ? Object.entries(selectedProduct.moqPackaging).map(([c, m]) => `${c}: ${m}`).join(', ')
+              : selectedProduct.moqPackaging;
+          };
+
+          const hasColorSpecs = selectedProduct.colorSpecs && Object.keys(selectedProduct.colorSpecs).length > 0;
+
+          const effCapType = getViewEffectiveSpec('capType');
+          const effUsage = getViewEffectiveSpec('usage');
+          const effVolume = getViewEffectiveSpec('volume');
+          const effNeckSize = getViewEffectiveSpec('neckSize');
+          const effNeckProfile = getViewEffectiveSpec('neckProfile');
+          const effOFC = getViewEffectiveSpec('ofc');
+          const effHeight = getViewEffectiveSpec('height');
+          const effDiameter = getViewEffectiveSpec('diameter');
+          const effPilfer = getViewEffectiveSpec('pilfer');
+          const effLength = getViewEffectiveSpec('length');
+          const effWeight = getViewEffectiveSpec('weight');
+          const effMoq = getViewMoq();
+
+          const specItems = [
+            { label: 'Category', value: selectedProduct.category },
+            { label: viewColors.length > 1 ? `Color · ${viewSelectedColor || 'All'}` : 'Color Variant', value: (Array.isArray(selectedProduct.color) ? selectedProduct.color.join(', ') : selectedProduct.color) },
+            { label: 'Size Dimensions', value: selectedProduct.size },
+            { label: 'Cap Specification', value: effCapType },
+            { label: 'MOQ Packaging', value: effMoq },
+            { label: 'Intended Usage', value: effUsage },
+            { label: 'Volume', value: formatViewSpecValue(effVolume) },
+            { label: 'Neck Size', value: formatViewSpecValue(effNeckSize) },
+            { label: 'Neck Profile', value: formatViewSpecValue(effNeckProfile) },
+            { label: 'OFC', value: formatViewSpecValue(effOFC) },
+            { label: 'Height', value: formatViewSpecValue(effHeight) },
+            { label: 'Diameter', value: formatViewSpecValue(effDiameter) },
+            { label: 'Pilfer', value: formatViewSpecValue(effPilfer) },
+            { label: 'Length', value: formatViewSpecValue(effLength) },
+            { label: 'Weight', value: formatViewSpecValue(effWeight) },
+            { label: 'Market Segments', value: (Array.isArray(selectedProduct.marketSegments) ? selectedProduct.marketSegments.join(', ') : selectedProduct.marketSegments) },
+          ];
+
+          return (
+            <>
+              {/* Show per-color images if available */}
+              {selectedProduct.images && Object.keys(selectedProduct.images).length > 0 ? (
+                <div className="grid grid-cols-2 gap-3">
+                  {Object.entries(selectedProduct.images).map(([color, filename]) => {
+                    const isSelected = viewSelectedColor === color;
+                    return (
+                      <div
+                        key={color}
+                        className={`aspect-square bg-neutral-950 border rounded-xl overflow-hidden flex items-center justify-center p-3 group relative cursor-pointer transition-all ${isSelected ? 'border-red-500 ring-2 ring-red-500/40' : 'border-neutral-800/80 hover:border-neutral-700'}`}
+                        onClick={() => setViewSelectedColor(color)}
+                      >
+                        <div className="absolute top-2 left-2 bg-black/70 px-2 py-1 rounded text-xs font-mono text-white uppercase">{color}</div>
+                        <img
+                          src={resolveImageUrl(filename)}
+                          alt={`${selectedProduct.name} - ${color}`}
+                          className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : selectedProduct.image ? (
+                <div className="aspect-square w-full bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden flex items-center justify-center p-6 group relative">
+                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent pointer-events-none" />
+                  <img
+                    src={resolveImageUrl(selectedProduct.image)}
+                    alt={selectedProduct.name}
+                    className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-square w-full bg-neutral-950 border border-neutral-800/80 rounded-2xl flex items-center justify-center">
+                  <div className="text-neutral-600 text-center space-y-3">
+                    <Package size={56} className="mx-auto opacity-40 stroke-[1.5]" />
+                    <p className="text-xs font-mono uppercase tracking-widest text-neutral-500">No Asset Available</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Color selector pills (when images aren't clickable or as alternative) */}
+              {viewColors.length > 1 && (
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] font-mono">
+                    Select Color Variant {hasColorSpecs && <span className="text-red-500">· Specs Change</span>}
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setViewSelectedColor(null)}
+                      className={`px-3 py-1.5 text-[11px] font-mono uppercase rounded-lg border transition-all ${!viewSelectedColor ? 'bg-neutral-100 text-black border-neutral-100' : 'bg-transparent text-neutral-400 border-neutral-800 hover:border-neutral-700 hover:text-neutral-200'}`}
+                    >
+                      All / Default
+                    </button>
+                    {viewColors.map((color) => {
+                      const isSelected = viewSelectedColor === color;
+                      const hasOverride = hasColorSpecs && selectedProduct.colorSpecs[color] && Object.keys(selectedProduct.colorSpecs[color]).some(k => selectedProduct.colorSpecs[color][k] !== '' && selectedProduct.colorSpecs[color][k] !== null && selectedProduct.colorSpecs[color][k] !== undefined && (!(Array.isArray(selectedProduct.colorSpecs[color][k])) || selectedProduct.colorSpecs[color][k].length > 0));
+                      return (
+                        <button
+                          key={color}
+                          type="button"
+                          onClick={() => setViewSelectedColor(color)}
+                          className={`px-3 py-1.5 text-[11px] font-mono uppercase rounded-lg border transition-all ${isSelected ? 'bg-neutral-100 text-black border-neutral-100' : 'bg-transparent text-neutral-400 border-neutral-800 hover:border-neutral-700 hover:text-neutral-200'}`}
+                        >
+                          {color} {hasOverride && <span className="text-red-500 ml-0.5">●</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Right Column specs rendered here using portal-like approach - actually they're in the right column below, let me just use a shared function */}
+              {/* We'll use specItems defined above but they need to be in the right column, so let's wrap everything and render right column separately with access to these */}
+
+              {/* Render Right Column here with access to closure variables */}
+              <div className="hidden" data-placeholder>
+                {/* Placeholder - specItems are rendered in right column below */}
               </div>
-            ))}
-          </div>
-        ) : selectedProduct.image ? (
-          <div className="aspect-square w-full bg-neutral-950 border border-neutral-800/80 rounded-2xl overflow-hidden flex items-center justify-center p-6 group relative">
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent pointer-events-none" />
-            <img
-             src={resolveImageUrl(selectedProduct.image)}
-             alt={selectedProduct.name}
-              className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
-        ) : (
-          <div className="aspect-square w-full bg-neutral-950 border border-neutral-800/80 rounded-2xl flex items-center justify-center">
-            <div className="text-neutral-600 text-center space-y-3">
-              <Package size={56} className="mx-auto opacity-40 stroke-[1.5]" />
-              <p className="text-xs font-mono uppercase tracking-widest text-neutral-500">No Asset Available</p>
-            </div>
-          </div>
-        )}
+
+              {/* Spec Items Renderer - Mobile only */}
+              <div className="md:hidden space-y-4 mt-2">
+                <div className="grid grid-cols-2 gap-3">
+                  {specItems.filter((item) => {
+                    if (item.value === undefined || item.value === null || item.value === '' || item.value === 'None') return false;
+                    if (Array.isArray(item.value) && item.value.length === 0) return false;
+                    if (typeof item.value === 'object' && item.value !== null && Object.keys(item.value).length === 0) return false;
+                    return true;
+                  }).map((item, idx) => (
+                    <div key={idx} className="p-3 bg-neutral-950/60 rounded-xl border border-neutral-900">
+                      <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-1 font-mono">
+                        {item.label}
+                      </p>
+                      <p className="text-neutral-200 text-xs font-medium">
+                        {item.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          );
+        })()}
       </div>
 
       {/* Right Column: Deep Metadata Breakdown (4/7 Width) */}
-      <div className="md:col-span-4">
-        <div className="grid grid-cols-2 gap-4">
-          {[
-            { label: 'Category', value: selectedProduct.category },
-            { label: 'Color Variant', value: (Array.isArray(selectedProduct.color) ? selectedProduct.color.join(', ') : selectedProduct.color) },
-            { label: 'Size Dimensions', value: selectedProduct.size },
-            { label: 'Cap Specification', value: selectedProduct.capType },
-            { 
-              label: 'MOQ Packaging', 
-              value: (typeof selectedProduct.moqPackaging === 'object' && selectedProduct.moqPackaging !== null ? Object.entries(selectedProduct.moqPackaging).map(([c, m]) => `${c}: ${m}`).join(', ') : selectedProduct.moqPackaging) 
-            },
-            { label: 'Intended Usage', value: selectedProduct.usage },
-            { label: 'Volume', value: selectedProduct.volume },
-            { label: 'Neck Size', value: selectedProduct.neckSize },
-            { label: 'Neck Profile', value: (Array.isArray(selectedProduct.neckProfile) ? selectedProduct.neckProfile.join(', ') : selectedProduct.neckProfile) },
-            { label: 'OFC', value: selectedProduct.ofc },
-            { label: 'Height', value: selectedProduct.height },
-            { label: 'Diameter', value: selectedProduct.diameter },
-            { label: 'Pilfer', value: selectedProduct.pilfer },
-            { label: 'Length', value: selectedProduct.length },
-            { label: 'Weight', value: selectedProduct.weight },
-            { label: 'Market Segments', value: (Array.isArray(selectedProduct.marketSegments) ? selectedProduct.marketSegments.join(', ') : selectedProduct.marketSegments) },
-          ].filter((item) => {
-            if (item.label === 'Show in Popup') return true;
-            if (item.value === undefined || item.value === null || item.value === '' || item.value === 'None') return false;
-            if (Array.isArray(item.value) && item.value.length === 0) return false;
-            if (typeof item.value === 'object' && item.value !== null) {
-              if (Object.keys(item.value).length === 0) return false;
+      <div className="md:col-span-4 hidden md:block">
+        {(() => {
+          const getViewEffectiveSpec = (fieldName) => {
+            if (viewSelectedColor && selectedProduct.colorSpecs && selectedProduct.colorSpecs[viewSelectedColor]) {
+              const colorSpec = selectedProduct.colorSpecs[viewSelectedColor];
+              if (colorSpec[fieldName] !== undefined && colorSpec[fieldName] !== null && colorSpec[fieldName] !== '') {
+                return colorSpec[fieldName];
+              }
             }
-            return true;
-          }).map((item, idx) => {
-            return (
-              <div key={idx} className="p-3 bg-neutral-950/60 rounded-xl border border-neutral-900 hover:border-neutral-800/80 transition-colors duration-200">
-                <p className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest mb-1 font-mono">
-                  {item.label}
-                </p>
-                <p className="text-neutral-200 text-sm font-medium">
-                  {item.value}
-                </p>
+            return selectedProduct[fieldName];
+          };
+          const formatViewSpecValue = (value) => {
+            if (Array.isArray(value)) return value.join(', ');
+            return value;
+          };
+          const getViewMoq = () => {
+            if (viewSelectedColor && selectedProduct.moqPackaging) {
+              if (typeof selectedProduct.moqPackaging === 'object') {
+                if (selectedProduct.moqPackaging[viewSelectedColor]) {
+                  return selectedProduct.moqPackaging[viewSelectedColor];
+                }
+                const colorLower = viewSelectedColor.toLowerCase();
+                const matchingKey = Object.keys(selectedProduct.moqPackaging).find(key => key.toLowerCase() === colorLower);
+                if (matchingKey) return selectedProduct.moqPackaging[matchingKey];
+              }
+            }
+            return typeof selectedProduct.moqPackaging === 'object' && selectedProduct.moqPackaging !== null
+              ? Object.entries(selectedProduct.moqPackaging).map(([c, m]) => `${c}: ${m}`).join(', ')
+              : selectedProduct.moqPackaging;
+          };
+          const viewColors = (() => {
+            if (selectedProduct.images && Object.keys(selectedProduct.images).length > 0) {
+              return Object.keys(selectedProduct.images);
+            }
+            return Array.isArray(selectedProduct.color) ? selectedProduct.color : (selectedProduct.color ? [selectedProduct.color] : []);
+          })();
+          const specItems = [
+            { label: 'Category', value: selectedProduct.category },
+            { label: viewColors.length > 1 ? `Color · ${viewSelectedColor || 'All'}` : 'Color Variant', value: (Array.isArray(selectedProduct.color) ? selectedProduct.color.join(', ') : selectedProduct.color) },
+            { label: 'Size Dimensions', value: selectedProduct.size },
+            { label: 'Cap Specification', value: getViewEffectiveSpec('capType') },
+            { label: 'MOQ Packaging', value: getViewMoq() },
+            { label: 'Intended Usage', value: getViewEffectiveSpec('usage') },
+            { label: 'Volume', value: formatViewSpecValue(getViewEffectiveSpec('volume')) },
+            { label: 'Neck Size', value: formatViewSpecValue(getViewEffectiveSpec('neckSize')) },
+            { label: 'Neck Profile', value: formatViewSpecValue(getViewEffectiveSpec('neckProfile')) },
+            { label: 'OFC', value: formatViewSpecValue(getViewEffectiveSpec('ofc')) },
+            { label: 'Height', value: formatViewSpecValue(getViewEffectiveSpec('height')) },
+            { label: 'Diameter', value: formatViewSpecValue(getViewEffectiveSpec('diameter')) },
+            { label: 'Pilfer', value: formatViewSpecValue(getViewEffectiveSpec('pilfer')) },
+            { label: 'Length', value: formatViewSpecValue(getViewEffectiveSpec('length')) },
+            { label: 'Weight', value: formatViewSpecValue(getViewEffectiveSpec('weight')) },
+            { label: 'Market Segments', value: (Array.isArray(selectedProduct.marketSegments) ? selectedProduct.marketSegments.join(', ') : selectedProduct.marketSegments) },
+          ];
+          const hasColorSpecs = selectedProduct.colorSpecs && Object.keys(selectedProduct.colorSpecs).length > 0;
+          return (
+            <div>
+              {hasColorSpecs && viewColors.length > 1 && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
+                  <p className="text-[11px] font-mono text-red-400 uppercase tracking-wider">
+                    Color-Specific Specs Available · Click a color or image to view
+                  </p>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4">
+                {specItems.filter((item) => {
+                  if (item.value === undefined || item.value === null || item.value === '' || item.value === 'None') return false;
+                  if (Array.isArray(item.value) && item.value.length === 0) return false;
+                  if (typeof item.value === 'object' && item.value !== null && Object.keys(item.value).length === 0) return false;
+                  return true;
+                }).map((item, idx) => (
+                  <div key={idx} className="p-3 bg-neutral-950/60 rounded-xl border border-neutral-900 hover:border-neutral-800/80 transition-colors duration-200">
+                    <p className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest mb-1 font-mono">
+                      {item.label}
+                    </p>
+                    <p className="text-neutral-200 text-sm font-medium">
+                      {item.value}
+                    </p>
+                  </div>
+                ))}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
 
@@ -1124,6 +1418,8 @@ const Dashboard = () => {
                                 delete updatedMoq[color];
                                 const updatedImages = { ...editProductData.images };
                                 delete updatedImages[color];
+                                const updatedColorSpecs = { ...editProductData.colorSpecs };
+                                delete updatedColorSpecs[color];
                                 const updatedPreviews = { ...editImagesPreview };
                                 delete updatedPreviews[color];
                                 
@@ -1131,7 +1427,8 @@ const Dashboard = () => {
                                   ...editProductData,
                                   color: updatedColors,
                                   moqPackaging: updatedMoq,
-                                  images: updatedImages
+                                  images: updatedImages,
+                                  colorSpecs: updatedColorSpecs
                                 });
                                 setEditImagesPreview(updatedPreviews);
                               }}
@@ -1172,275 +1469,6 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-
-                {/* Conditional Fields Based on Category - Key Logistic Table */}
-                {(editProductData.category === 'Bottles' || editProductData.category === 'Jars') && (
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Key Logistic</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Size</label>
-                        <select
-                          value={editProductData.neckSize}
-                          onChange={(e) => setEditProductData({ ...editProductData, neckSize: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 outline-none focus:border-neutral-700 transition-colors"
-                        >
-                          <option value="">Select Neck Size</option>
-                          {neckSizes.map(size => (
-                            <option key={size} value={size}>{size}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="space-y-2 sm:col-span-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Profile</label>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                          {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
-                            <label key={profile} className="flex items-center gap-2 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={Array.isArray(editProductData.neckProfile) ? editProductData.neckProfile.includes(profile) : editProductData.neckProfile === profile}
-                                onChange={(e) => {
-                                  const isChecked = e.target.checked;
-                                  let currentProfiles = [];
-                                  if (Array.isArray(editProductData.neckProfile)) {
-                                    currentProfiles = [...editProductData.neckProfile];
-                                  } else if (editProductData.neckProfile) {
-                                    currentProfiles = [editProductData.neckProfile];
-                                  }
-
-                                  if (isChecked && !currentProfiles.includes(profile)) {
-                                    currentProfiles.push(profile);
-                                  } else if (!isChecked) {
-                                    currentProfiles = currentProfiles.filter((p) => p !== profile);
-                                  }
-
-                                  setEditProductData({
-                                    ...editProductData,
-                                    neckProfile: currentProfiles
-                                  });
-                                }}
-                                className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
-                              />
-                              <span className="text-sm text-neutral-400">{profile}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Volume</label>
-                        <input
-                          type="text"
-                          value={editProductData.volume}
-                          onChange={(e) => setEditProductData({ ...editProductData, volume: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="e.g., 500ml, 1L"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">OFC</label>
-                        <input
-                          type="text"
-                          value={editProductData.ofc}
-                          onChange={(e) => setEditProductData({ ...editProductData, ofc: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="OFC"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Weight</label>
-                        <input
-                          type="text"
-                          value={editProductData.weight}
-                          onChange={(e) => setEditProductData({ ...editProductData, weight: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="e.g., 20g, 50g"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Height</label>
-                        <input
-                          type="text"
-                          value={editProductData.height}
-                          onChange={(e) => setEditProductData({ ...editProductData, height: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="Height"
-                        />
-                      </div>
-                      <div className="space-y-2 sm:col-span-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Diameter</label>
-                        <input
-                          type="text"
-                          value={editProductData.diameter}
-                          onChange={(e) => setEditProductData({ ...editProductData, diameter: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="Diameter"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {editProductData.category === 'Caps' && (
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Key Logistic</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Size</label>
-                        <select
-                          value={editProductData.neckSize}
-                          onChange={(e) => setEditProductData({ ...editProductData, neckSize: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 outline-none focus:border-neutral-700 transition-colors"
-                        >
-                          <option value="">Select Neck Size</option>
-                          {neckSizes.map(size => (
-                            <option key={size} value={size}>{size}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="space-y-2 sm:col-span-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Profile</label>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                          {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
-                            <label key={profile} className="flex items-center gap-2 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={Array.isArray(editProductData.neckProfile) ? editProductData.neckProfile.includes(profile) : editProductData.neckProfile === profile}
-                                onChange={(e) => {
-                                  const isChecked = e.target.checked;
-                                  let currentProfiles = [];
-                                  if (Array.isArray(editProductData.neckProfile)) {
-                                    currentProfiles = [...editProductData.neckProfile];
-                                  } else if (editProductData.neckProfile) {
-                                    currentProfiles = [editProductData.neckProfile];
-                                  }
-
-                                  if (isChecked && !currentProfiles.includes(profile)) {
-                                    currentProfiles.push(profile);
-                                  } else if (!isChecked) {
-                                    currentProfiles = currentProfiles.filter((p) => p !== profile);
-                                  }
-
-                                  setEditProductData({
-                                    ...editProductData,
-                                    neckProfile: currentProfiles
-                                  });
-                                }}
-                                className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
-                              />
-                              <span className="text-sm text-neutral-400">{profile}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Pilfer</label>
-                        <input
-                          type="text"
-                          value={editProductData.pilfer}
-                          onChange={(e) => setEditProductData({ ...editProductData, pilfer: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="Pilfer"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Height</label>
-                        <input
-                          type="text"
-                          value={editProductData.height}
-                          onChange={(e) => setEditProductData({ ...editProductData, height: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="Height"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Weight</label>
-                        <input
-                          type="text"
-                          value={editProductData.weight}
-                          onChange={(e) => setEditProductData({ ...editProductData, weight: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="e.g., 20g, 50g"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {editProductData.category === 'Preforms' && (
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Key Logistic</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Size</label>
-                        <select
-                          value={editProductData.neckSize}
-                          onChange={(e) => setEditProductData({ ...editProductData, neckSize: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 outline-none focus:border-neutral-700 transition-colors"
-                        >
-                          <option value="">Select Neck Size</option>
-                          {neckSizes.map(size => (
-                            <option key={size} value={size}>{size}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="space-y-2 sm:col-span-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Profile</label>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                          {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
-                            <label key={profile} className="flex items-center gap-2 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={Array.isArray(editProductData.neckProfile) ? editProductData.neckProfile.includes(profile) : editProductData.neckProfile === profile}
-                                onChange={(e) => {
-                                  const isChecked = e.target.checked;
-                                  let currentProfiles = [];
-                                  if (Array.isArray(editProductData.neckProfile)) {
-                                    currentProfiles = [...editProductData.neckProfile];
-                                  } else if (editProductData.neckProfile) {
-                                    currentProfiles = [editProductData.neckProfile];
-                                  }
-
-                                  if (isChecked && !currentProfiles.includes(profile)) {
-                                    currentProfiles.push(profile);
-                                  } else if (!isChecked) {
-                                    currentProfiles = currentProfiles.filter((p) => p !== profile);
-                                  }
-
-                                  setEditProductData({
-                                    ...editProductData,
-                                    neckProfile: currentProfiles
-                                  });
-                                }}
-                                className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
-                              />
-                              <span className="text-sm text-neutral-400">{profile}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Length</label>
-                        <input
-                          type="text"
-                          value={editProductData.length}
-                          onChange={(e) => setEditProductData({ ...editProductData, length: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="Length"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Weight</label>
-                        <input
-                          type="text"
-                          value={editProductData.weight}
-                          onChange={(e) => setEditProductData({ ...editProductData, weight: e.target.value })}
-                          className="w-full bg-[#050506] border border-neutral-800 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-700 transition-colors"
-                          placeholder="e.g., 20g, 50g"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* Per-Color MOQ Fields */}
                 {editProductData.color.length > 0 && (
@@ -1503,6 +1531,239 @@ const Dashboard = () => {
                               </div>
                             )}
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Per-Color Specification Fields in Edit */}
+                {editProductData.color.length > 0 && (
+                  <div className="space-y-4 pt-4 border-t border-neutral-800">
+                    <div>
+                      <h3 className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 mb-1">
+                        Specifications (Per Color Variant)
+                      </h3>
+                      <p className="text-xs text-neutral-500">
+                        Enter specifications for each color variant. Leave blank to use existing default values if available.
+                      </p>
+                    </div>
+                    <div className="space-y-5">
+                      {editProductData.color.map((color) => (
+                        <div
+                          key={color}
+                          className="bg-neutral-950 border border-neutral-800 rounded-xl p-4 space-y-4"
+                        >
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-bold text-neutral-200 font-mono uppercase tracking-wider">
+                              {color} Variant Specs
+                            </h4>
+                          </div>
+
+                          {/* Bottles / Jars Color Specs Edit */}
+                          {(editProductData.category === 'Bottles' || editProductData.category === 'Jars') && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Volume</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'volume')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'volume', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="e.g., 500ml, 1L"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Size</label>
+                                <select
+                                  value={getEditColorSpecValue(color, 'neckSize')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'neckSize', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 outline-none focus:border-neutral-600 transition-colors"
+                                >
+                                  <option value="">Use Default</option>
+                                  {neckSizes.map(size => (
+                                    <option key={size} value={size}>{size}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="space-y-2 sm:col-span-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Profile</label>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                  {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
+                                    <label key={profile} className="flex items-center gap-2 cursor-pointer">
+                                      <input
+                                        type="checkbox"
+                                        checked={getEditColorNeckProfile(color).includes(profile)}
+                                        onChange={(e) => toggleEditColorNeckProfile(color, profile, e.target.checked)}
+                                        className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
+                                      />
+                                      <span className="text-xs text-neutral-400">{profile}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">OFC</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'ofc')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'ofc', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="OFC"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Weight</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'weight')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'weight', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="e.g., 20g, 50g"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Height</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'height')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'height', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="Height"
+                                />
+                              </div>
+                              <div className="space-y-2 sm:col-span-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Diameter</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'diameter')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'diameter', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="Diameter"
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Caps Color Specs Edit */}
+                          {editProductData.category === 'Caps' && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Size</label>
+                                <select
+                                  value={getEditColorSpecValue(color, 'neckSize')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'neckSize', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 outline-none focus:border-neutral-600 transition-colors"
+                                >
+                                  <option value="">Use Default</option>
+                                  {neckSizes.map(size => (
+                                    <option key={size} value={size}>{size}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="space-y-2 sm:col-span-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Profile</label>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                  {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
+                                    <label key={profile} className="flex items-center gap-2 cursor-pointer">
+                                      <input
+                                        type="checkbox"
+                                        checked={getEditColorNeckProfile(color).includes(profile)}
+                                        onChange={(e) => toggleEditColorNeckProfile(color, profile, e.target.checked)}
+                                        className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
+                                      />
+                                      <span className="text-xs text-neutral-400">{profile}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Pilfer</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'pilfer')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'pilfer', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="Pilfer"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Height</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'height')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'height', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="Height"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Weight</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'weight')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'weight', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="e.g., 20g, 50g"
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Preforms Color Specs Edit */}
+                          {editProductData.category === 'Preforms' && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Size</label>
+                                <select
+                                  value={getEditColorSpecValue(color, 'neckSize')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'neckSize', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 outline-none focus:border-neutral-600 transition-colors"
+                                >
+                                  <option value="">Use Default</option>
+                                  {neckSizes.map(size => (
+                                    <option key={size} value={size}>{size}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="space-y-2 sm:col-span-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Profile</label>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                  {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
+                                    <label key={profile} className="flex items-center gap-2 cursor-pointer">
+                                      <input
+                                        type="checkbox"
+                                        checked={getEditColorNeckProfile(color).includes(profile)}
+                                        onChange={(e) => toggleEditColorNeckProfile(color, profile, e.target.checked)}
+                                        className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
+                                      />
+                                      <span className="text-xs text-neutral-400">{profile}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Length</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'length')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'length', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="Length"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Weight</label>
+                                <input
+                                  type="text"
+                                  value={getEditColorSpecValue(color, 'weight')}
+                                  onChange={(e) => setEditColorSpecValue(color, 'weight', e.target.value)}
+                                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                                  placeholder="e.g., 20g, 50g"
+                                />
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>

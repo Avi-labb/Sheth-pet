@@ -64,6 +64,12 @@ const productSchema = new mongoose.Schema(
     diameter: String, // For Bottles/Jars
     pilfer: String, // For Caps
     length: String, // For Preforms
+
+    // Color-specific specifications: { [colorName]: { volume, neckSize, weight, neckProfile, ofc, height, diameter, pilfer, length, capType, usage, keySpecs } }
+    colorSpecs: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
   },
   {
     timestamps: true,
@@ -92,6 +98,11 @@ productSchema.pre("save", async function () {
       this.neckProfile = [this.neckProfile];
     } else if (!Array.isArray(this.neckProfile)) {
       this.neckProfile = [];
+    }
+
+    // Ensure colorSpecs is an object
+    if (typeof this.colorSpecs !== 'object' || this.colorSpecs === null) {
+      this.colorSpecs = {};
     }
 
     // Generate SKU if needed
@@ -141,6 +152,20 @@ productSchema.pre(['findOneAndUpdate', 'updateOne', 'updateMany'], function () {
         update.neckProfile = [update.neckProfile];
       } else if (!Array.isArray(update.neckProfile)) {
         update.neckProfile = [];
+      }
+    }
+
+    // Handle colorSpecs field in updates
+    if (update.colorSpecs !== undefined) {
+      if (typeof update.colorSpecs === 'string' && update.colorSpecs) {
+        try {
+          update.colorSpecs = JSON.parse(update.colorSpecs);
+        } catch {
+          update.colorSpecs = {};
+        }
+      }
+      if (typeof update.colorSpecs !== 'object' || update.colorSpecs === null) {
+        update.colorSpecs = {};
       }
     }
   } catch (error) {

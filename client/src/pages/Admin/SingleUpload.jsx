@@ -41,6 +41,68 @@ export default function SingleUpload({
     }
   };
 
+  // Helper to get color spec value for a field (fallback to root-level value)
+  const getColorSpecValue = (colorName, field) => {
+    if (newProduct.colorSpecs && newProduct.colorSpecs[colorName] && newProduct.colorSpecs[colorName][field] !== undefined) {
+      return newProduct.colorSpecs[colorName][field];
+    }
+    return '';
+  };
+
+  // Helper to set color spec value for a field
+  const setColorSpecValue = (colorName, field, value) => {
+    setNewProduct(prev => {
+      const currentColorSpecs = prev.colorSpecs || {};
+      const currentColorEntry = currentColorSpecs[colorName] || {};
+      return {
+        ...prev,
+        colorSpecs: {
+          ...currentColorSpecs,
+          [colorName]: {
+            ...currentColorEntry,
+            [field]: value
+          }
+        }
+      };
+    });
+  };
+
+  // Helper to get color neckProfile array
+  const getColorNeckProfile = (colorName) => {
+    if (newProduct.colorSpecs && newProduct.colorSpecs[colorName] && newProduct.colorSpecs[colorName].neckProfile) {
+      return Array.isArray(newProduct.colorSpecs[colorName].neckProfile)
+        ? newProduct.colorSpecs[colorName].neckProfile
+        : [newProduct.colorSpecs[colorName].neckProfile];
+    }
+    return [];
+  };
+
+  // Helper to toggle color neckProfile entry
+  const toggleColorNeckProfile = (colorName, profile, isChecked) => {
+    setNewProduct(prev => {
+      const currentColorSpecs = prev.colorSpecs || {};
+      const currentColorEntry = currentColorSpecs[colorName] || {};
+      let currentProfiles = getColorNeckProfile(colorName);
+
+      if (isChecked && !currentProfiles.includes(profile)) {
+        currentProfiles = [...currentProfiles, profile];
+      } else if (!isChecked) {
+        currentProfiles = currentProfiles.filter((p) => p !== profile);
+      }
+
+      return {
+        ...prev,
+        colorSpecs: {
+          ...currentColorSpecs,
+          [colorName]: {
+            ...currentColorEntry,
+            neckProfile: currentProfiles
+          }
+        }
+      };
+    });
+  };
+
   return (
     <motion.div
       key="new-product"
@@ -251,6 +313,8 @@ export default function SingleUpload({
                       delete updatedMoq[color];
                       const updatedImages = { ...newProduct.images };
                       delete updatedImages[color];
+                      const updatedColorSpecs = { ...newProduct.colorSpecs };
+                      delete updatedColorSpecs[color];
                       const updatedPreviews = { ...imagePreviews };
                       delete updatedPreviews[color];
                       
@@ -258,7 +322,8 @@ export default function SingleUpload({
                         ...newProduct,
                         color: updatedColors,
                         moqPackaging: updatedMoq,
-                        images: updatedImages
+                        images: updatedImages,
+                        colorSpecs: updatedColorSpecs
                       });
                       setImagePreviews(updatedPreviews);
                     }}
@@ -339,276 +404,240 @@ export default function SingleUpload({
           </div>
         )}
 
-        {/* Conditional Fields Based on Category - Key Logistic Table */}
-        {(newProduct.category === 'Bottles' || newProduct.category === 'Jars') && (
-          <div className="space-y-4">
-            <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Key Specifications Logistics</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Size</label>
-                <select
-                  value={newProduct.neckSize}
-                  onChange={(e) => setNewProduct({ ...newProduct, neckSize: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 outline-none focus:border-neutral-600 transition-colors"
+        {/* Per-Color Specification Fields */}
+        {newProduct.color.length > 0 && (
+          <div className="space-y-4 pt-4 border-t border-neutral-800">
+            <div>
+              <h3 className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 mb-1">
+                Specifications (Per Color Variant)
+              </h3>
+              <p className="text-xs text-neutral-500">
+                Enter specifications for each color variant. All specs are configured individually per color.
+              </p>
+            </div>
+            <div className="space-y-6">
+              {newProduct.color.map((color) => (
+                <div
+                  key={color}
+                  className="bg-neutral-950 border border-neutral-800 rounded-xl p-4 sm:p-5 space-y-4"
                 >
-                  <option value="">Select Neck Size</option>
-                  {neckSizes.map(size => (
-                    <option className="text-xs" key={size} value={size}>{size}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Profile</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
-                    <label key={profile} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={Array.isArray(newProduct.neckProfile) ? newProduct.neckProfile.includes(profile) : newProduct.neckProfile === profile}
-                        onChange={(e) => {
-                          const isChecked = e.target.checked;
-                          let currentProfiles = [];
-                          if (Array.isArray(newProduct.neckProfile)) {
-                            currentProfiles = [...newProduct.neckProfile];
-                          } else if (newProduct.neckProfile) {
-                            currentProfiles = [newProduct.neckProfile];
-                          }
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-neutral-200 font-mono uppercase tracking-wider">
+                      {color} Variant Specs
+                    </h4>
+                  </div>
 
-                          if (isChecked && !currentProfiles.includes(profile)) {
-                            currentProfiles.push(profile);
-                          } else if (!isChecked) {
-                            currentProfiles = currentProfiles.filter((p) => p !== profile);
-                          }
+                  {/* Bottles / Jars Color Specs */}
+                  {(newProduct.category === 'Bottles' || newProduct.category === 'Jars') && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Volume</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'volume')}
+                          onChange={(e) => setColorSpecValue(color, 'volume', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="e.g., 500ml, 1L"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Size</label>
+                        <select
+                          value={getColorSpecValue(color, 'neckSize')}
+                          onChange={(e) => setColorSpecValue(color, 'neckSize', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 outline-none focus:border-neutral-600 transition-colors"
+                        >
+                          <option value="">Use Default</option>
+                          {neckSizes.map(size => (
+                            <option key={size} value={size}>{size}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Profile</label>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
+                            <label key={profile} className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={getColorNeckProfile(color).includes(profile)}
+                                onChange={(e) => toggleColorNeckProfile(color, profile, e.target.checked)}
+                                className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
+                              />
+                              <span className="text-xs text-neutral-400">{profile}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">OFC</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'ofc')}
+                          onChange={(e) => setColorSpecValue(color, 'ofc', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="OFC"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Weight</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'weight')}
+                          onChange={(e) => setColorSpecValue(color, 'weight', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="e.g., 20g, 50g"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Height</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'height')}
+                          onChange={(e) => setColorSpecValue(color, 'height', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="Height"
+                        />
+                      </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Diameter</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'diameter')}
+                          onChange={(e) => setColorSpecValue(color, 'diameter', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="Diameter"
+                        />
+                      </div>
+                    </div>
+                  )}
 
-                          setNewProduct({
-                            ...newProduct,
-                            neckProfile: currentProfiles
-                          });
-                        }}
-                        className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
-                      />
-                      <span className="text-sm text-neutral-400">{profile}</span>
-                    </label>
-                  ))}
+                  {/* Caps Color Specs */}
+                  {newProduct.category === 'Caps' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Size</label>
+                        <select
+                          value={getColorSpecValue(color, 'neckSize')}
+                          onChange={(e) => setColorSpecValue(color, 'neckSize', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 outline-none focus:border-neutral-600 transition-colors"
+                        >
+                          <option value="">Use Default</option>
+                          {neckSizes.map(size => (
+                            <option key={size} value={size}>{size}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Profile</label>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
+                            <label key={profile} className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={getColorNeckProfile(color).includes(profile)}
+                                onChange={(e) => toggleColorNeckProfile(color, profile, e.target.checked)}
+                                className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
+                              />
+                              <span className="text-xs text-neutral-400">{profile}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Pilfer</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'pilfer')}
+                          onChange={(e) => setColorSpecValue(color, 'pilfer', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="Pilfer"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Height</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'height')}
+                          onChange={(e) => setColorSpecValue(color, 'height', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="Height"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Weight</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'weight')}
+                          onChange={(e) => setColorSpecValue(color, 'weight', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="e.g., 20g, 50g"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Preforms Color Specs */}
+                  {newProduct.category === 'Preforms' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Size</label>
+                        <select
+                          value={getColorSpecValue(color, 'neckSize')}
+                          onChange={(e) => setColorSpecValue(color, 'neckSize', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 outline-none focus:border-neutral-600 transition-colors"
+                        >
+                          <option value="">Use Default</option>
+                          {neckSizes.map(size => (
+                            <option key={size} value={size}>{size}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Neck Profile</label>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
+                            <label key={profile} className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={getColorNeckProfile(color).includes(profile)}
+                                onChange={(e) => toggleColorNeckProfile(color, profile, e.target.checked)}
+                                className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
+                              />
+                              <span className="text-xs text-neutral-400">{profile}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Length</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'length')}
+                          onChange={(e) => setColorSpecValue(color, 'length', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="Length"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-500 block">Weight</label>
+                        <input
+                          type="text"
+                          value={getColorSpecValue(color, 'weight')}
+                          onChange={(e) => setColorSpecValue(color, 'weight', e.target.value)}
+                          className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-200 placeholder-neutral-500 outline-none focus:border-neutral-600 transition-colors"
+                          placeholder="e.g., 20g, 50g"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Volume</label>
-                <input
-                  type="text"
-                  value={newProduct.volume}
-                  onChange={(e) => setNewProduct({ ...newProduct, volume: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="e.g., 500ml, 1L"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">OFC</label>
-                <input
-                  type="text"
-                  value={newProduct.ofc}
-                  onChange={(e) => setNewProduct({ ...newProduct, ofc: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="OFC"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Weight</label>
-                <input
-                  type="text"
-                  value={newProduct.weight}
-                  onChange={(e) => setNewProduct({ ...newProduct, weight: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="e.g., 20g, 50g"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Height</label>
-                <input
-                  type="text"
-                  value={newProduct.height}
-                  onChange={(e) => setNewProduct({ ...newProduct, height: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="Height"
-                />
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Diameter</label>
-                <input
-                  type="text"
-                  value={newProduct.diameter}
-                  onChange={(e) => setNewProduct({ ...newProduct, diameter: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="Diameter"
-                />
-              </div>
+              ))}
             </div>
           </div>
         )}
 
-        {newProduct.category === 'Caps' && (
-          <div className="space-y-4">
-            <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Key Logistic</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Size</label>
-                <select
-                  value={newProduct.neckSize}
-                  onChange={(e) => setNewProduct({ ...newProduct, neckSize: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 outline-none focus:border-neutral-600 transition-colors"
-                >
-                  <option value="">Select Neck Size</option>
-                  {neckSizes.map(size => (
-                    <option key={size} value={size}>{size}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Profile</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
-                    <label key={profile} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={Array.isArray(newProduct.neckProfile) ? newProduct.neckProfile.includes(profile) : newProduct.neckProfile === profile}
-                        onChange={(e) => {
-                          const isChecked = e.target.checked;
-                          let currentProfiles = [];
-                          if (Array.isArray(newProduct.neckProfile)) {
-                            currentProfiles = [...newProduct.neckProfile];
-                          } else if (newProduct.neckProfile) {
-                            currentProfiles = [newProduct.neckProfile];
-                          }
 
-                          if (isChecked && !currentProfiles.includes(profile)) {
-                            currentProfiles.push(profile);
-                          } else if (!isChecked) {
-                            currentProfiles = currentProfiles.filter((p) => p !== profile);
-                          }
-
-                          setNewProduct({
-                            ...newProduct,
-                            neckProfile: currentProfiles
-                          });
-                        }}
-                        className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
-                      />
-                      <span className="text-sm text-neutral-400">{profile}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Pilfer</label>
-                <input
-                  type="text"
-                  value={newProduct.pilfer}
-                  onChange={(e) => setNewProduct({ ...newProduct, pilfer: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="Pilfer"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Height</label>
-                <input
-                  type="text"
-                  value={newProduct.height}
-                  onChange={(e) => setNewProduct({ ...newProduct, height: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="Height"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Weight</label>
-                <input
-                  type="text"
-                  value={newProduct.weight}
-                  onChange={(e) => setNewProduct({ ...newProduct, weight: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="e.g., 20g, 50g"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {newProduct.category === 'Preforms' && (
-          <div className="space-y-4">
-            <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider">Key Logistic</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Size</label>
-                <select
-                  value={newProduct.neckSize}
-                  onChange={(e) => setNewProduct({ ...newProduct, neckSize: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 outline-none focus:border-neutral-600 transition-colors"
-                >
-                  <option value="">Select Neck Size</option>
-                  {neckSizes.map(size => (
-                    <option key={size} value={size}>{size}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Neck Profile</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {['SP410', 'PCO', 'ROPP', 'SP 400', 'CTC', '3Start', 'Alaska'].map((profile) => (
-                    <label key={profile} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={Array.isArray(newProduct.neckProfile) ? newProduct.neckProfile.includes(profile) : newProduct.neckProfile === profile}
-                        onChange={(e) => {
-                          const isChecked = e.target.checked;
-                          let currentProfiles = [];
-                          if (Array.isArray(newProduct.neckProfile)) {
-                            currentProfiles = [...newProduct.neckProfile];
-                          } else if (newProduct.neckProfile) {
-                            currentProfiles = [newProduct.neckProfile];
-                          }
-
-                          if (isChecked && !currentProfiles.includes(profile)) {
-                            currentProfiles.push(profile);
-                          } else if (!isChecked) {
-                            currentProfiles = currentProfiles.filter((p) => p !== profile);
-                          }
-
-                          setNewProduct({
-                            ...newProduct,
-                            neckProfile: currentProfiles
-                          });
-                        }}
-                        className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600 focus:ring-red-500"
-                      />
-                      <span className="text-sm text-neutral-400">{profile}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Length</label>
-                <input
-                  type="text"
-                  value={newProduct.length}
-                  onChange={(e) => setNewProduct({ ...newProduct, length: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="Length"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Weight</label>
-                <input
-                  type="text"
-                  value={newProduct.weight}
-                  onChange={(e) => setNewProduct({ ...newProduct, weight: e.target.value })}
-                  className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-                  placeholder="e.g., 20g, 50g"
-                />
-              </div>
-            </div>
-
-          </div>
-
-        )}
         <div className="flex items-center gap-2">
           <input
             type="checkbox"

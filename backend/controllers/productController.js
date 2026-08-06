@@ -350,7 +350,8 @@ export const addProduct = async (req, res) => {
       height,
       diameter,
       pilfer,
-      length
+      length,
+      colorSpecs
     } = body;
 
     let marketSegments = body.marketSegments;
@@ -427,6 +428,47 @@ export const addProduct = async (req, res) => {
 
     console.log("[DEBUG] parsedNeckProfile:", parsedNeckProfile);
 
+    let parsedColorSpecs = colorSpecs;
+    if (parsedColorSpecs) {
+      if (typeof parsedColorSpecs === 'string') {
+        try {
+          parsedColorSpecs = JSON.parse(parsedColorSpecs);
+        } catch {
+          parsedColorSpecs = {};
+        }
+      }
+      if (typeof parsedColorSpecs !== 'object' || parsedColorSpecs === null) {
+        parsedColorSpecs = {};
+      }
+      // Normalize neckProfile within each color spec entry
+      Object.keys(parsedColorSpecs).forEach(colorKey => {
+        const spec = parsedColorSpecs[colorKey];
+        if (spec && spec.neckProfile !== undefined) {
+          if (typeof spec.neckProfile === 'string' && spec.neckProfile) {
+            try {
+              spec.neckProfile = JSON.parse(spec.neckProfile);
+            } catch {
+              if (spec.neckProfile.includes(',')) {
+                spec.neckProfile = spec.neckProfile.split(',').map(c => c.trim()).filter(c => c);
+              } else {
+                spec.neckProfile = [spec.neckProfile];
+              }
+            }
+          }
+          if (!Array.isArray(spec.neckProfile)) {
+            if (spec.neckProfile) {
+              spec.neckProfile = [spec.neckProfile];
+            } else {
+              spec.neckProfile = [];
+            }
+          }
+        }
+      });
+    } else {
+      parsedColorSpecs = {};
+    }
+    console.log("[DEBUG] parsedColorSpecs:", parsedColorSpecs);
+
     const images = {};
     let singleImage = undefined;
 
@@ -488,6 +530,7 @@ export const addProduct = async (req, res) => {
       diameter,
       pilfer,
       length,
+      colorSpecs: parsedColorSpecs,
       sku,
     };
 
@@ -683,6 +726,49 @@ export const updateProduct = async (req, res) => {
     if (body.pilfer !== undefined) updateData.pilfer = body.pilfer;
     if (body.length !== undefined) updateData.length = body.length;
 
+    let parsedColorSpecs;
+    if (body.colorSpecs !== undefined) {
+      parsedColorSpecs = body.colorSpecs;
+      if (parsedColorSpecs) {
+        if (typeof parsedColorSpecs === 'string') {
+          try {
+            parsedColorSpecs = JSON.parse(parsedColorSpecs);
+          } catch {
+            parsedColorSpecs = {};
+          }
+        }
+        if (typeof parsedColorSpecs !== 'object' || parsedColorSpecs === null) {
+          parsedColorSpecs = {};
+        }
+        // Normalize neckProfile within each color spec entry
+        Object.keys(parsedColorSpecs).forEach(colorKey => {
+          const spec = parsedColorSpecs[colorKey];
+          if (spec && spec.neckProfile !== undefined) {
+            if (typeof spec.neckProfile === 'string' && spec.neckProfile) {
+              try {
+                spec.neckProfile = JSON.parse(spec.neckProfile);
+              } catch {
+                if (spec.neckProfile.includes(',')) {
+                  spec.neckProfile = spec.neckProfile.split(',').map(c => c.trim()).filter(c => c);
+                } else {
+                  spec.neckProfile = [spec.neckProfile];
+                }
+              }
+            }
+            if (!Array.isArray(spec.neckProfile)) {
+              if (spec.neckProfile) {
+                spec.neckProfile = [spec.neckProfile];
+              } else {
+                spec.neckProfile = [];
+              }
+            }
+          }
+        });
+      } else {
+        parsedColorSpecs = {};
+      }
+    }
+
     let parsedColor;
     if (body.color !== undefined) {
       parsedColor = body.color;
@@ -732,6 +818,16 @@ export const updateProduct = async (req, res) => {
         }
       });
       updateData.moqPackaging = filteredMoq;
+    }
+
+    if (parsedColorSpecs !== undefined) {
+      const filteredColorSpecs = {};
+      Object.entries(parsedColorSpecs).forEach(([colorEntry, specValue]) => {
+        if (parsedColor.includes(colorEntry)) {
+          filteredColorSpecs[colorEntry] = specValue;
+        }
+      });
+      updateData.colorSpecs = filteredColorSpecs;
     }
 
     if (body.marketSegments !== undefined) {
