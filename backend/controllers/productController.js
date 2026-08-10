@@ -210,7 +210,10 @@ export const bulkUploadProducts = async (req, res) => {
         const pilfer = item.Pilfer || item.pilfer;
         const length = item.Length || item.length;
         const weight = item.Weight || item.weight;
-        const capType = item.Cap_Type || item.CapType || item['Cap Type'];
+        const rawCapType = item.Cap_Type || item.CapType || item['Cap Type'];
+        const finalCapType=(rawCapType && (String(rawCapType).toLowerCase() === 'individual' || String(rawCapType).toLowerCase() === 'family'))
+        ? String(rawCapType).toLowerCase()
+        : 'individual';
         const usage = item.Usage || item.usage;
         const keySpecs = item.Key_Specs || item.KeySpecs || item['Key Specs'];
         const size = item.Size || item.size;
@@ -230,7 +233,7 @@ export const bulkUploadProducts = async (req, res) => {
               color: colors,
               size: size,
               moqPackaging: moqPackaging,
-              capType: capType,
+              capType: finalCapType,
               usage: usage,
               keySpecs: keySpecs,
               image: imageFilename,
@@ -257,7 +260,7 @@ export const bulkUploadProducts = async (req, res) => {
             color: colors,
             size: size,
             moqPackaging: moqPackaging,
-            capType: capType,
+            capType: finalCapType,
             usage: usage,
             keySpecs: keySpecs,
             image: imageFilename,
@@ -507,14 +510,14 @@ export const addProduct = async (req, res) => {
       }
     );
     const sku = `SKU-${String(counter.sequence).padStart(4, "0")}`;
-
+    const finalCapType=(capType && (capType === 'individual' || capType === 'family' ))? capType :'individual';
     const productData = {
       name,
       category,
       productType,
       color: parsedColor,
       moqPackaging: parsedMoq,
-      capType,
+      capType:finalCapType,
       usage,
       keySpecs,
       image: singleImage,
@@ -574,7 +577,15 @@ export const getProducts = async (req, res) => {
       );
     }
 
-    products.forEach(p => console.log(`- ${p.name}: marketSegments = ${p.marketSegments}`));
+products.sort((a,b) => {
+  const aIsfamily =a.capType === 'family' ? 0:1;
+  const bIsfamily =b.capType === 'family' ? 0:1;
+  if(aIsfamily !== bIsfamily){
+    return aIsfamily-bIsfamily;
+  }
+  return new Date(b.createdAt)- new Date(a.createdAt)
+})
+products.forEach(p => console.log(`-${p.name}: capType = ${p.capType}, marketSegments = ${p.marketSegments}`));
     return res.status(200).json({
       success: true,
       products,

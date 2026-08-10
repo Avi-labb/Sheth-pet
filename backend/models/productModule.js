@@ -27,7 +27,10 @@ const productSchema = new mongoose.Schema(
       default: {},
     },
 
-    capType: String,
+    capType: {
+      type:String,
+      default:'individual'
+    },
 
     usage: String,
 

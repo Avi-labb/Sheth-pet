@@ -1,9 +1,10 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Package, ChevronRight, Filter, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../services/api'
 import { getProductImage, getProductColors } from '../utils/productImages'
+import { sortFamilyFirst } from '../utils/helper'
 
 const Products = () => {
  const navigate = useNavigate()
@@ -44,8 +45,9 @@ const Products = () => {
  try {
  const result = await productAPI.getProducts(category === 'All' ? null : category)
  if (result.ok) {
- setProducts(result.data.products)
- setFilteredProducts(result.data.products)
+    const sortedProducts = sortFamilyFirst(result.data.products)
+ setProducts(sortedProducts)
+ setFilteredProducts(sortedProducts)
  // Reset filters when category changes
  setSelectedNeckSizes([])
  setVolumeMin('')
@@ -115,7 +117,7 @@ const Products = () => {
  })
  }
 
- setFilteredProducts(filtered)
+ setFilteredProducts(sortFamilyFirst(filtered))
  }
 
  // Determine which filters to show based on category

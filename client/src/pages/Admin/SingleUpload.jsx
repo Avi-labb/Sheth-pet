@@ -195,32 +195,68 @@ export default function SingleUpload({
                 </button>
               </div>
             ) : (
-              <select
-                value={newProduct.category}
-                onChange={(e) => {
-                  console.log("Single Upload Category changed:", e.target.value);
-                  setNewProduct({ ...newProduct, category: e.target.value });
-                }}
-                className="w-full bg-[#050506] border border-neutral-800 uppercase rounded-xl px-4 py-3 text-xs text-neutral-200 outline-none focus:border-neutral-700 transition-colors appearance-none cursor-pointer"
-              >
-                <option value="" disabled className="text-neutral-600">Select a category</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={newProduct.category}
+                  onChange={(e) => {
+                    console.log("Single Upload Category changed:", e.target.value);
+                    setNewProduct({ ...newProduct, category: e.target.value });
+                  }}
+                  className="w-full bg-[#050506] border border-neutral-800 uppercase rounded-xl px-4 py-3 pr-10 text-xs text-neutral-200 outline-none focus:border-neutral-700 transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="" disabled className="text-neutral-600">
+                    Select a category
+                  </option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+                {/* Custom dropdown arrow to match appearance-none */}
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-400">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
             )}
           </div>
 
 
           <div className="space-y-2">
-            <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">Cap / Closure Type</label>
-            <input
-              type="text"
-              value={newProduct.capType}
-              onChange={(e) => setNewProduct({ ...newProduct, capType: e.target.value })}
-              className="w-full bg-[#050506] border border-neutral-700 rounded-xl px-4 py-3 text-xs text-neutral-200 placeholder-neutral-400 outline-none focus:border-neutral-600 transition-colors"
-              placeholder="Screw Cap"
-            />
+            <label className="text-[13px] font-mono uppercase tracking-widest text-neutral-400 block">
+              Cap Type
+            </label>
+            <div className="flex items-center gap-6 h-[46px] px-1">
+              <label className="flex items-center gap-2 text-md text-neutral-200 cursor-pointer select-none">
+                <input
+                  type="radio"
+                  name="capType"
+                  value="individual"
+                  checked={newProduct.capType === "individual"}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, capType: e.target.value })
+                  }
+                  className="accent-blue-600 cursor-pointer"
+                />
+                Individual
+              </label>
+
+              <label className="flex items-center gap-2 text-md text-neutral-200 cursor-pointer select-none">
+                <input
+                  type="radio"
+                  name="capType"
+                  value="family"
+                  checked={newProduct.capType === "family"}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, capType: e.target.value })
+                  }
+                  className="accent-blue-600 cursor-pointer"
+                />
+                Family
+              </label>
+            </div>
           </div>
         </div>
 

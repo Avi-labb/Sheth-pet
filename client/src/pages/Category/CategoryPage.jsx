@@ -5,6 +5,7 @@ import { Package, ArrowUpRight, Filter } from 'lucide-react'
 import { productAPI } from '../../services/api'
 import { getProductImage, getProductColors } from '../../utils/productImages'
 import industrialImage from '../../assets/images/Industrial.png'
+import { sortFamilyFirst } from '../../utils/helper'
 import pharmaceuticalImage from '../../assets/images/Pharna.png'
 import personalCareImage from '../../assets/images/Personal Care.png'
 import foodBeveragesImage from '../../assets/images/Food & Beverages.png'
@@ -87,8 +88,9 @@ const CategoryPage = () => {
  
  const result = await productAPI.getProducts(actualCategoryName)
  if (result.ok) {
- setProducts(result.data.products)
- setFilteredProducts(result.data.products)
+    const sortedProducts=sortFamilyFirst(result.data.products)
+ setProducts(sortedProducts)
+ setFilteredProducts(sortedProducts)
  }
  } catch (error) {
  console.error(`Error fetching ${categoryName} products:`, error)
@@ -141,7 +143,7 @@ const CategoryPage = () => {
  })
  }
 
- setFilteredProducts(filtered)
+ setFilteredProducts(sortFamilyFirst(filtered))
  }
 
  // Handle neck size checkbox toggle

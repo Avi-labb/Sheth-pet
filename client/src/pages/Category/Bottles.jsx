@@ -5,7 +5,7 @@ import { Package, ArrowUpRight, Filter } from 'lucide-react'
 import { productAPI } from '../../services/api'
 import { getProductImage, getProductColors } from '../../utils/productImages'
 import bottleImage from '../../assets/Bottle Category.png'
-
+import { sortFamilyFirst } from '../../utils/helper'
 const Bottles = () => {
  const navigate = useNavigate()
  const [products, setProducts] = useState([])
@@ -31,8 +31,9 @@ const Bottles = () => {
  try {
  const result = await productAPI.getProducts(null, 'Bottles')
  if (result.ok) {
- setProducts(result.data.products)
- setFilteredProducts(result.data.products)
+ const sortedProducts=sortFamilyFirst(result.data.products)
+ setProducts(sortedProducts)
+ setFilteredProducts(sortedProducts)
  }
  } catch (error) {
  console.error('Error fetching products:', error)
@@ -85,7 +86,7 @@ const Bottles = () => {
  })
  }
 
- setFilteredProducts(filtered)
+ setFilteredProducts(sortFamilyFirst(filtered))
  }
 
  // Handle neck size checkbox toggle

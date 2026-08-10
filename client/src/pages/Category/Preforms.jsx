@@ -5,7 +5,7 @@ import { Package, ArrowUpRight, Filter } from 'lucide-react'
 import { productAPI } from '../../services/api'
 import { getProductImage, getProductColors } from '../../utils/productImages'
 import preformsImage from '../../assets/Preforms Category.png'
-
+import { sortFamilyFirst } from '../../utils/helper'
 const Preforms = () => {
  const navigate = useNavigate()
  const [products, setProducts] = useState([])
@@ -31,8 +31,9 @@ const Preforms = () => {
  try {
  const result = await productAPI.getProducts(null, 'Preforms')
  if (result.ok) {
- setProducts(result.data.products)
- setFilteredProducts(result.data.products)
+    const sortedProducts=sortFamilyFirst(result.data.products)
+ setProducts(sortedProducts)
+ setFilteredProducts(sortedProducts)
  }
  } catch (error) {
  console.error('Error fetching products:', error)

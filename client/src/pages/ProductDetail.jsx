@@ -220,8 +220,6 @@ const ProductDetail = () => {
  const effectiveDiameter = getEffectiveSpec('diameter')
  const effectiveWeight = getEffectiveSpec('weight')
  const effectiveCapType = getEffectiveSpec('capType')
- const effectiveUsage = getEffectiveSpec('usage')
- const effectiveKeySpecs = getEffectiveSpec('keySpecs')
  const effectiveLength = getEffectiveSpec('length')
 
  const specRows = [
