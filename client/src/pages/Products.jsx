@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useCallback } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Package, ChevronRight, Filter, ArrowUpRight } from 'lucide-react'
 import { productAPI } from '../services/api'
 import { getProductImage, getProductColors } from '../utils/productImages'
-import { sortFamilyFirst } from '../utils/helper'
+import { sortFamilyFirst, filterProductsBySearch } from '../utils/helper'
+import SearchBar from '../components/SearchBar/SearchBar'
 
 const Products = () => {
  const navigate = useNavigate()
+ const location = useLocation()
  const [selectedCategory, setSelectedCategory] = useState('All')
  const [products, setProducts] = useState([])
  const [filteredProducts, setFilteredProducts] = useState([])
  const [categories, setCategories] = useState(['All', 'Bottles', 'Jars', 'Caps', 'Preforms'])
  const [loading, setLoading] = useState(false)
  const [selectedColor, setSelectedColor] = useState({})
+ const [searchQuery, setSearchQuery] = useState('')
  // Filter state
  const [neckSizes, setNeckSizes] = useState([])
  const [selectedNeckSizes, setSelectedNeckSizes] = useState([])
@@ -83,8 +86,11 @@ const Products = () => {
  }
  }
 
- const applyFilters = () => {
+ const applyFilters = useCallback(() => {
  let filtered = [...products]
+
+ // Search filter (apply first)
+ filtered = filterProductsBySearch(filtered, searchQuery)
 
  // Neck size filter
  if (selectedNeckSizes.length > 0) {
@@ -118,7 +124,7 @@ const Products = () => {
  }
 
  setFilteredProducts(sortFamilyFirst(filtered))
- }
+ }, [products, searchQuery, selectedNeckSizes, volumeMin, volumeMax, weightMin, weightMax])
 
  // Determine which filters to show based on category
  const showNeckSize = selectedCategory === 'All' || ['Bottles', 'Jars', 'Caps', 'Preforms'].includes(selectedCategory)
@@ -137,6 +143,12 @@ const Products = () => {
  useEffect(() => {
  fetchCategories()
  fetchNeckSizes()
+ // Read initial search from URL ?q= param
+ const params = new URLSearchParams(location.search)
+ const q = params.get('q')
+ if (q) {
+   setSearchQuery(q)
+ }
  }, [])
 
  useEffect(() => {
@@ -147,7 +159,7 @@ const Products = () => {
 
  useEffect(() => {
  applyFilters()
- }, [products, selectedNeckSizes, volumeMin, volumeMax, weightMin, weightMax])
+ }, [applyFilters])
 
  const handleCustomize = (e, product) => {
  e.stopPropagation()
@@ -284,6 +296,36 @@ const Products = () => {
 
  {/* ── RIGHT SIDE: Products (Scrollable) ── */}
  <main className="lg:col-span-9 ">
+
+ {/* Search Bar + Result Header */}
+ <div className="mb-8 space-y-5">
+   <div className="w-full lg:hidden">
+     <SearchBar
+       variant="default"
+       value={searchQuery}
+       onChange={setSearchQuery}
+       placeholder="Search products, SKU, volume..."
+     />
+   </div>
+   <div className="hidden lg:block">
+     <SearchBar
+       variant="default"
+       value={searchQuery}
+       onChange={setSearchQuery}
+       placeholder="Search by name, SKU, specs..."
+     />
+   </div>
+   <div className="flex items-center justify-between pt-1 pb-3 border-b border-[#DEDDD6]">
+     <span className="font-mono text-[11px] uppercase tracking-wider text-slate-700">
+       Class Classification Matrix
+     </span>
+     <span className="font-mono text-[10px] uppercase tracking-widest text-slate-700">
+       Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'Item' : 'Items'}
+       {searchQuery && ` for "${searchQuery}"`}
+     </span>
+   </div>
+ </div>
+
  {loading ? (
  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
  {Array.from({ length: 6 }).map((_, index) => (

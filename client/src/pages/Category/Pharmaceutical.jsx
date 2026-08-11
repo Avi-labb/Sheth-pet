@@ -1,10 +1,12 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Package, ArrowUpRight, Filter } from 'lucide-react'
 import { productAPI } from '../../services/api'
 import { getProductImage, getProductColors } from '../../utils/productImages'
 import pharmaImage from '../../assets/images/Pharna.png'
+import { sortFamilyFirst, filterProductsBySearch } from '../../utils/helper'
+import SearchBar from '../../components/SearchBar/SearchBar'
 
 const Pharmaceutical = () => {
  const navigate = useNavigate()
@@ -12,6 +14,7 @@ const Pharmaceutical = () => {
  const [filteredProducts, setFilteredProducts] = useState([])
  const [loading, setLoading] = useState(false)
  const [selectedColor, setSelectedColor] = useState({})
+ const [searchQuery, setSearchQuery] = useState('')
  // Filter state
  const [neckSizes, setNeckSizes] = useState([])
  const [selectedNeckSizes, setSelectedNeckSizes] = useState([])
@@ -85,7 +88,7 @@ const Pharmaceutical = () => {
  })
  }
 
- setFilteredProducts(filtered)
+ setFilteredProducts(sortFamilyFirst(filtered))
  }
 
  // Handle neck size checkbox toggle
@@ -104,7 +107,7 @@ const Pharmaceutical = () => {
 
  useEffect(() => {
  applyFilters()
- }, [products, selectedNeckSizes, volumeMin, volumeMax, weightMin, weightMax])
+ }, [applyFilters])
 
  return (
  <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-[#3FB893] selection:text-white">
@@ -229,13 +232,21 @@ const Pharmaceutical = () => {
 
  {/* RIGHT SIDE: PRODUCTS */}
  <main className="lg:col-span-9">
- <div className="flex items-center justify-between mb-8 pb-3 border-b border-slate-600">
+ <div className="mb-8 space-y-5">
+   <SearchBar
+     variant="default"
+     value={searchQuery}
+     onChange={setSearchQuery}
+     placeholder="Search Pharmaceutical..."
+   />
+   <div className="flex items-center justify-between pt-1 pb-3 border-b border-slate-600">
  <span className="font-mono text-[11px] uppercase tracking-wider text-slate-700">
  Class Classification Matrix
  </span>
  <span className="font-mono text-[10px] uppercase tracking-widest text-slate-700">
  Showing {filteredProducts.length} items
  </span>
+ </div>
  </div>
 
  {loading ? (
