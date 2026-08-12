@@ -143,13 +143,14 @@ const Products = () => {
  useEffect(() => {
  fetchCategories()
  fetchNeckSizes()
+ fetchProducts(selectedCategory)
  // Read initial search from URL ?q= param
  const params = new URLSearchParams(location.search)
  const q = params.get('q')
  if (q) {
    setSearchQuery(q)
  }
- }, [])
+ }, [location.pathname])
 
  useEffect(() => {
  fetchProducts(selectedCategory)
@@ -337,7 +338,7 @@ const Products = () => {
  ))}
  </div>
  ) : filteredProducts.length > 0 ? (
- <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+ <div className="grid  lg:grid-cols-3 gap-6">
  {filteredProducts.map((product) => {
  const colors = getProductColors(product)
  const currentColor = selectedColor[product._id] || colors[0]
@@ -385,12 +386,12 @@ const Products = () => {
  </div>
 
  {colors.length > 0 && (
- <div className="space-y-2">
- <div className="flex items-center justify-between font-medium text-[9px] uppercase tracking-wider text-slate-600">
+ <div className="space-y-2 sm:space-y-2">
+ <div className="flex items-center justify-between font-medium text-[10px] sm:text-[9px] uppercase tracking-wider text-slate-600">
  <span className='text-slate-800'>Variant</span>
  <span className="text-[#15171A]">{currentColor}</span>
  </div>
- <div className="flex flex-wrap gap-1">
+ <div className="flex flex-wrap gap-2 sm:gap-1">
  {colors.map((color, idx) => {
  const isSelected = currentColor === color
  return (
@@ -402,7 +403,7 @@ const Products = () => {
  e.stopPropagation()
  setSelectedColor({ ...selectedColor, [product._id]: color })
  }}
- className={`px-2 py-1 text-[10px] font-medium uppercase tracking-wide border transition-all ${isSelected
+ className={`px-3 py-2 text-xs sm:px-2 sm:py-1 sm:text-[10px] font-medium uppercase tracking-wide border transition-all ${isSelected
  ? 'bg-[#15171A] text-[#FAFAF8] border-[#15171A]'
  : 'bg-white text-slate-800 border-slate-500 hover:border-[#8C8E8A]'
  }`}

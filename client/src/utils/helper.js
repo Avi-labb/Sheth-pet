@@ -5,6 +5,24 @@ export const isFamilyProduct = (product) => {
   return colors.some(c => typeof c === 'string' && c.toLowerCase().includes('family'));
 };
 
+export const isFamilyColor = (color) => {
+  if (!color || typeof color !== 'string') return false;
+  return color.toLowerCase().includes('family');
+};
+
+export const sortVariantsFamilyFirst = (variants) => {
+  if (!Array.isArray(variants)) return [];
+  return [...variants].sort((a, b) => {
+    const aFamily = isFamilyColor(a) ? 0 : 1;
+    const bFamily = isFamilyColor(b) ? 0 : 1;
+    if (aFamily !== bFamily) return aFamily - bFamily;
+    const aNum = /^\d/.test(String(a));
+    const bNum = /^\d/.test(String(b));
+    if (aNum !== bNum) return aNum ? 1 : -1;
+    return String(a).localeCompare(String(b));
+  });
+};
+
 export const sortFamilyFirst = (productsList) => {
   return [...productsList].sort((a, b) => {
     const aFamily = isFamilyProduct(a) ? 0 : 1;

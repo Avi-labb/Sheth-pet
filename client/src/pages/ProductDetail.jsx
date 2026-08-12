@@ -395,10 +395,10 @@ const ProductDetail = () => {
  {colors.length > 0 && (
  <div className="border-t border-[#DEDDD6] pt-5">
  <div className="flex items-center justify-between mb-3">
- <span className="text-[11px] font-mono uppercase tracking-wider text-[#8C8E8A]">Variant</span>
+ <span className="text-[11px] sm:text-[11px] font-mono uppercase tracking-wider text-[#8C8E8A]">Variant</span>
  <span className="font-mono text-[11px] text-[#15171A]">{selectedColor}</span>
  </div>
- <div className="flex flex-wrap gap-2">
+ <div className="flex flex-wrap gap-2.5 sm:gap-2">
  {colors.map((color, idx) => {
  const isSelected = selectedColor === color
  return (
@@ -406,7 +406,7 @@ const ProductDetail = () => {
  key={idx}
  type="button"
  onClick={() => setSelectedColor(color)}
- className={`px-3.5 py-1.5 text-xs font-mono uppercase tracking-wide border transition-colors ${
+ className={`px-4 py-2.5 text-sm sm:px-3.5 sm:py-1.5 sm:text-xs font-mono uppercase tracking-wide border transition-colors ${
  isSelected
  ? 'bg-[#15171A] text-[#FAFAF8] border-[#15171A]'
  : 'bg-transparent text-[#5C6066] border-[#DEDDD6] hover:border-[#8C8E8A]'

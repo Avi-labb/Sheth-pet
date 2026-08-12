@@ -1,4 +1,6 @@
 
+import { sortVariantsFamilyFirst } from './helper'
+
 export const isRemoteUrl = (url) => {
   if (!url || typeof url !== 'string') return false
   return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//')
@@ -13,10 +15,12 @@ export const resolveImageUrl = (value) => {
 
 export const getAllProductImages = (product) => {
   if (product.images && Object.keys(product.images).length > 0) {
-    return Object.entries(product.images).map(([color, file]) => ({
+    const entries = Object.entries(product.images).map(([color, file]) => ({
       color,
       src: resolveImageUrl(file)
     }))
+    const sortedColors = sortVariantsFamilyFirst(entries.map(e => e.color))
+    return sortedColors.map(color => entries.find(e => e.color === color)).filter(Boolean)
   }
   if (product.image) {
     return [{
@@ -38,7 +42,8 @@ export const getProductImage = (product, color = null) => {
     }
   }
   if (product.images && Object.keys(product.images).length > 0) {
-    const firstKey = Object.keys(product.images)[0]
+    const sortedKeys = sortVariantsFamilyFirst(Object.keys(product.images))
+    const firstKey = sortedKeys[0]
     return resolveImageUrl(product.images[firstKey])
   }
   if (product.image) {
@@ -49,7 +54,7 @@ export const getProductImage = (product, color = null) => {
 
 export const getProductColors = (product) => {
   if (product.images && Object.keys(product.images).length > 0) {
-    return Object.keys(product.images)
+    return sortVariantsFamilyFirst(Object.keys(product.images))
   }
-  return Array.isArray(product.color) ? product.color : (product.color ? [product.color] : [])
+  return sortVariantsFamilyFirst(Array.isArray(product.color) ? product.color : (product.color ? [product.color] : []))
 }

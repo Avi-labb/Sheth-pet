@@ -10,6 +10,36 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const sortVariantsFamilyFirst = (variants) => {
+  if (!Array.isArray(variants)) return [];
+  return [...variants].sort((a, b) => {
+    const aFamily = typeof a === 'string' && a.toLowerCase().includes('family') ? 0 : 1;
+    const bFamily = typeof b === 'string' && b.toLowerCase().includes('family') ? 0 : 1;
+    if (aFamily !== bFamily) return aFamily - bFamily;
+    const aNum = /^\d/.test(String(a));
+    const bNum = /^\d/.test(String(b));
+    if (aNum !== bNum) return aNum ? 1 : -1;
+    return String(a).localeCompare(String(b));
+  });
+};
+
+const normalizeProductVariants = (product) => {
+  if (!product) return product;
+  const p = product.toObject ? product.toObject() : { ...product };
+  if (Array.isArray(p.color)) {
+    p.color = sortVariantsFamilyFirst(p.color);
+  }
+  if (p.images && typeof p.images === 'object') {
+    const sortedKeys = sortVariantsFamilyFirst(Object.keys(p.images));
+    const sortedImages = {};
+    for (const key of sortedKeys) {
+      sortedImages[key] = p.images[key];
+    }
+    p.images = sortedImages;
+  }
+  return p;
+};
+
 const deleteLocalFile = (filePath) => {
   if (!filePath) return;
   try {
@@ -543,7 +573,7 @@ export const addProduct = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      product,
+      product: normalizeProductVariants(product),
     });
 
   } catch (error) {
@@ -586,9 +616,10 @@ products.sort((a,b) => {
   return new Date(b.createdAt)- new Date(a.createdAt)
 })
 products.forEach(p => console.log(`-${p.name}: capType = ${p.capType}, marketSegments = ${p.marketSegments}`));
+    const normalizedProducts = products.map(normalizeProductVariants);
     return res.status(200).json({
       success: true,
-      products,
+      products: normalizedProducts,
     });
   } catch (error) {
     console.error('Error in getProducts:', error);
@@ -908,7 +939,7 @@ export const updateProduct = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      product: updatedProduct,
+      product: normalizeProductVariants(updatedProduct),
       message: "Product updated successfully"
     });
   } catch (error) {

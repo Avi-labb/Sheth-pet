@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Menu, X, ChevronRight, ChevronDown } from 'lucide-react'
 import { productAPI } from '../../services/api'
 import logo from '../../assets/images/radhe-logo.png'
@@ -50,6 +50,16 @@ const Header = ({ onCategorySelect }) => {
   const [showByType, setShowByType] = useState(false)
   const [showByIndustry, setShowByIndustry] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+
+  const goTo = (path) => {
+    setShowDropdown(false)
+    setIsOpen(false)
+    setShowProductsMenu(false)
+    setShowByType(false)
+    setShowByIndustry(false)
+    navigate(path)
+  }
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -144,7 +154,10 @@ const Header = ({ onCategorySelect }) => {
                             <Link
                               key={item.name}
                               to={item.path}
-                              onClick={() => setShowDropdown(false)}
+                              onClick={(e) => {
+                                e.preventDefault()
+                                goTo(item.path)
+                              }}
                               className="transition-colors duration-200 py-1 text-[15px] font-medium text-slate-700 hover:text-slate-900"
                             >
                               {item.name}
@@ -164,7 +177,10 @@ const Header = ({ onCategorySelect }) => {
                             <Link
                               key={item.name}
                               to={item.path}
-                              onClick={() => setShowDropdown(false)}
+                              onClick={(e) => {
+                                e.preventDefault()
+                                goTo(item.path)
+                              }}
                               className="transition-colors duration-200 py-1 text-[15px] font-medium text-slate-700 hover:text-slate-900"
                             >
                               {item.name}
@@ -176,15 +192,12 @@ const Header = ({ onCategorySelect }) => {
 
                     {/* Dropdown Footer: View All Products */}
                     <div
-                      className="border-t py-4 text-center transition-colors duration-200 bg-slate-100 border-slate-100 hover:bg-slate-200/20"
+                      className="border-t py-4 text-center transition-colors duration-200 bg-slate-100 border-slate-100 hover:bg-slate-200/20 cursor-pointer"
+                      onClick={() => goTo('/products')}
                     >
-                      <Link
-                        to="/products"
-                        onClick={() => setShowDropdown(false)}
-                        className="block text-center font-medium transition-colors text-slate-900 hover:text-slate-700"
-                      >
+                      <span className="block text-center font-medium transition-colors text-slate-900 hover:text-slate-700">
                         View All Products →
-                      </Link>
+                      </span>
                     </div>
                   </div>
                 </motion.div>
@@ -310,10 +323,9 @@ const Header = ({ onCategorySelect }) => {
                                 <Link
                                   key={item.name}
                                   to={item.path}
-                                  onClick={() => {
-                                    setIsOpen(false)
-                                    setShowProductsMenu(false)
-                                    setShowByType(false)
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    goTo(item.path)
                                   }}
                                   className="flex items-center justify-between w-full px-4 py-2 pl-2 rounded-xl text-sm font-medium tracking-wide transition-colors text-slate-600 hover:text-slate-900"
                                 >
@@ -351,10 +363,9 @@ const Header = ({ onCategorySelect }) => {
                                 <Link
                                   key={item.name}
                                   to={item.path}
-                                  onClick={() => {
-                                    setIsOpen(false)
-                                    setShowProductsMenu(false)
-                                    setShowByIndustry(false)
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    goTo(item.path)
                                   }}
                                   className="flex items-center justify-between w-full px-4 py-2 pl-2 rounded-xl text-sm font-medium tracking-wide transition-colors text-slate-600 hover:text-slate-900"
                                 >
@@ -368,16 +379,12 @@ const Header = ({ onCategorySelect }) => {
                       </div>
 
                       {/* View All Products Link */}
-                      <Link
-                        to="/products"
-                        onClick={() => {
-                          setIsOpen(false)
-                          setShowProductsMenu(false)
-                        }}
-                        className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-colors text-teal-600 hover:text-teal-700"
+                      <div
+                        onClick={() => goTo('/products')}
+                        className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-colors text-teal-600 hover:text-teal-700 cursor-pointer"
                       >
                         View All Products →
-                      </Link>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
