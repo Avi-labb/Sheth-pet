@@ -54,61 +54,75 @@ const Pharmaceutical = () => {
  }
  }
 
- const applyFilters = () => {
- let filtered = [...products]
+ 
+  const applyFilters = useCallback(() => {
+    let filtered = [...products]
 
- // Neck size filter
- if (selectedNeckSizes.length > 0) {
- filtered = filtered.filter(p =>
- p.neckSize && selectedNeckSizes.includes(p.neckSize)
- )
- }
+    // Search query filter
+    if (searchQuery.trim()) {
+      filtered = filterProductsBySearch(filtered, searchQuery)
+    }
 
- // Volume filter
- if (volumeMin || volumeMax) {
- filtered = filtered.filter(p => {
- if (!p.volume) return false
- const vol = parseFloat(p.volume)
- if (isNaN(vol)) return false
- const min = volumeMin ? parseFloat(volumeMin) : -Infinity
- const max = volumeMax ? parseFloat(volumeMax) : Infinity
- return vol >= min && vol <= max
- })
- }
+    // Neck size filter
+    if (selectedNeckSizes.length > 0) {
+      filtered = filtered.filter(
+        (p) => p.neckSize && selectedNeckSizes.includes(p.neckSize)
+      )
+    }
 
- // Weight filter
- if (weightMin || weightMax) {
- filtered = filtered.filter(p => {
- if (!p.weight) return false
- const wt = parseFloat(p.weight)
- if (isNaN(wt)) return false
- const min = weightMin ? parseFloat(weightMin) : -Infinity
- const max = weightMax ? parseFloat(weightMax) : Infinity
- return wt >= min && wt <= max
- })
- }
+    // Volume filter
+    if (volumeMin || volumeMax) {
+      filtered = filtered.filter((p) => {
+        if (!p.volume) return false
+        const vol = parseFloat(p.volume)
+        if (isNaN(vol)) return false
+        const min = volumeMin ? parseFloat(volumeMin) : -Infinity
+        const max = volumeMax ? parseFloat(volumeMax) : Infinity
+        return vol >= min && vol <= max
+      })
+    }
 
- setFilteredProducts(sortFamilyFirst(filtered))
- }
+    // Weight filter
+    if (weightMin || weightMax) {
+      filtered = filtered.filter((p) => {
+        if (!p.weight) return false
+        const wt = parseFloat(p.weight)
+        if (isNaN(wt)) return false
+        const min = weightMin ? parseFloat(weightMin) : -Infinity
+        const max = weightMax ? parseFloat(weightMax) : Infinity
+        return wt >= min && wt <= max
+      })
+    }
 
- // Handle neck size checkbox toggle
- const toggleNeckSize = (size) => {
- if (selectedNeckSizes.includes(size)) {
- setSelectedNeckSizes(selectedNeckSizes.filter(s => s !== size))
- } else {
- setSelectedNeckSizes([...selectedNeckSizes, size])
- }
- }
+    setFilteredProducts(sortFamilyFirst(filtered))
+  }, [
+    products,
+    searchQuery,
+    selectedNeckSizes,
+    volumeMin,
+    volumeMax,
+    weightMin,
+    weightMax,
+  ])
 
- useEffect(() => {
- fetchProducts()
- fetchNeckSizes()
- }, [])
+  // Handle neck size checkbox toggle
+  const toggleNeckSize = (size) => {
+    if (selectedNeckSizes.includes(size)) {
+      setSelectedNeckSizes(selectedNeckSizes.filter((s) => s !== size))
+    } else {
+      setSelectedNeckSizes([...selectedNeckSizes, size])
+    }
+  }
 
- useEffect(() => {
- applyFilters()
- }, [applyFilters])
+  useEffect(() => {
+    fetchProducts()
+    fetchNeckSizes()
+  }, [])
 
+  useEffect(() => {
+    applyFilters()
+  }, [applyFilters])
+  
  return (
  <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-[#3FB893] selection:text-white">
  {/* HERO SECTION */}

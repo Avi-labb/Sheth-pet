@@ -54,64 +54,74 @@ const Industrial = () => {
  }
  }
 
- const applyFilters = useCallback(() => {
- let filtered = [...products]
+  const applyFilters = useCallback(() => {
+    let filtered = [...products]
 
- // Search filter (apply first)
- filtered = filterProductsBySearch(filtered, searchQuery)
+    // Search query filter
+    if (searchQuery.trim()) {
+      filtered = filterProductsBySearch(filtered, searchQuery)
+    }
 
- // Neck size filter
- if (selectedNeckSizes.length > 0) {
- filtered = filtered.filter(p =>
- p.neckSize && selectedNeckSizes.includes(p.neckSize)
- )
- }
+    // Neck size filter
+    if (selectedNeckSizes.length > 0) {
+      filtered = filtered.filter(
+        (p) => p.neckSize && selectedNeckSizes.includes(p.neckSize)
+      )
+    }
 
- // Volume filter
- if (volumeMin || volumeMax) {
- filtered = filtered.filter(p => {
- if (!p.volume) return false
- const vol = parseFloat(p.volume)
- if (isNaN(vol)) return false
- const min = volumeMin ? parseFloat(volumeMin) : -Infinity
- const max = volumeMax ? parseFloat(volumeMax) : Infinity
- return vol >= min && vol <= max
- })
- }
+    // Volume filter
+    if (volumeMin || volumeMax) {
+      filtered = filtered.filter((p) => {
+        if (!p.volume) return false
+        const vol = parseFloat(p.volume)
+        if (isNaN(vol)) return false
+        const min = volumeMin ? parseFloat(volumeMin) : -Infinity
+        const max = volumeMax ? parseFloat(volumeMax) : Infinity
+        return vol >= min && vol <= max
+      })
+    }
 
- // Weight filter
- if (weightMin || weightMax) {
- filtered = filtered.filter(p => {
- if (!p.weight) return false
- const wt = parseFloat(p.weight)
- if (isNaN(wt)) return false
- const min = weightMin ? parseFloat(weightMin) : -Infinity
- const max = weightMax ? parseFloat(weightMax) : Infinity
- return wt >= min && wt <= max
- })
- }
+    // Weight filter
+    if (weightMin || weightMax) {
+      filtered = filtered.filter((p) => {
+        if (!p.weight) return false
+        const wt = parseFloat(p.weight)
+        if (isNaN(wt)) return false
+        const min = weightMin ? parseFloat(weightMin) : -Infinity
+        const max = weightMax ? parseFloat(weightMax) : Infinity
+        return wt >= min && wt <= max
+      })
+    }
 
- setFilteredProducts(sortFamilyFirst(filtered))
- }, [products, searchQuery, selectedNeckSizes, volumeMin, volumeMax, weightMin, weightMax])
+    setFilteredProducts(sortFamilyFirst(filtered))
+  }, [
+    products,
+    searchQuery,
+    selectedNeckSizes,
+    volumeMin,
+    volumeMax,
+    weightMin,
+    weightMax,
+  ])
 
- // Handle neck size checkbox toggle
- const toggleNeckSize = (size) => {
- if (selectedNeckSizes.includes(size)) {
- setSelectedNeckSizes(selectedNeckSizes.filter(s => s !== size))
- } else {
- setSelectedNeckSizes([...selectedNeckSizes, size])
- }
- }
+  // Handle neck size checkbox toggle
+  const toggleNeckSize = (size) => {
+    if (selectedNeckSizes.includes(size)) {
+      setSelectedNeckSizes(selectedNeckSizes.filter((s) => s !== size))
+    } else {
+      setSelectedNeckSizes([...selectedNeckSizes, size])
+    }
+  }
 
- useEffect(() => {
- fetchProducts()
- fetchNeckSizes()
- }, [])
+  useEffect(() => {
+    fetchProducts()
+    fetchNeckSizes()
+  }, [])
 
- useEffect(() => {
- applyFilters()
- }, [products, searchQuery, selectedNeckSizes, volumeMin, volumeMax, weightMin, weightMax])
-
+  useEffect(() => {
+    applyFilters()
+  }, [applyFilters])
+ 
  return (
  <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-[#3FB893] selection:text-white">
  {/* HERO SECTION */}

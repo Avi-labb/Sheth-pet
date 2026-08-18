@@ -232,8 +232,9 @@ const ProductDetail = () => {
  { label: 'Diameter', value: formatSpecValue(effectiveDiameter) },
  { label: 'Length', value: formatSpecValue(effectiveLength) },
  { label: 'Net weight', value: formatSpecValue(effectiveWeight) },
+
  { label: 'Closure type', value: formatSpecValue(effectiveCapType) }
- ].filter(row => row.value)
+].filter(row => row.value && row.label !== 'Closure type')
 
  const goToLightboxImage = (delta) => {
  if (allImages.length === 0) return
